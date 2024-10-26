@@ -30,7 +30,77 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
       </tags>
   </entry>
   <entry>
-    <title>LeetcodeHard_42接雨水</title>
+    <title>LeetcodeHard-871最低加油次数</title>
+    <url>/2024/10/23/LeetcodeHard-871/</url>
+    <content><![CDATA[<p>写在前面：该题转载至leetcode力扣 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy9taW5pbXVtLW51bWJlci1vZi1yZWZ1ZWxpbmctc3RvcHM=">No.871–最低加油次数<i class="fa fa-external-link-alt"></i></span></em> 😃</p>
+<h2 id="题目描述：">题目描述：</h2>
+<h3 id="No-871最低加油次数">No.871最低加油次数</h3>
+<p>汽车从起点出发驶向目的地，该目的地位于出发位置东面 <code>target </code>英里处。</p>
+<p>沿途有加油站，用数组 <code>stations </code>表示。其中 <code>stations[i] = [positioni, fueli]</code> 表示第 <code>i</code> 个加油站位于出发位置东面 <code>positioni</code> 英里处，并且有 <code>fueli</code> 升汽油。</p>
+<p>假设汽车油箱的容量是无限的，其中最初有 <code>startFuel</code> 升燃料。它每行驶 <code>1</code> 英里就会用掉 <code>1</code> 升汽油。当汽车到达加油站时，它可能停下来加油，将所有汽油从加油站转移到汽车中。</p>
+<p>为了到达目的地，汽车所必要的最低加油次数是多少？如果无法到达目的地，则返回 <code>-1</code> 。</p>
+<p>注意：如果汽车到达加油站时剩余燃料为 <code>0</code>，它仍然可以在那里加油。如果汽车到达目的地时剩余燃料为 <code>0</code>，仍然认为它已经到达目的地。</p>
+<h4 id="示例1：">示例1：</h4>
+<blockquote>
+<p>输入：target = <code>1</code>, startFuel = <code>1</code>, stations = <code>[]</code><br>
+输出：<code>0</code>解释：可以在不加油的情况下到达目的地。</p>
+</blockquote>
+<span id="more"></span>
+<h4 id="示例2：">示例2：</h4>
+<blockquote>
+<p>输入：target = <code>100</code>, startFuel = <code>1</code>, stations = <code>[[10,100]]</code><br>
+输出：<code>-1</code>解释：无法抵达目的地，甚至无法到达第一个加油站。</p>
+</blockquote>
+<h4 id="示例3：">示例3：</h4>
+<blockquote>
+<p>输入：target = <code>100</code>, startFuel = <code>10</code>, stations = <code>[[10,60],[20,30],[30,30],[60,40]]</code><br>
+输出：<code>2</code>解释：出发时有 <code>10</code> 升燃料。开车来到距起点 <code>10</code> 英里处的加油站，消耗 <code>10</code>升燃料。将汽油从 <code>0</code> 升加到 <code>60</code> 升。然后，从 <code>10</code> 英里处的加油站开到 <code>60</code> 英里处的加油站（消耗 <code>50</code> 升燃料），并将汽油从 <code>10</code> 升加到 <code>50</code> 升。然后开车抵达目的地。沿途在两个加油站停靠，所以返回 <code>2</code> 。</p>
+</blockquote>
+<h4 id="数据范围：">数据范围：</h4>
+<blockquote>
+<p><code>1</code> &lt;= target, startFuel &lt;= <code>109</code><br>
+<code>0</code> &lt;= stations.length &lt;= <code>500</code><br>
+<code>1</code> &lt;= positioni &lt; positioni+1 &lt; target<br>
+<code>1</code> &lt;= fueli &lt; <code>109</code></p>
+</blockquote>
+<h4 id="默认代码模板：">默认代码模板：</h4>
+<p>C:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">minRefuelStops</span><span class="params">(<span class="type">int</span> target, <span class="type">int</span> startFuel, <span class="type">int</span>** stations, <span class="type">int</span> stationsSize, <span class="type">int</span>* stationsColSize)</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Python3:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">minRefuelStops</span>(<span class="params">self, target: <span class="built_in">int</span>, startFuel: <span class="built_in">int</span>, stations: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]</span>) -&gt; <span class="built_in">int</span>:</span><br></pre></td></tr></table></figure>
+<h3 id="题目解析：">题目解析：</h3>
+<p>dp可以，贪心也可以，这里先说dp</p>
+<h4 id="动态规划：">动态规划：</h4>
+<p>转移方程：</p>
+<p><code>dp[j + 1] = max(dp[j + 1],dp[j] + stations[i][1])</code></p>
+<p><code>dp[j]</code>表示加了j次油的情况下最远行驶距离，如果在最新遍历到的一个加油站加油能够使行驶距离到新高的话就更新dp，</p>
+<p>每次途径一个加油站都往回遍历一遍已经走过的加油站更新<code>dp[i]</code>，</p>
+<p>如果目的地<code>target&lt;dp[i]</code>,就说明在i次加油的情况下能到目的地，在符合条件的<code>dp[i]</code>中选择最小的i值即为所求答案。</p>
+<!-- #### 效果示意： -->
+<h5 id="复杂度：">复杂度：</h5>
+<p>每次遍历到新的加油站都要回头看一遍遍历过的，所以时间复杂度O(n<sup>2</sup>).</p>
+<p>要在程序中维护数组<code>dp[]</code>,其大小是<code>n</code>,空间复杂度O(n).</p>
+<h5 id="完整代码：">完整代码：</h5>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">minRefuelStops</span><span class="params">(<span class="type">int</span> target, <span class="type">int</span> startFuel, <span class="type">int</span>** stations, <span class="type">int</span> stationsSize, <span class="type">int</span>* stationsColSize)</span>&#123;</span><br><span class="line">    <span class="type">long</span> dp[stationsSize+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=stationsSize;i++)</span><br><span class="line">        dp[i]=<span class="number">0</span>;</span><br><span class="line">    dp[<span class="number">0</span>] = startFuel;<span class="comment">//dp[i]为加i次油能到的最远距离</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; stationsSize; i++) <span class="comment">//途径的加油站</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i; j &gt;= <span class="number">0</span>; j--) <span class="comment">//每次遍历到一个新的加油站的时候回头看能否更新dp[]</span></span><br><span class="line">            <span class="keyword">if</span> (dp[j] &gt;= stations[i][<span class="number">0</span>]) </span><br><span class="line">                dp[j + <span class="number">1</span>] = dp[j + <span class="number">1</span>]&gt;dp[j] + stations[i][<span class="number">1</span>]?dp[j + <span class="number">1</span>]:dp[j] + stations[i][<span class="number">1</span>];<span class="comment">//如果在当前遍历到的加油站加油，会不会跑得更远？(dp[]变得更大)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= stationsSize; i++) </span><br><span class="line">        <span class="keyword">if</span> (dp[i] &gt;= target) <span class="comment">//i次是能到目的地的最小的加油次数</span></span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="反悔贪心：">反悔贪心：</h4>
+<p>用一个最大堆维护当前遍历到的加油站的加油量,如果当前行驶距离小于目的地的距离，就从最大堆中取出最大值，加到行驶范围中，加油次数自增，再做距离的判断。</p>
+<p>如果在某次判断中第一次行驶距离大于等于了目的地的距离，就返回当前的加油次数，如果堆已经空了都没到目的地就返回-1。</p>
+<h5 id="完整代码">完整代码</h5>
+<p>这里引用了 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy9taW5pbXVtLW51bWJlci1vZi1yZWZ1ZWxpbmctc3RvcHMvc29sdXRpb25zLzI5MjEwNjQvenVpLWRhLWR1aS10YW4teGluLXB5dGhvbmphdmFjZ29qc3J1c3QtYi15bGRwLw==">灵茶山艾府大佬的python题解<i class="fa fa-external-link-alt"></i></span></em></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">minRefuelStops</span>(<span class="params">self, target: <span class="built_in">int</span>, startFuel: <span class="built_in">int</span>, stations: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        stations.append((target, <span class="number">0</span>))</span><br><span class="line">        ans, miles = <span class="number">0</span>, startFuel</span><br><span class="line">        fuel_heap = []  <span class="comment"># 下面把堆中元素取反，当作最大堆用</span></span><br><span class="line">        <span class="keyword">for</span> position, fuel <span class="keyword">in</span> stations:</span><br><span class="line">            <span class="keyword">while</span> fuel_heap <span class="keyword">and</span> miles &lt; position:  <span class="comment"># 没有足够的油到达 position</span></span><br><span class="line">                miles -= heappop(fuel_heap)  <span class="comment"># 选油量最多的油桶</span></span><br><span class="line">                ans += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> miles &lt; position:  <span class="comment"># 无法到达</span></span><br><span class="line">                <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">            heappush(fuel_heap, -fuel)  <span class="comment"># 留着后面加油</span></span><br><span class="line">        <span class="keyword">return</span> ans</span><br><span class="line"></span><br><span class="line">作者：灵茶山艾府</span><br><span class="line">来源：力扣（LeetCode）</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br></pre></td></tr></table></figure>
+<hr>
+<p align="center"><img src="https://raw.githubusercontent.com/khoa083/khoa/main/Khoa_ne/img/Rainbow.gif" width="100%"></p>
+<h1 align="center"><i> Connect With Me <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/handShake.gif' width="50px" height=50px> </i></h1>
+<p align="center">
+<a href="mailto:hrlong_@outlook.com"><img title="Email" src="https://logospng.org/download/microsoft-outlook/logo-microsoft-outlook-1024.png"width="50px" height=50px></a><a href="https://github.com/HenRiser"><img title="Github" src="https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/github.gif"width="50px" height=50px,target="_blank"></a>
+</p>
+<h1 align="center"><i> TTTTTThank You! <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/winkFace.gif' width="50px" height=50px> </i></h1>]]></content>
+      <tags>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetcodeHard-42接雨水</title>
     <url>/2024/10/22/LeetcodeHard-42/</url>
     <content><![CDATA[<p>写在前面：该题转载至leetcode力扣 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy90cmFwcGluZy1yYWluLXdhdGVy">No.42–接雨水<i class="fa fa-external-link-alt"></i></span></em> 😃</p>
 <h2 id="题目描述：">题目描述：</h2>

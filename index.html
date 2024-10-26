@@ -150,13 +150,14 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
+          <a href="/tags/">
         <span class="site-state-item-count">2</span>
-        <span class="site-state-item-name">tags</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
 </div>
@@ -166,6 +167,9 @@
       </span>
       <span class="links-of-author-item">
         <span class="exturl" data-url="bWFpbHRvOmhybG9uZ19Ab3V0bG9vay5jb20=" title="E-Mail → mailto:hrlong_@outlook.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9zdGVhbWNvbW11bml0eS5jb20vcHJvZmlsZXMvNzY1NjExOTg5NzY4OTM4MTYv" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198976893816&#x2F;"><i class="fab fa-steam fa-fw"></i></span>
       </span>
   </div>
   <div class="cc-license animated" itemprop="license">
@@ -285,6 +289,101 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://henriser.github.io/2024/10/23/LeetcodeHard-871/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/authorAvatar.jpg">
+      <meta itemprop="name" content="HenRiser">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/23/LeetcodeHard-871/" class="post-title-link" itemprop="url">LeetcodeHard-871最低加油次数</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-23 14:41:35" itemprop="dateCreated datePublished" datetime="2024-10-23T14:41:35+08:00">2024-10-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-26 21:31:30" itemprop="dateModified" datetime="2024-10-26T21:31:30+08:00">2024-10-26</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>写在前面：该题转载至leetcode力扣 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy9taW5pbXVtLW51bWJlci1vZi1yZWZ1ZWxpbmctc3RvcHM=">No.871–最低加油次数<i class="fa fa-external-link-alt"></i></span></em> 😃</p>
+<h2 id="题目描述：">题目描述：</h2>
+<h3 id="No-871最低加油次数">No.871最低加油次数</h3>
+<p>汽车从起点出发驶向目的地，该目的地位于出发位置东面 <code>target </code>英里处。</p>
+<p>沿途有加油站，用数组 <code>stations </code>表示。其中 <code>stations[i] = [positioni, fueli]</code> 表示第 <code>i</code> 个加油站位于出发位置东面 <code>positioni</code> 英里处，并且有 <code>fueli</code> 升汽油。</p>
+<p>假设汽车油箱的容量是无限的，其中最初有 <code>startFuel</code> 升燃料。它每行驶 <code>1</code> 英里就会用掉 <code>1</code> 升汽油。当汽车到达加油站时，它可能停下来加油，将所有汽油从加油站转移到汽车中。</p>
+<p>为了到达目的地，汽车所必要的最低加油次数是多少？如果无法到达目的地，则返回 <code>-1</code> 。</p>
+<p>注意：如果汽车到达加油站时剩余燃料为 <code>0</code>，它仍然可以在那里加油。如果汽车到达目的地时剩余燃料为 <code>0</code>，仍然认为它已经到达目的地。</p>
+<h4 id="示例1：">示例1：</h4>
+<blockquote>
+<p>输入：target = <code>1</code>, startFuel = <code>1</code>, stations = <code>[]</code><br>
+输出：<code>0</code>解释：可以在不加油的情况下到达目的地。</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/10/23/LeetcodeHard-871/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://henriser.github.io/2024/10/22/LeetcodeHard-42/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -303,7 +402,7 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/22/LeetcodeHard-42/" class="post-title-link" itemprop="url">LeetcodeHard_42接雨水</a>
+          <a href="/2024/10/22/LeetcodeHard-42/" class="post-title-link" itemprop="url">LeetcodeHard-42接雨水</a>
         </h2>
 
         <div class="post-meta-container">
@@ -313,9 +412,15 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2024-10-22 00:32:52 / Modified: 21:02:26" itemprop="dateCreated datePublished" datetime="2024-10-22T00:32:52+08:00">2024-10-22</time>
+      <time title="Created: 2024-10-22 00:32:52" itemprop="dateCreated datePublished" datetime="2024-10-22T00:32:52+08:00">2024-10-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2024-10-26 21:34:11" itemprop="dateModified" datetime="2024-10-26T21:34:11+08:00">2024-10-26</time>
     </span>
 
   

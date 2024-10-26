@@ -20,10 +20,10 @@
   --btn-default-hover-bg: #222;
   --btn-default-hover-color: #fff;
   --btn-default-hover-border-color: #222;
-  --highlight-background: #282c34;
-  --highlight-foreground: #abb2bf;
-  --highlight-gutter-background: #353941;
-  --highlight-gutter-foreground: #9da4b1;
+  --highlight-background: #1c1d21;
+  --highlight-foreground: #c0c5ce;
+  --highlight-gutter-background: #2c2d32;
+  --highlight-gutter-foreground: #afb4bc;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -49,10 +49,10 @@
     --btn-default-hover-bg: #666;
     --btn-default-hover-color: #ccc;
     --btn-default-hover-border-color: #666;
-    --highlight-background: #282c34;
-    --highlight-foreground: #abb2bf;
-    --highlight-gutter-background: #353941;
-    --highlight-gutter-foreground: #9da4b1;
+    --highlight-background: #1c1d21;
+    --highlight-foreground: #c0c5ce;
+    --highlight-gutter-background: #2c2d32;
+    --highlight-gutter-foreground: #afb4bc;
     color-scheme: dark;
   }
   img {
@@ -415,102 +415,72 @@ pre code.hljs {
 code.hljs {
   padding: 3px 5px
 }
-/*
+/*!
+  Theme: An Old Hope – Star Wars Syntax
+  Author: (c) Gustavo Costa <gusbemacbe@gmail.com>
+  Maintainer: @gusbemacbe
 
-Atom One Dark With support for ReasonML by Gidi Morris, based off work by Daniel Gamage
-
-Original One Dark Syntax theme from https://github.com/atom/one-dark-syntax
-
+  Original theme - Ocean Dark Theme – by https://github.com/gavsiu
+  Based on Jesse Leite's Atom syntax theme 'An Old Hope'
+    https://github.com/JesseLeite/an-old-hope-syntax-atom
 */
+/* Millenium Falcon */
 .hljs {
-  color: #abb2bf;
-  background: #282c34
+  background: #1C1D21;
+  color: #c0c5ce
 }
-.hljs-keyword,
-.hljs-operator {
-  color: #F92672
-}
-.hljs-pattern-match {
-  color: #F92672
-}
-.hljs-pattern-match .hljs-constructor {
-  color: #61aeee
-}
-.hljs-function {
-  color: #61aeee
-}
-.hljs-function .hljs-params {
-  color: #A6E22E
-}
-.hljs-function .hljs-params .hljs-typing {
-  color: #FD971F
-}
-.hljs-module-access .hljs-module {
-  color: #7e57c2
-}
-.hljs-constructor {
-  color: #e2b93d
-}
-.hljs-constructor .hljs-string {
-  color: #9CCC65
-}
+/* Death Star Comment */
 .hljs-comment,
 .hljs-quote {
-  color: #b18eb1;
-  font-style: italic
+  color: #B6B18B
 }
-.hljs-doctag,
-.hljs-formula {
-  color: #c678dd
-}
-.hljs-section,
-.hljs-name,
-.hljs-selector-tag,
-.hljs-deletion,
-.hljs-subst {
-  color: #e06c75
-}
-.hljs-literal {
-  color: #56b6c2
-}
-.hljs-string,
-.hljs-regexp,
-.hljs-addition,
-.hljs-attribute,
-.hljs-meta .hljs-string {
-  color: #98c379
-}
-.hljs-built_in,
-.hljs-title.class_,
-.hljs-class .hljs-title {
-  color: #e6c07b
-}
-.hljs-attr,
+/* Darth Vader */
 .hljs-variable,
 .hljs-template-variable,
-.hljs-type,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
 .hljs-selector-class,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-number {
-  color: #d19a66
+.hljs-regexp,
+.hljs-deletion {
+  color: #EB3C54
 }
+/* Threepio */
+.hljs-number,
+.hljs-built_in,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+  color: #E7CE56
+}
+/* Luke Skywalker */
+.hljs-attribute {
+  color: #EE7C2B
+}
+/* Obi Wan Kenobi */
+.hljs-string,
 .hljs-symbol,
 .hljs-bullet,
-.hljs-link,
-.hljs-meta,
-.hljs-selector-id,
-.hljs-title {
-  color: #61aeee
+.hljs-addition {
+  color: #4FB4D7
+}
+/* Yoda */
+.hljs-title,
+.hljs-section {
+  color: #78BB65
+}
+/* Mace Windu */
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #B45EA4
 }
 .hljs-emphasis {
   font-style: italic
 }
 .hljs-strong {
   font-weight: bold
-}
-.hljs-link {
-  text-decoration: underline
 }
 .highlight:hover .copy-btn,
 .code-container:hover .copy-btn {
@@ -1496,7 +1466,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #f1ec61;
+    background: #3d0481;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
