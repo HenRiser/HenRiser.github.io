@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"henriser.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="写在前面：该题转载至leetcode力扣 No.42–接雨水 😃 题目描述： No.42接雨水 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。 示例1：    输入：height &#x3D; [0,1,0,2,1,0,1,3,2,1,2,1] 输出：6 解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，">
+    <meta name="description" content="写在前面：该题转载至leetcode力扣 No.42–接雨水 😃 题目描述： No.42接雨水 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。 示例1：    输入：height &#x3D; [0,1,0,2,1,0,1,3,2,1,2,1]输出：6解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="LeetcodeHard-42接雨水">
 <meta property="og:url" content="https://henriser.github.io/2024/10/22/LeetcodeHard-42/index.html">
 <meta property="og:site_name" content="Codeverse">
-<meta property="og:description" content="写在前面：该题转载至leetcode力扣 No.42–接雨水 😃 题目描述： No.42接雨水 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。 示例1：    输入：height &#x3D; [0,1,0,2,1,0,1,3,2,1,2,1] 输出：6 解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，">
+<meta property="og:description" content="写在前面：该题转载至leetcode力扣 No.42–接雨水 😃 题目描述： No.42接雨水 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。 示例1：    输入：height &#x3D; [0,1,0,2,1,0,1,3,2,1,2,1]输出：6解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://henriser.github.io/2024/10/22/LeetcodeHard-42/example.png">
 <meta property="og:image" content="https://henriser.github.io/2024/10/22/LeetcodeHard-42/exampleEmpty.png">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/github.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/winkFace.gif">
 <meta property="article:published_time" content="2024-10-21T16:32:52.000Z">
-<meta property="article:modified_time" content="2024-10-26T13:34:11.518Z">
+<meta property="article:modified_time" content="2024-10-27T07:35:17.401Z">
 <meta property="article:author" content="HenRiser">
 <meta property="article:tag" content="Leetcode">
 <meta name="twitter:card" content="summary">
@@ -165,13 +165,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -252,7 +252,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2024-10-26 21:34:11" itemprop="dateModified" datetime="2024-10-26T21:34:11+08:00">2024-10-26</time>
+      <time title="Modified: 2024-10-27 15:35:17" itemprop="dateModified" datetime="2024-10-27T15:35:17+08:00">2024-10-27</time>
     </span>
 
   
@@ -267,50 +267,47 @@
     <div class="post-body" itemprop="articleBody"><p>写在前面：该题转载至leetcode力扣 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy90cmFwcGluZy1yYWluLXdhdGVy">No.42–接雨水<i class="fa fa-external-link-alt"></i></span></em> 😃</p>
 <h2 id="题目描述：">题目描述：</h2>
 <h3 id="No-42接雨水">No.42接雨水</h3>
-<p>给定 <code>n</code> 个<em>非负整数</em>表示每个宽度为 <code>1</code> 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。</p>
+<p>给定 <em>n</em> 个<em>非负整数</em>表示每个宽度为 <em>1</em> 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。</p>
 <h4 id="示例1：">示例1：</h4>
  <img src="/2024/10/22/LeetcodeHard-42/example.png" class="" title="example_pic">
 <blockquote>
-<p>输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]<br>
-输出：6<br>
-解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。</p>
+<p>输入：<code>height = [0,1,0,2,1,0,1,3,2,1,2,1]</code><BR>输出：<code>6</code><BR>解释：上面是由数组 <code>[0,1,0,2,1,0,1,3,2,1,2,1]</code> 表示的高度图，在这种情况下，可以接 <code>6</code> 个单位的雨水（蓝色部分表示雨水）。</p>
 </blockquote>
 <span id="more"></span>
 <h4 id="示例2：">示例2：</h4>
 <blockquote>
-<p>输入：height = [4,2,0,3,2,5]<br>
-输出：9</p>
+<p>输入：<code>height = [4,2,0,3,2,5]</code><BR>输出：<code>9</code></p>
 </blockquote>
 <h4 id="数据范围：">数据范围：</h4>
 <blockquote>
 <p>n == height.length<br>
-1 &lt;= n &lt;= 2 * 104<br>
-0 &lt;= height[i] &lt;= 105</p>
+1 &lt;= n &lt;= 2 * 10<sup>4</sup><br>
+0 &lt;= height[i] &lt;= 10<sup>5</sup></p>
 </blockquote>
 <h4 id="默认代码模板：">默认代码模板：</h4>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">trap</span><span class="params">(<span class="type">int</span>* height, <span class="type">int</span> heightSize)</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="题目解析：">题目解析：</h4>
 <p>该题最容易想到的，也是性能最好的代码，是左右相向双指针。</p>
-<p>我们以样例1为例：</p>
+<p>我们以<strong>样例1</strong>为例：</p>
 <p>下雨前：</p>
 <img src="/2024/10/22/LeetcodeHard-42/exampleEmpty.png" class="" title="example_pic">
-<p>想象l，r两个指针从左右两端向中间行进，我们需要维护左右两个指针，左右两个指针所经过的最大高度以及最后的返回值：</p>
+<p>想象<em>l</em>，<em>r</em>两个指针从左右两端向中间行进，我们需要维护左右两个指针，左右两个指针所经过的最大高度以及最后的返回值：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> l=<span class="number">0</span>,r= heightSize<span class="number">-1</span>,sum=<span class="number">0</span>,lMax=<span class="number">0</span>,rMax=<span class="number">0</span>;</span><br></pre></td></tr></table></figure>
 <p>在左右指针相遇的时候就已经遍历了全体数组，而一个指针只有在遇到不比他矮的柱子后，他身后经过的空位才能接到雨水，所以只需要对全体数组进行一次遍历，结合遍历过程中指针每一步行进时的反馈，就可以得出全部的接到雨水数，也就是空缺数。</p>
-<p>所以我们用一个在左右指针相遇时停止的while循环进行数组遍历：</p>
+<p>所以我们用一个在左右指针相遇时停止的<em>while</em>循环进行数组遍历：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在每一次遍历中都更新左右指针所经过的最高柱子的高度：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lMax = lMax&gt;height[l]?lMax:height[l];</span><br><span class="line">rMax = rMax&gt;height[r]?rMax:height[r];</span><br></pre></td></tr></table></figure>
 <details open>
-<summary><span class="pre-summary">&nbsp;</span><strong>为什么要维护最高柱子高度？</strong></summary><p>如果指针在记录到经过路径的最高柱子a的高度h后又遇到了新的不比a矮的柱子b，那么a和b之间的所有高度不高于h的柱子上方都可以被视为空缺，而h与中间的柱子a<sub>i</sub>的高度h<sub>i</sub>的高度之差h-h<sub>i</sub>就是柱子a<sub>i</sub>上方的空缺所能接的雨水量。</p>
+<summary><span class="pre-summary">&nbsp;</span><strong>为什么要维护最高柱子高度？</strong></summary><p>如果指针在记录到经过路径的最高柱子 <em>a</em> 的高度 <em>h</em> 后又遇到了新的不比 <em>a</em> 矮的柱子 <em>b</em> ，那么 <em>a</em> 和 <em>b</em> 之间的所有高度不高于 <em>h</em> 的柱子上方都可以被视为空缺，而 <em>h</em> 与中间的柱子 <em>a<sub>i</sub></em> 的高度 <em>h<sub>i</sub></em> 的高度之差 <em>h-h<sub>i</sub></em> 就是柱子 <em>a<sub>i</sub></em> 上方的空缺所能接的雨水量。</p>
 </details>
-<p>只有在遇到至少不比经过的柱子矮的柱子才能接到雨水，那岂不是在遇到符合条件的柱子前都不知道要不要将遍历到的柱子对应的空缺加入到sum里面？所以我们可以选择一个指针行进的条件----前方有不比自己经过的最高柱子矮的柱子时，才会向前行进，即：</p>
+<p>只有在遇到至少不比经过的柱子矮的柱子才能接到雨水，那岂不是在遇到符合条件的柱子前都不知道要不要将遍历到的柱子对应的空缺加入到 <em>sum</em> 里面？所以我们可以选择一个指针行进的条件----前方有不比自己经过的最高柱子矮的柱子时，才会向前行进，即：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(lMax&gt;rMax)&#123;</span><br><span class="line">            sum+=rMax-height[r];</span><br><span class="line">            r--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            sum+=lMax-height[l];</span><br><span class="line">            l++;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
 <h4 id="效果示意：">效果示意：</h4>
 <img src="/2024/10/22/LeetcodeHard-42/step.gif" class="" title="example_pic">
-<p>这样，每次循环只移动一个指针行进一步，而这个指针定然会在两个指针顺利会师前遍历到符合条件的新柱子，而在路上遇到的所有矮柱子都会为sum的增长做贡献。</p>
+<p>这样，每次循环只移动一个指针行进一步，而这个指针定然会在两个指针顺利会师前遍历到符合条件的新柱子，而在路上遇到的所有矮柱子都会为<em>sum</em>的增长做贡献。</p>
 <h4 id="复杂度：">复杂度：</h4>
-<p>使用双指针求解只需要遍历一次，而且只需要维护常数个变量，所以空间复杂度是O(1),时间复杂度是O(n)。</p>
+<p>使用双指针求解只需要遍历一次，而且只需要维护常数个变量，所以空间复杂度是<em>O(1)</em>,时间复杂度是<em>O(n)</em>。</p>
 <h4 id="完整代码：">完整代码：</h4>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">trap</span><span class="params">(<span class="type">int</span>* height, <span class="type">int</span> heightSize)</span> &#123;</span><br><span class="line">    <span class="type">int</span> l=<span class="number">0</span>,r=heightSize<span class="number">-1</span>,sum=<span class="number">0</span>,lMax=<span class="number">0</span>,rMax=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        lMax = lMax&gt;height[l]?lMax:height[l];</span><br><span class="line">        rMax = rMax&gt;height[r]?rMax:height[r];</span><br><span class="line">        <span class="keyword">if</span>(lMax&gt;rMax)&#123;</span><br><span class="line">            sum+=rMax-height[r];</span><br><span class="line">            r--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            sum+=lMax-height[l];</span><br><span class="line">            l++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p align="center"><img src="https://raw.githubusercontent.com/khoa083/khoa/main/Khoa_ne/img/Rainbow.gif" width="100%"></p>
