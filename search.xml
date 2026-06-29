@@ -1417,4 +1417,780 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
         <tag>Devlog</tag>
       </tags>
   </entry>
+  <entry>
+    <title>PROJECT-v M3：完整战斗闭环实现拆解</title>
+    <url>/2026/06/29/ProjectV-M3-Implementation/</url>
+    <content><![CDATA[<p>M3 的目标不是把战斗“做得热闹”，而是把 M2 的基础攻击、受伤、死亡链路扩展成可继续承载动作游戏手感的完整战斗骨架：玩家能闪避，攻击能按命中结果取消，命中反馈能从战斗事实触发，技能和武器能通过配置资产接入，测试场景和 runtime probe 能证明这条链路在 Unity 工程里真实可运行。</p>
+<p>除注明 docs 仓库的文档外，本文所有工程路径均以 <code>PROJECT-V</code> 项目根目录为基准；docs 路径均以 <code>PROJECT-V-game-docs</code> 根目录为基准。</p>
+<span id="more"></span>
+<h2 id="关联提交和依据">关联提交和依据</h2>
+<p>M3 功能主体提交：</p>
+<table>
+<thead>
+<tr>
+<th>commit</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>e5317f8</code></td>
+<td><code>feat(combat): complete M3 full combat milestone</code>，完整战斗里程碑实现</td>
+</tr>
+</tbody>
+</table>
+<p>分支状态：</p>
+<table>
+<thead>
+<tr>
+<th>分支</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>develop</code></td>
+<td>M3 实施分支</td>
+</tr>
+<tr>
+<td><code>origin/develop</code></td>
+<td>已推送，范围 <code>5d0e869..e5317f8</code></td>
+</tr>
+</tbody>
+</table>
+<p>主要参考产物：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交付报告</td>
+<td><code>reports/M3_delivery_report.html</code></td>
+</tr>
+<tr>
+<td>QA 报告</td>
+<td><code>qa/reports/M3_test_report.md</code></td>
+</tr>
+<tr>
+<td>EditMode 结果</td>
+<td><code>qa/results/M3_EditMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>PlayMode 结果</td>
+<td><code>qa/results/M3_PlayMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>30s Runtime Probe</td>
+<td><code>qa/results/M3_RuntimeProbe.json</code></td>
+</tr>
+<tr>
+<td>60s Runtime Probe</td>
+<td><code>qa/results/M3_RuntimeProbe_60s.json</code></td>
+</tr>
+<tr>
+<td>M3 Feature Spec，docs 仓库</td>
+<td><code>design/feature_specs/M3_combat_full.md</code></td>
+</tr>
+<tr>
+<td>武器修饰规则，docs 仓库</td>
+<td><code>design/weapon_worldview_modifiers.md</code></td>
+</tr>
+<tr>
+<td>Sprint 状态，docs 仓库</td>
+<td><code>project/sprints/SPRINT_03.md</code></td>
+</tr>
+<tr>
+<td>Project State，docs 仓库</td>
+<td><code>project/PROJECT_STATE.md</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="M3-的目标和边界">M3 的目标和边界</h2>
+<p>M3 承接 M2 的最小战斗闭环，但不重写 M2 的攻击、生命、敌人和事件基础。它的范围是把“能打、能受伤、能死”扩展成“能通过战斗状态做动作决策”。</p>
+<p>M3 纳入实现的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>闪避系统：无敌帧、位移、冷却、SFX 和事件。</p>
+</li>
+<li class="lvl-2">
+<p>攻击取消：轻攻击命中后可转重攻击或闪避，重攻击后段可转闪避。</p>
+</li>
+<li class="lvl-2">
+<p>连招倍率：轻攻击链、重击终结倍率和输入缓冲。</p>
+</li>
+<li class="lvl-2">
+<p>命中反馈：hitstop、相机震动、闪白、粒子、伤害数字和 SFX hook。</p>
+</li>
+<li class="lvl-2">
+<p>技能系统：U/I 两个激活槽、O 预留槽、8 个内功/轻功/暗器技能。</p>
+</li>
+<li class="lvl-2">
+<p>武器修饰：8 种冷兵器 × 3 个异世界形态，共 24 个 form。</p>
+</li>
+<li class="lvl-2">
+<p>15 个 placeholder WAV，用于把音频调用链先接通。</p>
+</li>
+<li class="lvl-2">
+<p><code>M3_FullCombat.unity</code> 白盒战斗测试场景。</p>
+</li>
+<li class="lvl-2">
+<p>M3 setup、EditMode、PlayMode、Windows Development Build 和 runtime probe 验证。</p>
+</li>
+</ul>
+<p>M3 明确不把下面内容当成完成标准：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>正式技能 HUD 和完整 UI 表现。</p>
+</li>
+<li class="lvl-2">
+<p>最终混音、正式技能特效和正式粒子资源。</p>
+</li>
+<li class="lvl-2">
+<p>正式 projectile 物理表现；当前暗器类技能仍是白盒化命中实现。</p>
+</li>
+<li class="lvl-2">
+<p>Boss、镜像 Boss、手工关卡流程和 Roguelite Build。</p>
+</li>
+<li class="lvl-2">
+<p>30 分钟 1080p soak；M3 的 30s/60s probe 只是阶段工程验证，不等同于 release-grade QA gate。</p>
+</li>
+</ul>
+<p>这个边界是必要的。M3 如果同时做 Boss、正式 UI、正式音频和关卡，会把战斗状态链、表现层和内容设计混在一起，问题定位会失控。当前阶段真正需要固定的是战斗因果链。</p>
+<h2 id="工程生成入口">工程生成入口</h2>
+<p>M3 的落地入口是 <code>unity-project/Assets/_Project/Editor/M3ProjectBuilder.cs</code>。</p>
+<p><code>SetupM3()</code> 的第一步是调用 M2 setup，确保 M3 是在 M2 战斗闭环上增量构建，而不是另起一套战斗框架。之后它负责生成或更新：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>关键路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>闪避配置</td>
+<td><code>unity-project/Assets/_Project/Player/SO/Dodge_M3.asset</code></td>
+</tr>
+<tr>
+<td>技能资产</td>
+<td><code>unity-project/Assets/_Project/Player/SO/Skills/</code></td>
+</tr>
+<tr>
+<td>武器资产</td>
+<td><code>unity-project/Assets/_Project/Player/SO/Weapons/</code></td>
+</tr>
+<tr>
+<td>M3 音频占位</td>
+<td><code>unity-project/Assets/_Project/Audio/SFX/M3/</code></td>
+</tr>
+<tr>
+<td>M3 测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M3_FullCombat.unity</code></td>
+</tr>
+<tr>
+<td>Runtime Probe</td>
+<td><code>unity-project/Assets/_Project/Player/Scripts/M3RuntimeProbe.cs</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>VerifyM3Setup()</code> 则做硬性检查：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>闪避配置必须是 <code>0.3s</code> 无敌、<code>3m</code> 位移、<code>0.6s</code> 冷却。</p>
+</li>
+<li class="lvl-2">
+<p>技能资产必须正好 8 个。</p>
+</li>
+<li class="lvl-2">
+<p>武器配置必须正好 8 个。</p>
+</li>
+<li class="lvl-2">
+<p>武器世界观修饰必须正好 24 个。</p>
+</li>
+<li class="lvl-2">
+<p>M3 placeholder SFX 至少 15 个。</p>
+</li>
+<li class="lvl-2">
+<p>Player Prefab、输入绑定、M3 场景和 scene harness 必须存在。</p>
+</li>
+</ul>
+<p>这里的工程决策很清楚：M3 不依赖一次手工搭好的 Unity 场景。配置、Prefab 接线、输入、场景和验收入口都能被同一个 Editor tooling 重建和校验。</p>
+<h2 id="闪避系统">闪避系统</h2>
+<p>闪避由两个核心对象组成：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/DodgeConfigSO.cs</code></td>
+<td>保存闪避参数和音效数组</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/PlayerDodge.cs</code></td>
+<td>消费输入、位移、无敌、冷却和事件发布</td>
+</tr>
+</tbody>
+</table>
+<p>M3 默认参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th style="text-align:right">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无敌时间</td>
+<td style="text-align:right"><code>0.3s</code></td>
+</tr>
+<tr>
+<td>位移距离</td>
+<td style="text-align:right"><code>3m</code></td>
+</tr>
+<tr>
+<td>位移时长</td>
+<td style="text-align:right"><code>0.3s</code></td>
+</tr>
+<tr>
+<td>冷却</td>
+<td style="text-align:right"><code>0.6s</code></td>
+</tr>
+<tr>
+<td>SFX</td>
+<td style="text-align:right"><code>dodge_whoosh_01/02/03</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>PlayerDodge.TryStartDodge()</code> 的实现重点不是“播放一个动作”，而是同时处理战斗语义：</p>
+<ol>
+<li class="lvl-3">
+<p>死亡或冷却中不能闪避。</p>
+</li>
+<li class="lvl-3">
+<p>输入方向为空时，使用角色朝向的反方向作为 fallback。</p>
+</li>
+<li class="lvl-3">
+<p>根据 <code>distance / durationSeconds</code> 计算闪避速度。</p>
+</li>
+<li class="lvl-3">
+<p>调用 <code>HealthComponent.GrantInvulnerability()</code> 写入无敌时间。</p>
+</li>
+<li class="lvl-3">
+<p>播放随机闪避 SFX。</p>
+</li>
+<li class="lvl-3">
+<p>发布 <code>OnPlayerDodge</code> 事件。</p>
+</li>
+</ol>
+<p>这让闪避在 M3 里不是单纯位移，而是战斗状态的一部分：它能避伤害、能被测试探针观察，也能被后续表现层订阅。</p>
+<h2 id="攻击取消和连招">攻击取消和连招</h2>
+<p>M3 没有引入新的攻击框架，而是在 M2 的 <code>PlayerAttack</code> 上扩展状态规则。这个选择是正确的：M2 已经把输入、<code>AttackConfigSO</code>、命中框、<code>HealthComponent</code> 和事件链跑通，M3 应该复用这条链，而不是为了“完整战斗”重写一套更复杂的动作系统。</p>
+<p>关键代码位于：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerAttack.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerCombo.cs</code></p>
+</li>
+</ul>
+<p>取消规则：</p>
+<table>
+<thead>
+<tr>
+<th>当前动作</th>
+<th>条件</th>
+<th>可取消到</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>轻攻击</td>
+<td>已命中目标</td>
+<td>重攻击</td>
+</tr>
+<tr>
+<td>轻攻击</td>
+<td>已命中目标</td>
+<td>闪避</td>
+</tr>
+<tr>
+<td>轻攻击</td>
+<td>whiff，未命中</td>
+<td>不允许取消</td>
+</tr>
+<tr>
+<td>重攻击</td>
+<td>进入最后 30% recovery</td>
+<td>闪避</td>
+</tr>
+</tbody>
+</table>
+<p><code>PlayerAttack</code> 中的关键状态是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">currentAttack</span><br><span class="line">attackTimer</span><br><span class="line">bufferedAttackType</span><br><span class="line">bufferedAttackTimer</span><br><span class="line">hasLandedHit</span><br><span class="line">currentDamageMultiplier</span><br><span class="line">nextAttackDamageMultiplier</span><br></pre></td></tr></table></figure>
+<p>轻转重的判断依赖 <code>hasLandedHit</code>，这能把“命中奖励”与“空挥惩罚”区分开。空挥时输入不会立刻取消当前动作，只会进入输入缓冲；当前攻击结束后再消费。</p>
+<p>连招由 <code>PlayerCombo</code> 管：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th style="text-align:right">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>轻攻击最大段数</td>
+<td style="text-align:right"><code>3</code></td>
+</tr>
+<tr>
+<td>输入缓冲</td>
+<td style="text-align:right"><code>0.2s</code></td>
+</tr>
+<tr>
+<td>连招重置窗口</td>
+<td style="text-align:right"><code>0.8s</code></td>
+</tr>
+<tr>
+<td>每段轻攻击加成</td>
+<td style="text-align:right"><code>+10%</code></td>
+</tr>
+<tr>
+<td>三段后重击终结倍率</td>
+<td style="text-align:right"><code>1.35x</code></td>
+</tr>
+</tbody>
+</table>
+<p>最终伤害倍率在 <code>PlayerAttack.StartAttack()</code> 中合成：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">comboMultiplier * nextAttackDamageMultiplier * WeaponDamageMultiplier</span><br></pre></td></tr></table></figure>
+<p>这个设计把三类来源分开了：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>连招倍率来自 <code>PlayerCombo</code>。</p>
+</li>
+<li class="lvl-2">
+<p>技能下一击倍率来自 <code>PlayerSkillController</code> 写入的 <code>nextAttackDamageMultiplier</code>。</p>
+</li>
+<li class="lvl-2">
+<p>武器倍率来自 <code>PlayerWeaponController</code>。</p>
+</li>
+</ul>
+<p>这比把所有倍率塞进攻击配置更干净，因为攻击本身只定义基础招式，运行时构成由连招、技能和武器共同决定。</p>
+<h2 id="命中反馈链">命中反馈链</h2>
+<p>M3 的反馈链不是装饰层强行播放效果，而是从命中事实触发。</p>
+<p>实际链路：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">PlayerAttack.ApplyHitbox()</span><br><span class="line">  -&gt; Hitbox2D.Overlap()</span><br><span class="line">  -&gt; HealthComponent.TakeDamage()</span><br><span class="line">  -&gt; HitFeedback.PlayHitFeedback()</span><br><span class="line">  -&gt; ApplyKnockback()</span><br><span class="line">  -&gt; PlayHitstop()</span><br><span class="line">  -&gt; CameraShake.Main.Shake()</span><br><span class="line">  -&gt; OnAttackHit</span><br></pre></td></tr></table></figure>
+<p>涉及文件：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unity-project/Assets/_Project/Combat/Scripts/HitFeedback.cs</code></td>
+<td>闪白、粒子、伤害数字</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/CameraShake.cs</code></td>
+<td>相机震动和 rumble SFX</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/PlayerAttack.cs</code></td>
+<td>命中后触发 feedback、hitstop、shake 和事件</td>
+</tr>
+</tbody>
+</table>
+<p>轻攻击和重攻击的反馈参数也被写回攻击配置：</p>
+<table>
+<thead>
+<tr>
+<th>攻击</th>
+<th style="text-align:right">hitstop</th>
+<th style="text-align:right">相机震动</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Light</td>
+<td style="text-align:right"><code>6</code> frames</td>
+<td style="text-align:right"><code>0.05</code></td>
+</tr>
+<tr>
+<td>Heavy</td>
+<td style="text-align:right"><code>12</code> frames</td>
+<td style="text-align:right"><code>0.10</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>HitFeedback</code> 当前会生成临时 <code>HitParticle</code> 和 <code>DamageNumber</code> 对象，并记录最后一次伤害数字和暴击状态，方便测试验证。它不是最终表现资产，但已经把表现触发点放在正确位置：有效伤害发生之后，而不是输入按下之后。</p>
+<h2 id="技能系统">技能系统</h2>
+<p>技能系统由三层组成：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/SkillSlot.cs</code></td>
+<td>定义 <code>U/I/O</code> 槽位</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/SkillSO.cs</code></td>
+<td>配置技能类别、冷却、效果参数和 SFX</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/PlayerSkillController.cs</code></td>
+<td>消费输入、执行效果、管理冷却、发布事件</td>
+</tr>
+</tbody>
+</table>
+<p>M3 实装 U/I 两个槽，O 作为预留槽保留在输入和结构中。8 个主动技能如下：</p>
+<table>
+<thead>
+<tr>
+<th>技能</th>
+<th>槽位</th>
+<th>类别</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>juqi</code></td>
+<td>U</td>
+<td>Internal</td>
+<td>下一击 <code>2.5x</code> 伤害，窗口 <code>5s</code></td>
+</tr>
+<tr>
+<td><code>huti</code></td>
+<td>U</td>
+<td>Internal</td>
+<td><code>60</code> 点护盾，持续 <code>2s</code></td>
+</tr>
+<tr>
+<td><code>zhiyu</code></td>
+<td>U</td>
+<td>Internal</td>
+<td>回复 <code>35</code> HP</td>
+</tr>
+<tr>
+<td><code>jinzhongzhao</code></td>
+<td>U</td>
+<td>Internal</td>
+<td>无敌 <code>1.5s</code></td>
+</tr>
+<tr>
+<td><code>shuangbu</code></td>
+<td>I</td>
+<td>Lightness</td>
+<td>位移 <code>5m</code>，无敌 <code>0.4s</code>，冷却 <code>3s</code></td>
+</tr>
+<tr>
+<td><code>feizhen</code></td>
+<td>I</td>
+<td>HiddenWeapon</td>
+<td>3 枚飞针，每枚 <code>8</code> 伤害</td>
+</tr>
+<tr>
+<td><code>guiyingbu</code></td>
+<td>I</td>
+<td>Lightness</td>
+<td>隐匿 <code>1.5s</code></td>
+</tr>
+<tr>
+<td><code>feidao</code></td>
+<td>I</td>
+<td>HiddenWeapon</td>
+<td>8 向飞刀，每枚 <code>6</code> 伤害</td>
+</tr>
+</tbody>
+</table>
+<p>技能效果不是硬写在输入层，而是通过 <code>SkillEffectType</code> 分发：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>NextAttackDamageMultiplier</code></p>
+</li>
+<li class="lvl-2">
+<p><code>DamageShield</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Heal</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Invulnerability</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Dash</code></p>
+</li>
+<li class="lvl-2">
+<p><code>ProjectileBurst</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Concealment</code></p>
+</li>
+</ul>
+<p>这保证了输入槽位、技能资产和技能效果之间保持松耦合。后续 M4/M5 可以替换技能装配逻辑或 UI，而不必把 U/I/O 键写死进每个效果分支。</p>
+<p>当前暗器类技能仍是白盒实现：在范围内找最近敌人，把 projectile 数量和单枚伤害合并成一次伤害应用。这对 M3 验收足够，但不是正式 projectile 系统。</p>
+<h2 id="武器和异世界修饰">武器和异世界修饰</h2>
+<p>武器系统的核心不在“做 24 把武器”，而在“同一把冷兵器能被世界观层修饰”。</p>
+<p>涉及文件：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/WeaponConfigSO.cs</code></td>
+<td>定义武器类型和世界观修饰数组</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/PlayerWeaponController.cs</code></td>
+<td>应用当前武器和当前世界观修饰</td>
+</tr>
+</tbody>
+</table>
+<p>M3 覆盖 8 种武器：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Sword</p>
+</li>
+<li class="lvl-2">
+<p>Dao</p>
+</li>
+<li class="lvl-2">
+<p>Spear</p>
+</li>
+<li class="lvl-2">
+<p>Dagger</p>
+</li>
+<li class="lvl-2">
+<p>Staff</p>
+</li>
+<li class="lvl-2">
+<p>Hammer</p>
+</li>
+<li class="lvl-2">
+<p>Flexible</p>
+</li>
+<li class="lvl-2">
+<p>DualShortBlades</p>
+</li>
+</ul>
+<p>每种武器有 3 个世界观 form：</p>
+<table>
+<thead>
+<tr>
+<th>世界观</th>
+<th>视觉 tint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wasteland</td>
+<td><code>#CC6633</code></td>
+</tr>
+<tr>
+<td>Cyberpunk</td>
+<td><code>#22D3EE</code></td>
+</tr>
+<tr>
+<td>Biohazard</td>
+<td><code>#84CC16</code></td>
+</tr>
+</tbody>
+</table>
+<p>所有 form 当前的 <code>damageMultiplier</code> 统一为 <code>1.2</code>，不同武器通过 <code>rangeMultiplier</code> 拉开基础差异，例如 Spear 和 Staff 是 <code>1.1</code>，Flexible 是 <code>1.15</code>，Dagger 和 DualShortBlades 是 <code>0.95</code>。</p>
+<p><code>PlayerWeaponController.SetWorldview()</code> 的作用是切换当前修饰，并更新：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>伤害倍率。</p>
+</li>
+<li class="lvl-2">
+<p>攻击范围倍率。</p>
+</li>
+<li class="lvl-2">
+<p>视觉 tint。</p>
+</li>
+<li class="lvl-2">
+<p><code>OnWeaponModifierChanged</code> 事件。</p>
+</li>
+</ul>
+<p>M3 场景中使用默认武器接线来验证倍率，Player Prefab 本身不应该被某个测试场景的具体武器选择锁死。这个决策能避免后续关卡、掉落和 Build 系统接入时反复改基础 Prefab。</p>
+<h2 id="音频占位">音频占位</h2>
+<p>M3 生成了 15 个 placeholder WAV，覆盖：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>3 个闪避 whoosh。</p>
+</li>
+<li class="lvl-2">
+<p>轻击、重击和暴击命中。</p>
+</li>
+<li class="lvl-2">
+<p>8 个技能激活音效。</p>
+</li>
+<li class="lvl-2">
+<p>1 个 camera rumble。</p>
+</li>
+</ul>
+<p>这些文件位于 <code>unity-project/Assets/_Project/Audio/SFX/M3/</code>。它们的价值不是音质，而是把音频 hook 放进正确位置：闪避、挥击、命中、技能和震屏都已经能触发音频调用。正式混音和替换资产应留到音频生产阶段。</p>
+<h2 id="M3-测试场景">M3 测试场景</h2>
+<p>M3 测试场景是 <code>unity-project/Assets/Scenes/TestScenes/M3_FullCombat.unity</code>。</p>
+<p>这个场景的角色不是“关卡体验”，而是白盒 harness：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>放置玩家和 3 个敌人。</p>
+</li>
+<li class="lvl-2">
+<p>挂接 M3 dodge、skills、weapon、feedback 和 runtime probe。</p>
+</li>
+<li class="lvl-2">
+<p>让 automated probe 能在固定时间窗口内触发闪避、U 技能、I 技能和武器世界观切换。</p>
+</li>
+<li class="lvl-2">
+<p>让 EditMode / PlayMode 可以检查 M3 系统是否真实挂进 Unity 场景。</p>
+</li>
+</ul>
+<p>这仍然是测试场景，不是正式关卡。M4 才应该把 M3 战斗链放进手工关卡、Boss 和镜像 Boss 的设计环境里验证。</p>
+<h2 id="验证结果">验证结果</h2>
+<p>M3 当前验证结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>验证项</th>
+<th>证据</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M3 setup generation</td>
+<td><code>ProjectV.EditorTools.M3ProjectBuilder.SetupM3</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>M3 setup verification</td>
+<td><code>ProjectV.EditorTools.M3ProjectBuilder.VerifyM3Setup</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>EditMode</td>
+<td><code>qa/results/M3_EditMode_TestResults.xml</code></td>
+<td>20 / 20 passed</td>
+</tr>
+<tr>
+<td>PlayMode</td>
+<td><code>qa/results/M3_PlayMode_TestResults.xml</code></td>
+<td>10 / 10 passed</td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td><code>unity-project/Builds/Windows/PROJECT-V.exe</code></td>
+<td>Success，构建产物被 gitignore 排除</td>
+</tr>
+<tr>
+<td>Runtime Probe 30s</td>
+<td><code>qa/results/M3_RuntimeProbe.json</code></td>
+<td>Avg <code>60.008</code> FPS，<code>m3SystemsReady: true</code></td>
+</tr>
+<tr>
+<td>Runtime Probe 60s</td>
+<td><code>qa/results/M3_RuntimeProbe_60s.json</code></td>
+<td>Avg <code>59.999</code> FPS，<code>frameCount: 3600</code>，<code>m3SystemsReady: true</code></td>
+</tr>
+</tbody>
+</table>
+<p>60s probe 的关键结果：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;warmupSeconds&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;totalElapsedSeconds&quot;</span><span class="punctuation">:</span> <span class="number">63</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;measuredSeconds&quot;</span><span class="punctuation">:</span> <span class="number">60.001</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;frameCount&quot;</span><span class="punctuation">:</span> <span class="number">3600</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;averageFps&quot;</span><span class="punctuation">:</span> <span class="number">59.999</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;minFps&quot;</span><span class="punctuation">:</span> <span class="number">48.154</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;maxFps&quot;</span><span class="punctuation">:</span> <span class="number">146.23</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;targetFrameRate&quot;</span><span class="punctuation">:</span> <span class="number">60</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;m3SystemsReady&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;dodgeStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;skillUActivated&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;skillIActivated&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;weaponDamageMultiplier&quot;</span><span class="punctuation">:</span> <span class="number">1.2</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;enemyCount&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;playerHp&quot;</span><span class="punctuation">:</span> <span class="number">64</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;playerIsDead&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这个结果说明 runtime probe 不只是空跑场景。它实际确认了：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>M3 系统挂接完成。</p>
+</li>
+<li class="lvl-2">
+<p>闪避成功开始。</p>
+</li>
+<li class="lvl-2">
+<p>U 槽技能成功激活。</p>
+</li>
+<li class="lvl-2">
+<p>I 槽技能成功激活。</p>
+</li>
+<li class="lvl-2">
+<p>武器世界观切换后伤害倍率读到 <code>1.2</code>。</p>
+</li>
+<li class="lvl-2">
+<p>3 个敌人存在。</p>
+</li>
+<li class="lvl-2">
+<p>玩家在 60s probe 后仍存活。</p>
+</li>
+</ul>
+<p>EditMode 覆盖了配置、输入、Prefab、场景、技能资产、武器资产和 24 个世界观 form。PlayMode 覆盖了闪避无敌和冷却、命中反馈链、聚气下一击伤害、轻攻击命中取消、空挥不能取消、projectile / concealment 技能效果和武器修饰倍率。</p>
+<h2 id="已知风险">已知风险</h2>
+<p>M3 已通过阶段验收，但还有明确风险：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>60s runtime probe 的平均 FPS 是 <code>59.999</code>，但 <code>minFps</code> 出现 <code>48.154</code> 单帧 outlier。当前证据只说明它是单点异常，不能解释根因。M4 需要增加 percentile frame timing、GC allocation 和 spike 采样。</p>
+</li>
+<li class="lvl-2">
+<p>15 个 WAV 都是 placeholder，不代表最终音频质量。</p>
+</li>
+<li class="lvl-2">
+<p>暗器技能目前是白盒化命中，不是正式 projectile 物理与视觉系统。</p>
+</li>
+<li class="lvl-2">
+<p>正式技能 HUD 仍未实现，O 槽只是结构预留。</p>
+</li>
+<li class="lvl-2">
+<p>M3 场景是测试 harness，不代表正式关卡节奏。</p>
+</li>
+<li class="lvl-2">
+<p>30 分钟 1080p soak 未执行，仍然是后续 release-grade QA gate。</p>
+</li>
+</ul>
+<h2 id="M4-方向">M4 方向</h2>
+<p>docs 仓库的 <code>project/PROJECT_STATE.md</code> 已把项目状态推进到 M3 完成、准备 M4。M4 不应该继续堆更多孤立战斗功能，而应该把 M3 的战斗链放进内容压力里验证。</p>
+<p>M4 的合理方向：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>制作手工关卡原型，让移动、敌人和战斗不再只在白盒平台上验证。</p>
+</li>
+<li class="lvl-2">
+<p>引入 Boss 和镜像 Boss，用更长的攻击节奏测试闪避、取消、技能和反馈链。</p>
+</li>
+<li class="lvl-2">
+<p>为 Boss 行为准备 PlayMode / QA matrix，而不是只靠人工观察。</p>
+</li>
+<li class="lvl-2">
+<p>把 M3 的 runtime probe 扩展成更细的性能采样，至少记录 percentile 和 GC spike。</p>
+</li>
+<li class="lvl-2">
+<p>让技能、武器和敌人配置进入关卡语境，验证这些系统是否真的支持可玩构成。</p>
+</li>
+</ul>
+<p>M3 的阶段价值在这里：PROJECT-V 现在已经有一条从输入到攻击、伤害、反馈、技能、武器倍率和自动验证的完整战斗实现链。后续如果战斗不好玩，问题会更多来自调参、内容和表现，而不是“工程链路还没接起来”。</p>
+]]></content>
+      <tags>
+        <tag>ProjectV</tag>
+        <tag>Unity</tag>
+        <tag>Devlog</tag>
+      </tags>
+  </entry>
 </search>
