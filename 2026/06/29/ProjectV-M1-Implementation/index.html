@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"henriser.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="M1 不是一个“项目进度汇报”节点，而是 PROJECT-V 的第一条可运行实现链路：玩家输入进入 Unity，新 Input System 被消费，Rigidbody2D 接收移动与跳跃，状态机更新视觉状态，相机跟随，测试场景验证角色可以从起点平台移动到目标平台。 本文所有文件路径均以 PROJECT-V 项目根目录为基准。">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="PROJECT-v M1：角色能动闭环实现拆解">
+<meta property="og:url" content="https://henriser.github.io/2026/06/29/ProjectV-M1-Implementation/index.html">
+<meta property="og:site_name" content="Codeverse">
+<meta property="og:description" content="M1 不是一个“项目进度汇报”节点，而是 PROJECT-V 的第一条可运行实现链路：玩家输入进入 Unity，新 Input System 被消费，Rigidbody2D 接收移动与跳跃，状态机更新视觉状态，相机跟随，测试场景验证角色可以从起点平台移动到目标平台。 本文所有文件路径均以 PROJECT-V 项目根目录为基准。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-06-29T03:46:52.000Z">
+<meta property="article:modified_time" content="2026-06-29T04:07:45.350Z">
+<meta property="article:author" content="HenRiser">
+<meta property="article:tag" content="ProjectV">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Devlog">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://henriser.github.io/2026/06/29/ProjectV-M1-Implementation/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://henriser.github.io/2026/06/29/ProjectV-M1-Implementation/","path":"2026/06/29/ProjectV-M1-Implementation/","title":"PROJECT-v M1：角色能动闭环实现拆解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PROJECT-v M1：角色能动闭环实现拆解 | Codeverse</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Codeverse</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">HenRiser'blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/2024/10/19/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E6%8F%90%E4%BA%A4%E5%92%8C%E4%BE%9D%E6%8D%AE"><span class="nav-text">关联提交和依据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M1-%E7%9A%84%E5%AE%9E%E7%8E%B0%E8%BE%B9%E7%95%8C"><span class="nav-text">M1 的实现边界</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E7%94%9F%E6%88%90%E5%85%A5%E5%8F%A3"><span class="nav-text">工程生成入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Player-Prefab-%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-text">Player Prefab 的组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E5%B1%82%EF%BC%9A%E7%BC%93%E5%AD%98%E6%84%8F%E5%9B%BE%EF%BC%8C%E4%B8%8D%E7%9B%B4%E6%8E%A5%E6%94%B9%E7%89%A9%E7%90%86"><span class="nav-text">输入层：缓存意图，不直接改物理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8%EF%BC%9AUpdate-%E5%A4%84%E7%90%86%E7%8A%B6%E6%80%81%EF%BC%8CFixedUpdate-%E5%A4%84%E7%90%86%E7%89%A9%E7%90%86"><span class="nav-text">控制器：Update 处理状态，FixedUpdate 处理物理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E5%8A%A8%E5%8F%82%E6%95%B0%E6%9D%A5%E8%87%AA-ScriptableObject"><span class="nav-text">移动参数来自 ScriptableObject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%B3%E8%B7%83%E6%89%8B%E6%84%9F%E7%9A%84%E5%9B%9B%E4%B8%AA%E7%BB%86%E8%8A%82"><span class="nav-text">跳跃手感的四个细节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%9C%BA%E7%9B%AE%E5%89%8D%E5%8F%AA%E5%81%9A%E8%A7%86%E8%A7%89%E5%88%87%E6%8D%A2"><span class="nav-text">状态机目前只做视觉切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E5%8F%AA%E6%9A%B4%E9%9C%B2%E8%B5%B7%E8%B7%B3%E4%B8%8E%E8%90%BD%E5%9C%B0"><span class="nav-text">事件只暴露起跳与落地</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E6%9C%BA%E8%B7%9F%E9%9A%8F%E4%BF%9D%E6%8C%81%E7%AE%80%E5%8D%95"><span class="nav-text">相机跟随保持简单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M1-%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF%E6%80%8E%E4%B9%88%E9%AA%8C%E8%AF%81%E7%A7%BB%E5%8A%A8"><span class="nav-text">M1 测试场景怎么验证移动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%8E%A2%E9%92%88%E7%94%A8%E4%BA%8E%E7%9F%AD%E6%97%B6%E5%B7%A5%E7%A8%8B%E9%AA%8C%E8%AF%81"><span class="nav-text">运行探针用于短时工程验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M1-%E4%B9%8B%E5%90%8E%E7%9C%9F%E6%AD%A3%E7%95%99%E4%B8%8B%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-text">M1 之后真正留下了什么</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HenRiser"
+      src="/images/authorAvatar.jpg">
+  <p class="site-author-name" itemprop="name">HenRiser</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;HenRiser"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmhybG9uZ19Ab3V0bG9vay5jb20=" title="E-Mail → mailto:hrlong_@outlook.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9zdGVhbWNvbW11bml0eS5jb20vcHJvZmlsZXMvNzY1NjExOTg5NzY4OTM4MTYv" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198976893816&#x2F;"><i class="fab fa-steam fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="Back to top">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://henriser.github.io/2026/06/29/ProjectV-M1-Implementation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/authorAvatar.jpg">
+      <meta itemprop="name" content="HenRiser">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PROJECT-v M1：角色能动闭环实现拆解 | Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PROJECT-v M1：角色能动闭环实现拆解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-06-29 11:46:52 / Modified: 12:07:45" itemprop="dateCreated datePublished" datetime="2026-06-29T11:46:52+08:00">2026-06-29</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>M1 不是一个“项目进度汇报”节点，而是 PROJECT-V 的第一条可运行实现链路：玩家输入进入 Unity，新 Input System 被消费，<code>Rigidbody2D</code> 接收移动与跳跃，状态机更新视觉状态，相机跟随，测试场景验证角色可以从起点平台移动到目标平台。</p>
+<p>本文所有文件路径均以 <code>PROJECT-V</code> 项目根目录为基准。</p>
+<span id="more"></span>
+<h2 id="关联提交和依据">关联提交和依据</h2>
+<p>这篇 M1 记录对应两类提交：</p>
+<table>
+<thead>
+<tr>
+<th>commit</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>576d81e</code></td>
+<td><code>feat(m1): implement player movement milestone</code>，M1 功能主体实现</td>
+</tr>
+<tr>
+<td><code>94a125c</code></td>
+<td><code>docs: add phase completion blog hook</code>，阶段完成后的博客钩子说明</td>
+</tr>
+</tbody>
+</table>
+<p>主要参考产物是：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>reports/M1_delivery_report.html</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reports/M1_test_report.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reports/T-DEV01_compile_verified.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_smoke_checklist.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_player_movement.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_visual_validation.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_performance_baseline.md</code></p>
+</li>
+</ul>
+<h2 id="M1-的实现边界">M1 的实现边界</h2>
+<p>M1 只做 character agency，也就是“角色能动性”。这个边界很窄，但它是后续战斗、敌人、关卡、Build 和表现层的共同底座。</p>
+<p>M1 纳入实现的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Unity 工程初始化与 Core 模板接入。</p>
+</li>
+<li class="lvl-2">
+<p>玩家输入、移动、跳跃、短跳、土狼时间和跳跃缓冲。</p>
+</li>
+<li class="lvl-2">
+<p>Player Prefab 及其物理组件配置。</p>
+</li>
+<li class="lvl-2">
+<p>横向 2D 相机跟随。</p>
+</li>
+<li class="lvl-2">
+<p>M1 测试场景和自动化验证。</p>
+</li>
+</ul>
+<p>M1 明确不做的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>战斗、受击、死亡、敌人、Boss。</p>
+</li>
+<li class="lvl-2">
+<p>程序化房间、关卡选择、Roguelite Build。</p>
+</li>
+<li class="lvl-2">
+<p>Steam 集成、正式 UI、正式角色动画和正式美术资产。</p>
+</li>
+</ul>
+<p>这个边界直接决定了实现方式：M1 没有急着堆玩法系统，而是先把“输入到物理反馈”的主链路做成可复现、可测试、可继续扩展的工程结构。</p>
+<h2 id="工程生成入口">工程生成入口</h2>
+<p>M1 的工程落地入口不是手动在 Unity 里拖一堆对象，而是 <code>unity-project/Assets/_Project/Editor/M1ProjectBuilder.cs</code>。</p>
+<p>这个 Editor 脚本负责一次性生成和校验 M1 需要的基础内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>创建 <code>Ground</code>、<code>Player</code> 物理 Layer。</p>
+</li>
+<li class="lvl-2">
+<p>创建玩家与地块占位 Sprite。</p>
+</li>
+<li class="lvl-2">
+<p>写入 <code>PlayerStatsConfig.asset</code>。</p>
+</li>
+<li class="lvl-2">
+<p>生成 <code>Player.prefab</code>。</p>
+</li>
+<li class="lvl-2">
+<p>生成 <code>_Init.unity</code> 和 <code>M1_PlayerMovement.unity</code> 两个测试场景。</p>
+</li>
+<li class="lvl-2">
+<p>把 M1 场景加入 Build Settings。</p>
+</li>
+<li class="lvl-2">
+<p>验证 Prefab、场景、配置资产和核心组件是否存在。</p>
+</li>
+</ul>
+<p>这一步的关键价值不是“省事”，而是避免 M1 依赖某一次本地 Unity 场景手工操作。Player Prefab、测试场景和基础配置可以由脚本稳定重建，后续如果场景被误删或配置漂移，也能通过同一个入口恢复。</p>
+<p>M1 生成和验证涉及的关键产物路径如下：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unity 工程</td>
+<td><code>unity-project/</code></td>
+</tr>
+<tr>
+<td>Core 脚本</td>
+<td><code>unity-project/Assets/_Project/Scripts/Core/</code></td>
+</tr>
+<tr>
+<td>Player 脚本</td>
+<td><code>unity-project/Assets/_Project/Player/Scripts/</code></td>
+</tr>
+<tr>
+<td>输入资产</td>
+<td><code>unity-project/Assets/_Project/Player/InputActions/DefaultInputActions.inputactions</code></td>
+</tr>
+<tr>
+<td>Stats 资产</td>
+<td><code>unity-project/Assets/_Project/Player/SO/PlayerStatsConfig.asset</code></td>
+</tr>
+<tr>
+<td>Player Prefab</td>
+<td><code>unity-project/Assets/_Project/Player/Prefabs/Player.prefab</code></td>
+</tr>
+<tr>
+<td>M1 测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M1_PlayerMovement.unity</code></td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td><code>unity-project/Builds/Windows/PROJECT-V.exe</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="Player-Prefab-的组成">Player Prefab 的组成</h2>
+<p>玩家对象落在 <code>unity-project/Assets/_Project/Player/Prefabs/Player.prefab</code>，它把 M1 需要的几类职责拆成明确组件：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SpriteRenderer</code></td>
+<td>显示当前运动状态的占位 Sprite</td>
+</tr>
+<tr>
+<td><code>Rigidbody2D</code></td>
+<td>承接水平速度、跳跃速度和下落速度</td>
+</tr>
+<tr>
+<td><code>BoxCollider2D</code></td>
+<td>提供玩家碰撞体和地面检测尺寸来源</td>
+</tr>
+<tr>
+<td><code>PlayerInputHandler</code></td>
+<td>读取移动与跳跃输入</td>
+</tr>
+<tr>
+<td><code>PlayerStatsComponent</code></td>
+<td>暴露移动参数配置</td>
+</tr>
+<tr>
+<td><code>PlayerController</code></td>
+<td>组织输入、物理、状态、事件和视觉切换</td>
+</tr>
+</tbody>
+</table>
+<p>Prefab 的物理设置偏保守：<code>Rigidbody2D</code> 使用动态刚体，冻结旋转，并开启更稳定的碰撞与插值设置。M1 只做横板基础移动，所以不让角色因为物理碰撞产生旋转，是一个必要的约束。</p>
+<h2 id="输入层：缓存意图，不直接改物理">输入层：缓存意图，不直接改物理</h2>
+<p>输入实现位于 <code>unity-project/Assets/_Project/Player/Scripts/PlayerInputHandler.cs</code>。</p>
+<p>M1 没有把输入读取塞进 <code>FixedUpdate</code>，而是在输入层缓存“玩家意图”：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Move</code> 读取水平轴。</p>
+</li>
+<li class="lvl-2">
+<p><code>Jump</code> 记录按下与松开。</p>
+</li>
+<li class="lvl-2">
+<p><code>ConsumeJumpPressed()</code> 和 <code>ConsumeJumpReleased()</code> 用一次性消费的方式交给控制器。</p>
+</li>
+</ul>
+<p>这样做的好处是，跳跃这种瞬时输入不会因为物理帧和渲染帧不同步而丢失。玩家在两次 <code>FixedUpdate</code> 之间按下跳跃键，<code>Update</code> 仍能记录下来，随后由控制器在物理帧里处理。</p>
+<p>M1 支持的输入来源：</p>
+<table>
+<thead>
+<tr>
+<th>行为</th>
+<th>键鼠</th>
+<th>手柄</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>水平移动</td>
+<td><code>A/D</code>、方向键</td>
+<td>左摇杆、D-pad</td>
+</tr>
+<tr>
+<td>跳跃</td>
+<td><code>Space</code>、<code>W</code>、上方向键</td>
+<td>south button</td>
+</tr>
+</tbody>
+</table>
+<p>工程里同时保留 <code>unity-project/Assets/_Project/Player/InputActions/DefaultInputActions.inputactions</code>，自动化测试会检查 Player/UI map 和关键绑定是否存在。这给后续把输入资产完全纳入编辑器流程留下空间。</p>
+<h2 id="控制器：Update-处理状态，FixedUpdate-处理物理">控制器：Update 处理状态，FixedUpdate 处理物理</h2>
+<p>核心控制逻辑位于 <code>unity-project/Assets/_Project/Player/Scripts/PlayerController.cs</code>。</p>
+<p>M1 的控制器分两条节奏运行：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Update</code>：消费跳跃按下/松开，记录跳跃缓冲，处理短跳请求，更新运动状态。</p>
+</li>
+<li class="lvl-2">
+<p><code>FixedUpdate</code>：刷新接地状态，更新土狼时间和跳跃缓冲计时，执行跳跃，应用水平速度，应用短跳，限制最大下落速度。</p>
+</li>
+</ul>
+<p>这个拆分比较重要。输入和状态是“玩家感知层”，应该跟随渲染帧及时响应；速度、重力、接地检测是“物理层”，应该放在固定时间步里更新，避免不同机器帧率下行为漂移。</p>
+<h2 id="移动参数来自-ScriptableObject">移动参数来自 ScriptableObject</h2>
+<p>玩家移动数值由 <code>unity-project/Assets/_Project/Player/Scripts/PlayerStatsConfigSO.cs</code> 定义，并由 <code>unity-project/Assets/_Project/Player/SO/PlayerStatsConfig.asset</code> 承载。</p>
+<p>M1 当前核心参数如下：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th style="text-align:right">当前值</th>
+<th>实现含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>moveSpeed</code></td>
+<td style="text-align:right"><code>5</code></td>
+<td>地面水平移动速度</td>
+</tr>
+<tr>
+<td><code>airControlMultiplier</code></td>
+<td style="text-align:right"><code>0.8</code></td>
+<td>空中横向控制倍率</td>
+</tr>
+<tr>
+<td><code>jumpForce</code></td>
+<td style="text-align:right"><code>12</code></td>
+<td>起跳时的纵向速度</td>
+</tr>
+<tr>
+<td><code>jumpCutMultiplier</code></td>
+<td style="text-align:right"><code>0.5</code></td>
+<td>松开跳跃后的短跳削减倍率</td>
+</tr>
+<tr>
+<td><code>maxJumps</code></td>
+<td style="text-align:right"><code>1</code></td>
+<td>M1 禁止二段跳</td>
+</tr>
+<tr>
+<td><code>coyoteTime</code></td>
+<td style="text-align:right"><code>0.1s</code></td>
+<td>离地后仍允许跳跃的宽限窗口</td>
+</tr>
+<tr>
+<td><code>jumpBufferTime</code></td>
+<td style="text-align:right"><code>0.1s</code></td>
+<td>落地前提前按跳的缓存窗口</td>
+</tr>
+<tr>
+<td><code>gravity</code></td>
+<td style="text-align:right"><code>-25</code></td>
+<td>M1 控制器施加的重力</td>
+</tr>
+<tr>
+<td><code>maxFallSpeed</code></td>
+<td style="text-align:right"><code>20</code></td>
+<td>最大下落速度限制</td>
+</tr>
+</tbody>
+</table>
+<p>这些值没有写死在控制器里，是为了让后续手感调参不需要改代码。M1 的代码负责解释参数，参数本身留给配置资产。</p>
+<h2 id="跳跃手感的四个细节">跳跃手感的四个细节</h2>
+<p>M1 的跳跃不是简单的“按键就给一个 Y 速度”，而是补了横板动作游戏最基本的容错。</p>
+<p>第一，接地检测使用基于 Collider 尺寸的 <code>BoxCast</code>，检测目标是 <code>Ground</code> Layer。这样平台宽度、角色碰撞体变化时，检测区域仍能跟着 Collider 走。</p>
+<p>第二，土狼时间通过离地后的计时器实现。角色刚离开平台边缘时，<code>coyoteTime</code> 还没有归零，玩家仍能跳。这解决的是“玩家肉眼觉得还在边缘，但物理上已经离地”的手感落差。</p>
+<p>第三，跳跃缓冲通过 <code>jumpBufferTime</code> 实现。玩家落地前提前按跳，控制器会短暂保留这个输入；只要缓存窗口内重新接地，跳跃就会被消费。</p>
+<p>第四，短跳通过松开跳跃键后的速度削减实现。当玩家提前松开跳跃，<code>PlayerController</code> 会把上升速度乘以 <code>jumpCutMultiplier</code>，从而让长按和轻点产生不同高度。</p>
+<p>在测试中，理论跳高按 <code>jumpForce^2 / (2 * abs(gravity))</code> 估算：<code>12^2 / (2 * 25) = 2.88m</code>。这个结果落在 M1 预期的 2.8m 到 3.0m 区间内。</p>
+<h2 id="状态机目前只做视觉切换">状态机目前只做视觉切换</h2>
+<p>M1 已接入 Core 状态机模板，但没有提前把移动逻辑拆散到多个复杂状态里。现在的状态集合很小：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Idle</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Move</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Jump</code></p>
+</li>
+</ul>
+<p>对应文件包括：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerMotionState.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerStateMachine.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerIdleState.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerMoveState.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerJumpState.cs</code></p>
+</li>
+</ul>
+<p>这些状态在 M1 阶段主要调用 <code>SetVisualState()</code>，切换占位 Sprite、颜色和朝向。真正的移动和跳跃仍集中在 <code>PlayerController</code>，这是有意保守的实现：M1 的状态机先验证接入方式，不急着把物理行为拆到状态类里，避免在玩法尚未展开时制造过度抽象。</p>
+<h2 id="事件只暴露起跳与落地">事件只暴露起跳与落地</h2>
+<p>M1 里已经把起跳和落地作为事件抛出：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>OnPlayerJump</code></p>
+</li>
+<li class="lvl-2">
+<p><code>OnPlayerLand</code></p>
+</li>
+</ul>
+<p>这两个事件不是为了 M1 立刻做完整音效和特效，而是给后续反馈层留接口。到 M2/M3 引入音频、粒子、受击或战斗反馈时，不需要再回头侵入跳跃主逻辑，只要订阅事件即可。</p>
+<h2 id="相机跟随保持简单">相机跟随保持简单</h2>
+<p>相机逻辑位于 <code>unity-project/Assets/_Project/Player/Scripts/CameraFollow.cs</code>。</p>
+<p>M1 没有引入 Cinemachine 虚拟相机配置，而是用一个轻量脚本做目标跟随：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>在 <code>LateUpdate</code> 中读取玩家位置。</p>
+</li>
+<li class="lvl-2">
+<p>添加固定 offset。</p>
+</li>
+<li class="lvl-2">
+<p>用 <code>Vector3.SmoothDamp</code> 平滑移动。</p>
+</li>
+</ul>
+<p>这个实现足够验证横板移动和跳跃场景。更复杂的镜头边界、房间锁定、Boss 战震屏和镜头权重，都应该留到关卡和战斗系统出现之后再做。</p>
+<h2 id="M1-测试场景怎么验证移动">M1 测试场景怎么验证移动</h2>
+<p>测试场景是 <code>unity-project/Assets/Scenes/TestScenes/M1_PlayerMovement.unity</code>。</p>
+<p>场景里不是随便摆几个方块，而是按移动验证拆了平台：</p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A_Start_Wasteland</code></td>
+<td>起点平台，验证站立、起步和基础移动</td>
+</tr>
+<tr>
+<td><code>B_Cyberpunk_Rise</code></td>
+<td>上升平台，验证跳跃高度和空中控制</td>
+</tr>
+<tr>
+<td><code>C_Biohazard_Rise</code></td>
+<td>第二段上升平台，验证连续平台移动</td>
+</tr>
+<tr>
+<td><code>D_Landing_Return</code></td>
+<td>落点平台，验证落地状态回切</td>
+</tr>
+<tr>
+<td><code>Safety_Floor</code></td>
+<td>兜底地面，避免角色永久掉出场景</td>
+</tr>
+</tbody>
+</table>
+<p><code>unity-project/Assets/_Project/Tests/EditMode/M1SetupTests.cs</code> 会检查配置默认值、Prefab 组件、输入资产、场景存在性和平台间距。这里的测试重点不是“玩家主观手感已经完美”，而是证明 M1 的工程结构没有断：Prefab 没丢组件、场景能被找到、关键平台在可达范围内、核心参数没有被误改。</p>
+<h2 id="运行探针用于短时工程验证">运行探针用于短时工程验证</h2>
+<p>M1 还提供了 <code>unity-project/Assets/_Project/Player/Scripts/M1RuntimeProbe.cs</code>。它会在运行时按目标帧率采样，并把结果写入日志文件。</p>
+<p>完整的本地验证结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>验证项</th>
+<th>证据</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unity 资源生成</td>
+<td><code>logs/unity_setup_m1_final.log</code></td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>M1 setup verification</td>
+<td><code>logs/unity_verify_m1_final.log</code></td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>EditMode tests</td>
+<td><code>logs/editmode-results-final.xml</code></td>
+<td>5 passed / 0 failed</td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td><code>logs/unity_build_windows_final.log</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td>Runtime probe</td>
+<td><code>logs/m1-runtime-probe-final.json</code></td>
+<td>平均 59.943 FPS</td>
+</tr>
+</tbody>
+</table>
+<p>短时探针结果显示：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th style="text-align:right">数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>测量帧数</td>
+<td style="text-align:right"><code>480</code></td>
+</tr>
+<tr>
+<td>平均 FPS</td>
+<td style="text-align:right"><code>59.943</code></td>
+</tr>
+<tr>
+<td>最低 FPS</td>
+<td style="text-align:right"><code>49.590</code></td>
+</tr>
+<tr>
+<td>最高 FPS</td>
+<td style="text-align:right"><code>62.887</code></td>
+</tr>
+<tr>
+<td>目标 FPS</td>
+<td style="text-align:right"><code>60</code></td>
+</tr>
+</tbody>
+</table>
+<p>这只能说明 M1 简单场景的短时运行没有明显性能问题，不能替代 30 分钟 soak，也不能代表后续战斗场景性能。<code>qa/reports/M1_test_report.md</code> 已明确记录：30 分钟 1080p 长时性能 soak 没有执行，它仍然是后续 release-grade QA gate。</p>
+<h2 id="M1-之后真正留下了什么">M1 之后真正留下了什么</h2>
+<p>M1 最重要的产物不是一段能移动的角色代码，而是一条清楚的实现主线：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Input System</span><br><span class="line">  -&gt; PlayerInputHandler</span><br><span class="line">  -&gt; PlayerController</span><br><span class="line">  -&gt; Rigidbody2D / Collider2D</span><br><span class="line">  -&gt; PlayerMotionState</span><br><span class="line">  -&gt; CameraFollow</span><br><span class="line">  -&gt; M1SetupTests / M1RuntimeProbe</span><br></pre></td></tr></table></figure>
+<p>这条链路让 PROJECT-V 从“文档和设定”进入“可运行工程”。它仍然很小，但已经有了后续扩展需要的关键接口：参数资产、状态机、事件、Prefab、场景生成脚本、自动化测试和短时运行探针。</p>
+<p>下一步如果进入 M2，应该沿着这条链路增加生命值、受击、伤害入口和最小敌人，而不是另起一套控制框架。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ProjectV/" rel="tag"><i class="fa fa-tag"></i> ProjectV</a>
+              <a href="/tags/Unity/" rel="tag"><i class="fa fa-tag"></i> Unity</a>
+              <a href="/tags/Devlog/" rel="tag"><i class="fa fa-tag"></i> Devlog</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/06/29/ProjectV-M0-Introduction/" rel="prev" title="PROJECT-v M0：项目介绍与方向锁定">
+                  <i class="fa fa-angle-left"></i> PROJECT-v M0：项目介绍与方向锁定
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HenRiser</span>
+  </div>
+  <div class="powered-by">Powered by <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZw==">NexT.Gemini</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
+</html>

@@ -30,6 +30,785 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
       </tags>
   </entry>
   <entry>
+    <title>PROJECT-v M1：角色能动闭环实现拆解</title>
+    <url>/2026/06/29/ProjectV-M1-Implementation/</url>
+    <content><![CDATA[<p>M1 不是一个“项目进度汇报”节点，而是 PROJECT-V 的第一条可运行实现链路：玩家输入进入 Unity，新 Input System 被消费，<code>Rigidbody2D</code> 接收移动与跳跃，状态机更新视觉状态，相机跟随，测试场景验证角色可以从起点平台移动到目标平台。</p>
+<p>本文所有文件路径均以 <code>PROJECT-V</code> 项目根目录为基准。</p>
+<span id="more"></span>
+<h2 id="关联提交和依据">关联提交和依据</h2>
+<p>这篇 M1 记录对应两类提交：</p>
+<table>
+<thead>
+<tr>
+<th>commit</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>576d81e</code></td>
+<td><code>feat(m1): implement player movement milestone</code>，M1 功能主体实现</td>
+</tr>
+<tr>
+<td><code>94a125c</code></td>
+<td><code>docs: add phase completion blog hook</code>，阶段完成后的博客钩子说明</td>
+</tr>
+</tbody>
+</table>
+<p>主要参考产物是：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>reports/M1_delivery_report.html</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reports/M1_test_report.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reports/T-DEV01_compile_verified.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_smoke_checklist.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_player_movement.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_visual_validation.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_performance_baseline.md</code></p>
+</li>
+</ul>
+<h2 id="M1-的实现边界">M1 的实现边界</h2>
+<p>M1 只做 character agency，也就是“角色能动性”。这个边界很窄，但它是后续战斗、敌人、关卡、Build 和表现层的共同底座。</p>
+<p>M1 纳入实现的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Unity 工程初始化与 Core 模板接入。</p>
+</li>
+<li class="lvl-2">
+<p>玩家输入、移动、跳跃、短跳、土狼时间和跳跃缓冲。</p>
+</li>
+<li class="lvl-2">
+<p>Player Prefab 及其物理组件配置。</p>
+</li>
+<li class="lvl-2">
+<p>横向 2D 相机跟随。</p>
+</li>
+<li class="lvl-2">
+<p>M1 测试场景和自动化验证。</p>
+</li>
+</ul>
+<p>M1 明确不做的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>战斗、受击、死亡、敌人、Boss。</p>
+</li>
+<li class="lvl-2">
+<p>程序化房间、关卡选择、Roguelite Build。</p>
+</li>
+<li class="lvl-2">
+<p>Steam 集成、正式 UI、正式角色动画和正式美术资产。</p>
+</li>
+</ul>
+<p>这个边界直接决定了实现方式：M1 没有急着堆玩法系统，而是先把“输入到物理反馈”的主链路做成可复现、可测试、可继续扩展的工程结构。</p>
+<h2 id="工程生成入口">工程生成入口</h2>
+<p>M1 的工程落地入口不是手动在 Unity 里拖一堆对象，而是 <code>unity-project/Assets/_Project/Editor/M1ProjectBuilder.cs</code>。</p>
+<p>这个 Editor 脚本负责一次性生成和校验 M1 需要的基础内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>创建 <code>Ground</code>、<code>Player</code> 物理 Layer。</p>
+</li>
+<li class="lvl-2">
+<p>创建玩家与地块占位 Sprite。</p>
+</li>
+<li class="lvl-2">
+<p>写入 <code>PlayerStatsConfig.asset</code>。</p>
+</li>
+<li class="lvl-2">
+<p>生成 <code>Player.prefab</code>。</p>
+</li>
+<li class="lvl-2">
+<p>生成 <code>_Init.unity</code> 和 <code>M1_PlayerMovement.unity</code> 两个测试场景。</p>
+</li>
+<li class="lvl-2">
+<p>把 M1 场景加入 Build Settings。</p>
+</li>
+<li class="lvl-2">
+<p>验证 Prefab、场景、配置资产和核心组件是否存在。</p>
+</li>
+</ul>
+<p>这一步的关键价值不是“省事”，而是避免 M1 依赖某一次本地 Unity 场景手工操作。Player Prefab、测试场景和基础配置可以由脚本稳定重建，后续如果场景被误删或配置漂移，也能通过同一个入口恢复。</p>
+<p>M1 生成和验证涉及的关键产物路径如下：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unity 工程</td>
+<td><code>unity-project/</code></td>
+</tr>
+<tr>
+<td>Core 脚本</td>
+<td><code>unity-project/Assets/_Project/Scripts/Core/</code></td>
+</tr>
+<tr>
+<td>Player 脚本</td>
+<td><code>unity-project/Assets/_Project/Player/Scripts/</code></td>
+</tr>
+<tr>
+<td>输入资产</td>
+<td><code>unity-project/Assets/_Project/Player/InputActions/DefaultInputActions.inputactions</code></td>
+</tr>
+<tr>
+<td>Stats 资产</td>
+<td><code>unity-project/Assets/_Project/Player/SO/PlayerStatsConfig.asset</code></td>
+</tr>
+<tr>
+<td>Player Prefab</td>
+<td><code>unity-project/Assets/_Project/Player/Prefabs/Player.prefab</code></td>
+</tr>
+<tr>
+<td>M1 测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M1_PlayerMovement.unity</code></td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td><code>unity-project/Builds/Windows/PROJECT-V.exe</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="Player-Prefab-的组成">Player Prefab 的组成</h2>
+<p>玩家对象落在 <code>unity-project/Assets/_Project/Player/Prefabs/Player.prefab</code>，它把 M1 需要的几类职责拆成明确组件：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SpriteRenderer</code></td>
+<td>显示当前运动状态的占位 Sprite</td>
+</tr>
+<tr>
+<td><code>Rigidbody2D</code></td>
+<td>承接水平速度、跳跃速度和下落速度</td>
+</tr>
+<tr>
+<td><code>BoxCollider2D</code></td>
+<td>提供玩家碰撞体和地面检测尺寸来源</td>
+</tr>
+<tr>
+<td><code>PlayerInputHandler</code></td>
+<td>读取移动与跳跃输入</td>
+</tr>
+<tr>
+<td><code>PlayerStatsComponent</code></td>
+<td>暴露移动参数配置</td>
+</tr>
+<tr>
+<td><code>PlayerController</code></td>
+<td>组织输入、物理、状态、事件和视觉切换</td>
+</tr>
+</tbody>
+</table>
+<p>Prefab 的物理设置偏保守：<code>Rigidbody2D</code> 使用动态刚体，冻结旋转，并开启更稳定的碰撞与插值设置。M1 只做横板基础移动，所以不让角色因为物理碰撞产生旋转，是一个必要的约束。</p>
+<h2 id="输入层：缓存意图，不直接改物理">输入层：缓存意图，不直接改物理</h2>
+<p>输入实现位于 <code>unity-project/Assets/_Project/Player/Scripts/PlayerInputHandler.cs</code>。</p>
+<p>M1 没有把输入读取塞进 <code>FixedUpdate</code>，而是在输入层缓存“玩家意图”：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Move</code> 读取水平轴。</p>
+</li>
+<li class="lvl-2">
+<p><code>Jump</code> 记录按下与松开。</p>
+</li>
+<li class="lvl-2">
+<p><code>ConsumeJumpPressed()</code> 和 <code>ConsumeJumpReleased()</code> 用一次性消费的方式交给控制器。</p>
+</li>
+</ul>
+<p>这样做的好处是，跳跃这种瞬时输入不会因为物理帧和渲染帧不同步而丢失。玩家在两次 <code>FixedUpdate</code> 之间按下跳跃键，<code>Update</code> 仍能记录下来，随后由控制器在物理帧里处理。</p>
+<p>M1 支持的输入来源：</p>
+<table>
+<thead>
+<tr>
+<th>行为</th>
+<th>键鼠</th>
+<th>手柄</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>水平移动</td>
+<td><code>A/D</code>、方向键</td>
+<td>左摇杆、D-pad</td>
+</tr>
+<tr>
+<td>跳跃</td>
+<td><code>Space</code>、<code>W</code>、上方向键</td>
+<td>south button</td>
+</tr>
+</tbody>
+</table>
+<p>工程里同时保留 <code>unity-project/Assets/_Project/Player/InputActions/DefaultInputActions.inputactions</code>，自动化测试会检查 Player/UI map 和关键绑定是否存在。这给后续把输入资产完全纳入编辑器流程留下空间。</p>
+<h2 id="控制器：Update-处理状态，FixedUpdate-处理物理">控制器：Update 处理状态，FixedUpdate 处理物理</h2>
+<p>核心控制逻辑位于 <code>unity-project/Assets/_Project/Player/Scripts/PlayerController.cs</code>。</p>
+<p>M1 的控制器分两条节奏运行：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Update</code>：消费跳跃按下/松开，记录跳跃缓冲，处理短跳请求，更新运动状态。</p>
+</li>
+<li class="lvl-2">
+<p><code>FixedUpdate</code>：刷新接地状态，更新土狼时间和跳跃缓冲计时，执行跳跃，应用水平速度，应用短跳，限制最大下落速度。</p>
+</li>
+</ul>
+<p>这个拆分比较重要。输入和状态是“玩家感知层”，应该跟随渲染帧及时响应；速度、重力、接地检测是“物理层”，应该放在固定时间步里更新，避免不同机器帧率下行为漂移。</p>
+<h2 id="移动参数来自-ScriptableObject">移动参数来自 ScriptableObject</h2>
+<p>玩家移动数值由 <code>unity-project/Assets/_Project/Player/Scripts/PlayerStatsConfigSO.cs</code> 定义，并由 <code>unity-project/Assets/_Project/Player/SO/PlayerStatsConfig.asset</code> 承载。</p>
+<p>M1 当前核心参数如下：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th style="text-align:right">当前值</th>
+<th>实现含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>moveSpeed</code></td>
+<td style="text-align:right"><code>5</code></td>
+<td>地面水平移动速度</td>
+</tr>
+<tr>
+<td><code>airControlMultiplier</code></td>
+<td style="text-align:right"><code>0.8</code></td>
+<td>空中横向控制倍率</td>
+</tr>
+<tr>
+<td><code>jumpForce</code></td>
+<td style="text-align:right"><code>12</code></td>
+<td>起跳时的纵向速度</td>
+</tr>
+<tr>
+<td><code>jumpCutMultiplier</code></td>
+<td style="text-align:right"><code>0.5</code></td>
+<td>松开跳跃后的短跳削减倍率</td>
+</tr>
+<tr>
+<td><code>maxJumps</code></td>
+<td style="text-align:right"><code>1</code></td>
+<td>M1 禁止二段跳</td>
+</tr>
+<tr>
+<td><code>coyoteTime</code></td>
+<td style="text-align:right"><code>0.1s</code></td>
+<td>离地后仍允许跳跃的宽限窗口</td>
+</tr>
+<tr>
+<td><code>jumpBufferTime</code></td>
+<td style="text-align:right"><code>0.1s</code></td>
+<td>落地前提前按跳的缓存窗口</td>
+</tr>
+<tr>
+<td><code>gravity</code></td>
+<td style="text-align:right"><code>-25</code></td>
+<td>M1 控制器施加的重力</td>
+</tr>
+<tr>
+<td><code>maxFallSpeed</code></td>
+<td style="text-align:right"><code>20</code></td>
+<td>最大下落速度限制</td>
+</tr>
+</tbody>
+</table>
+<p>这些值没有写死在控制器里，是为了让后续手感调参不需要改代码。M1 的代码负责解释参数，参数本身留给配置资产。</p>
+<h2 id="跳跃手感的四个细节">跳跃手感的四个细节</h2>
+<p>M1 的跳跃不是简单的“按键就给一个 Y 速度”，而是补了横板动作游戏最基本的容错。</p>
+<p>第一，接地检测使用基于 Collider 尺寸的 <code>BoxCast</code>，检测目标是 <code>Ground</code> Layer。这样平台宽度、角色碰撞体变化时，检测区域仍能跟着 Collider 走。</p>
+<p>第二，土狼时间通过离地后的计时器实现。角色刚离开平台边缘时，<code>coyoteTime</code> 还没有归零，玩家仍能跳。这解决的是“玩家肉眼觉得还在边缘，但物理上已经离地”的手感落差。</p>
+<p>第三，跳跃缓冲通过 <code>jumpBufferTime</code> 实现。玩家落地前提前按跳，控制器会短暂保留这个输入；只要缓存窗口内重新接地，跳跃就会被消费。</p>
+<p>第四，短跳通过松开跳跃键后的速度削减实现。当玩家提前松开跳跃，<code>PlayerController</code> 会把上升速度乘以 <code>jumpCutMultiplier</code>，从而让长按和轻点产生不同高度。</p>
+<p>在测试中，理论跳高按 <code>jumpForce^2 / (2 * abs(gravity))</code> 估算：<code>12^2 / (2 * 25) = 2.88m</code>。这个结果落在 M1 预期的 2.8m 到 3.0m 区间内。</p>
+<h2 id="状态机目前只做视觉切换">状态机目前只做视觉切换</h2>
+<p>M1 已接入 Core 状态机模板，但没有提前把移动逻辑拆散到多个复杂状态里。现在的状态集合很小：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Idle</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Move</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Jump</code></p>
+</li>
+</ul>
+<p>对应文件包括：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerMotionState.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerStateMachine.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerIdleState.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerMoveState.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerJumpState.cs</code></p>
+</li>
+</ul>
+<p>这些状态在 M1 阶段主要调用 <code>SetVisualState()</code>，切换占位 Sprite、颜色和朝向。真正的移动和跳跃仍集中在 <code>PlayerController</code>，这是有意保守的实现：M1 的状态机先验证接入方式，不急着把物理行为拆到状态类里，避免在玩法尚未展开时制造过度抽象。</p>
+<h2 id="事件只暴露起跳与落地">事件只暴露起跳与落地</h2>
+<p>M1 里已经把起跳和落地作为事件抛出：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>OnPlayerJump</code></p>
+</li>
+<li class="lvl-2">
+<p><code>OnPlayerLand</code></p>
+</li>
+</ul>
+<p>这两个事件不是为了 M1 立刻做完整音效和特效，而是给后续反馈层留接口。到 M2/M3 引入音频、粒子、受击或战斗反馈时，不需要再回头侵入跳跃主逻辑，只要订阅事件即可。</p>
+<h2 id="相机跟随保持简单">相机跟随保持简单</h2>
+<p>相机逻辑位于 <code>unity-project/Assets/_Project/Player/Scripts/CameraFollow.cs</code>。</p>
+<p>M1 没有引入 Cinemachine 虚拟相机配置，而是用一个轻量脚本做目标跟随：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>在 <code>LateUpdate</code> 中读取玩家位置。</p>
+</li>
+<li class="lvl-2">
+<p>添加固定 offset。</p>
+</li>
+<li class="lvl-2">
+<p>用 <code>Vector3.SmoothDamp</code> 平滑移动。</p>
+</li>
+</ul>
+<p>这个实现足够验证横板移动和跳跃场景。更复杂的镜头边界、房间锁定、Boss 战震屏和镜头权重，都应该留到关卡和战斗系统出现之后再做。</p>
+<h2 id="M1-测试场景怎么验证移动">M1 测试场景怎么验证移动</h2>
+<p>测试场景是 <code>unity-project/Assets/Scenes/TestScenes/M1_PlayerMovement.unity</code>。</p>
+<p>场景里不是随便摆几个方块，而是按移动验证拆了平台：</p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A_Start_Wasteland</code></td>
+<td>起点平台，验证站立、起步和基础移动</td>
+</tr>
+<tr>
+<td><code>B_Cyberpunk_Rise</code></td>
+<td>上升平台，验证跳跃高度和空中控制</td>
+</tr>
+<tr>
+<td><code>C_Biohazard_Rise</code></td>
+<td>第二段上升平台，验证连续平台移动</td>
+</tr>
+<tr>
+<td><code>D_Landing_Return</code></td>
+<td>落点平台，验证落地状态回切</td>
+</tr>
+<tr>
+<td><code>Safety_Floor</code></td>
+<td>兜底地面，避免角色永久掉出场景</td>
+</tr>
+</tbody>
+</table>
+<p><code>unity-project/Assets/_Project/Tests/EditMode/M1SetupTests.cs</code> 会检查配置默认值、Prefab 组件、输入资产、场景存在性和平台间距。这里的测试重点不是“玩家主观手感已经完美”，而是证明 M1 的工程结构没有断：Prefab 没丢组件、场景能被找到、关键平台在可达范围内、核心参数没有被误改。</p>
+<h2 id="运行探针用于短时工程验证">运行探针用于短时工程验证</h2>
+<p>M1 还提供了 <code>unity-project/Assets/_Project/Player/Scripts/M1RuntimeProbe.cs</code>。它会在运行时按目标帧率采样，并把结果写入日志文件。</p>
+<p>完整的本地验证结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>验证项</th>
+<th>证据</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unity 资源生成</td>
+<td><code>logs/unity_setup_m1_final.log</code></td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>M1 setup verification</td>
+<td><code>logs/unity_verify_m1_final.log</code></td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>EditMode tests</td>
+<td><code>logs/editmode-results-final.xml</code></td>
+<td>5 passed / 0 failed</td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td><code>logs/unity_build_windows_final.log</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td>Runtime probe</td>
+<td><code>logs/m1-runtime-probe-final.json</code></td>
+<td>平均 59.943 FPS</td>
+</tr>
+</tbody>
+</table>
+<p>短时探针结果显示：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th style="text-align:right">数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>测量帧数</td>
+<td style="text-align:right"><code>480</code></td>
+</tr>
+<tr>
+<td>平均 FPS</td>
+<td style="text-align:right"><code>59.943</code></td>
+</tr>
+<tr>
+<td>最低 FPS</td>
+<td style="text-align:right"><code>49.590</code></td>
+</tr>
+<tr>
+<td>最高 FPS</td>
+<td style="text-align:right"><code>62.887</code></td>
+</tr>
+<tr>
+<td>目标 FPS</td>
+<td style="text-align:right"><code>60</code></td>
+</tr>
+</tbody>
+</table>
+<p>这只能说明 M1 简单场景的短时运行没有明显性能问题，不能替代 30 分钟 soak，也不能代表后续战斗场景性能。<code>qa/reports/M1_test_report.md</code> 已明确记录：30 分钟 1080p 长时性能 soak 没有执行，它仍然是后续 release-grade QA gate。</p>
+<h2 id="M1-之后真正留下了什么">M1 之后真正留下了什么</h2>
+<p>M1 最重要的产物不是一段能移动的角色代码，而是一条清楚的实现主线：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Input System</span><br><span class="line">  -&gt; PlayerInputHandler</span><br><span class="line">  -&gt; PlayerController</span><br><span class="line">  -&gt; Rigidbody2D / Collider2D</span><br><span class="line">  -&gt; PlayerMotionState</span><br><span class="line">  -&gt; CameraFollow</span><br><span class="line">  -&gt; M1SetupTests / M1RuntimeProbe</span><br></pre></td></tr></table></figure>
+<p>这条链路让 PROJECT-V 从“文档和设定”进入“可运行工程”。它仍然很小，但已经有了后续扩展需要的关键接口：参数资产、状态机、事件、Prefab、场景生成脚本、自动化测试和短时运行探针。</p>
+<p>下一步如果进入 M2，应该沿着这条链路增加生命值、受击、伤害入口和最小敌人，而不是另起一套控制框架。</p>
+]]></content>
+      <tags>
+        <tag>ProjectV</tag>
+        <tag>Unity</tag>
+        <tag>Devlog</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PROJECT-v M0：项目介绍与方向锁定</title>
+    <url>/2026/06/29/ProjectV-M0-Introduction/</url>
+    <content><![CDATA[<p>PROJECT-V 是一个国风浪子剑客穿越末日异世界的 2D 横板 Roguelite 动作游戏。M0 的任务不是做可玩 Demo，而是把项目“为什么成立、做成什么样、哪些东西不做、后续怎么落地”先锁住。</p>
+<p>本文所有文档路径均以 <code>PROJECT-V-game-docs</code> 项目根目录为基准。</p>
+<span id="more"></span>
+<h2 id="一句话定位">一句话定位</h2>
+<p>PROJECT-V 的核心表达可以压缩成一句话：</p>
+<blockquote>
+<p>天赋绝顶、放荡不羁的国风浪子剑客，被传送到三个末日异世界，在污染与力量之间做取舍，为回到原本世界而战。</p>
+</blockquote>
+<p>这个定位里有三个关键词：国风主角、末日异世界、Roguelite 取舍。</p>
+<p>项目不是单纯做“像素横板动作”，也不是单纯做“末日题材缝合”。它的第一锚点是一个稳定、有记忆点的主角：白袍、青绿色调、酒葫芦、浪子气质、天赋很高但不端着。三个世界不断改变外部规则和视觉氛围，但主角身份保持不变。</p>
+<h2 id="M0-锁定的游戏形态">M0 锁定的游戏形态</h2>
+<p>M0 在 <code>design/GDD.md</code> 中锁定了基础形态：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>类型：2D 横板 Roguelite 动作游戏。</p>
+</li>
+<li class="lvl-2">
+<p>平台：PC，优先 Steam。</p>
+</li>
+<li class="lvl-2">
+<p>引擎：Unity <code>2022.3.34f1c1</code>。</p>
+</li>
+<li class="lvl-2">
+<p>运行结构：每局由三个世界关卡组成，世界顺序可以变化。</p>
+</li>
+<li class="lvl-2">
+<p>每个世界有独立风格、敌人、Boss 和 Build 倾向。</p>
+</li>
+<li class="lvl-2">
+<p>单人体验，不在早期做多人、移动端、云同步或 Mod。</p>
+</li>
+</ul>
+<p>这类边界很重要。没有边界，项目会很快被“开放世界、联机、复杂剧情、多角色、全平台发布”之类愿望拖垮。M0 的价值就是先把诱惑砍掉，只保留能支撑核心体验的东西。</p>
+<h2 id="三个末日世界">三个末日世界</h2>
+<p>PROJECT-V 的世界观不是一个单一末日，而是三个不同异世界叠加到 Roguelite 结构里：</p>
+<table>
+<thead>
+<tr>
+<th>世界</th>
+<th>视觉关键词</th>
+<th>玩法倾向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>辐射废土</td>
+<td>铁锈、沙尘、灰烬、毒性绿色</td>
+<td>改装、辐射、硬派生存</td>
+</tr>
+<tr>
+<td>赛博朋克</td>
+<td>霓虹洋红、电光青、紫色、雨夜暗巷</td>
+<td>义体、黑客、护盾、控制</td>
+</tr>
+<tr>
+<td>生化危机</td>
+<td>血红、病态绿色、粉色肉质、真菌感</td>
+<td>变异、寄生、低血量爆发</td>
+</tr>
+</tbody>
+</table>
+<p>这三个世界的作用不是换皮。它们分别承载不同的 Build 方向和风险收益：废土偏改装与 DOT，赛博偏义体和控制，生化偏自伤与爆发。</p>
+<h2 id="Roguelite-结构的核心">Roguelite 结构的核心</h2>
+<p>M0 阶段确定的基础结构是：每局跑三章，但三章顺序可以变化。三世界排列本身就能产生不同体验，再叠加玩家在不同世界中拿到的升级线，构成 Roguelite 的主要变化来源。</p>
+<p>项目文档里还保留了一个更强的方向：不同世界组合会影响后续内容和 Build 走向。也就是说，PROJECT-V 不是只靠随机房间制造差异，而是让“世界顺序”和“世界污染”也参与构建玩家这一局的身份。</p>
+<h2 id="纯度系统不是道德值">纯度系统不是道德值</h2>
+<p>M0 对纯度系统做了一个关键修正：它不是传统善恶值，也不是简单剧情分支，而是更接近 Monster Train 式的平衡压力。</p>
+<p>玩家拿到异世界力量，会变强；同时怪物或世界也会获得强化。纯度影响主角视觉形态，也影响后续挑战结构。</p>
+<p>在 <code>design/data/purity_system.csv</code> 中，纯度被拆成几个区间：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>70-99</code>：轻度污染。</p>
+</li>
+<li class="lvl-2">
+<p><code>30-69</code>：中度污染。</p>
+</li>
+<li class="lvl-2">
+<p><code>0-29</code>：重度污染，并可能触发镜像纯净 Boss。</p>
+</li>
+<li class="lvl-2">
+<p>高纯度路线也可能触发镜像堕落 Boss。</p>
+</li>
+</ul>
+<p>这个设计的重点是“力量不是免费午餐”。玩家越依赖异世界改造，越可能被异世界反噬；玩家越追求极端纯净，也会面对另一个极端自己的挑战。</p>
+<h2 id="Boss-不是血条木桩">Boss 不是血条木桩</h2>
+<p>M0 还锁定了 Boss 弱点部位设计。<code>design/data/boss_weakpoints.csv</code> 里定义了废土军阀、赛博 AI、生化母体等 Boss 的弱点：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>废土 Boss 有背部反应堆、头部弱点。</p>
+</li>
+<li class="lvl-2">
+<p>赛博 Boss 有核心处理器、主眼。</p>
+</li>
+<li class="lvl-2">
+<p>生化 Boss 有心脏核心、背部肿瘤。</p>
+</li>
+</ul>
+<p>弱点不是纯装饰，而是会带来易伤、眩晕、召唤暂停、强制阶段切换等效果。这个方向能让横板 Boss 战从“贴脸输出”变成“识别窗口、攻击部位、打断机制”的结构化战斗。</p>
+<h2 id="永久升级线">永久升级线</h2>
+<p><code>design/data/upgrade_lines.csv</code> 把永久升级分成通用线和世界线。</p>
+<p>通用线负责所有角色基础成长：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>最大 HP。</p>
+</li>
+<li class="lvl-2">
+<p>攻击力。</p>
+</li>
+<li class="lvl-2">
+<p>闪避距离。</p>
+</li>
+<li class="lvl-2">
+<p>闪避无敌时间。</p>
+</li>
+<li class="lvl-2">
+<p>死亡后资源保留。</p>
+</li>
+</ul>
+<p>世界线则服务项目特色：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>废土线：锈毒 DOT、辐射抗性、蒸汽冲击。</p>
+</li>
+<li class="lvl-2">
+<p>赛博线：闪避残影、黑客控制、能量护盾。</p>
+</li>
+<li class="lvl-2">
+<p>生化线：低血量增伤、寄生召唤、狂暴模式。</p>
+</li>
+</ul>
+<p>这样设计的好处是，玩家既有稳定成长，也有世界身份。通用线保证长期推进，世界线保证每局和每个世界都不只是换敌人。</p>
+<h2 id="视觉身份">视觉身份</h2>
+<p>M0 在 <code>design/STYLE_GUIDE.md</code> 中锁定了 v8 视觉方向。</p>
+<p>主角固定为国风浪子剑客：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>年轻、瘦长、脸部轮廓清晰。</p>
+</li>
+<li class="lvl-2">
+<p>白袍带青绿色调。</p>
+</li>
+<li class="lvl-2">
+<p>腰带松散，带酒葫芦。</p>
+</li>
+<li class="lvl-2">
+<p>有狡黠笑意，不是苦大仇深的传统大侠。</p>
+</li>
+</ul>
+<p>三世界视觉不直接吞掉主角，而是逐渐附着在主角身上。废土给铁锈和毒性痕迹，赛博给霓虹和义体痕迹，生化给血肉和真菌痕迹。这个策略能保住 IP 识别度：世界可以变，主角不能丢。</p>
+<h2 id="工程方向">工程方向</h2>
+<p>M0 的工程文档没有停留在“以后再说”，而是提前定了技术骨架。</p>
+<p><code>project/DECISIONS.md</code> 锁定的核心技术决策包括：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Unity <code>2022.3.34f1c1</code>。</p>
+</li>
+<li class="lvl-2">
+<p>URP 2D Renderer。</p>
+</li>
+<li class="lvl-2">
+<p>新 Input System。</p>
+</li>
+<li class="lvl-2">
+<p>Addressables。</p>
+</li>
+<li class="lvl-2">
+<p>Unity Animation 先行，Spine 后续可接入。</p>
+</li>
+<li class="lvl-2">
+<p>ScriptableObject 数据驱动。</p>
+</li>
+<li class="lvl-2">
+<p>JSON 加二进制存档。</p>
+</li>
+<li class="lvl-2">
+<p>不使用 ECS/DOTS 作为早期主架构。</p>
+</li>
+</ul>
+<p><code>docs/ARCHITECTURE.md</code> 给出模块边界：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Core</code>：状态机、事件总线、对象池、数据基类。</p>
+</li>
+<li class="lvl-2">
+<p><code>Player</code>：玩家控制、状态、参数。</p>
+</li>
+<li class="lvl-2">
+<p><code>Enemies</code>：敌人与 Boss。</p>
+</li>
+<li class="lvl-2">
+<p><code>Combat</code>：伤害、命中、战斗反馈。</p>
+</li>
+<li class="lvl-2">
+<p><code>LevelGeneration</code>：房间、关卡生成。</p>
+</li>
+<li class="lvl-2">
+<p><code>Roguelite</code>：Build、永久升级、局外成长。</p>
+</li>
+<li class="lvl-2">
+<p><code>UI</code>、<code>Audio</code>、<code>Utils</code>：表现和基础工具。</p>
+</li>
+</ul>
+<p>这个架构对早期项目来说已经足够，不需要更复杂的框架。最重要的是依赖方向清楚：Core 在底层，玩法模块依赖 Core，而不是互相缠在一起。</p>
+<h2 id="生产协作方式">生产协作方式</h2>
+<p>M0 也建立了 agent 分工和交付模板：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>game-producer</code> 控范围、节奏、风险。</p>
+</li>
+<li class="lvl-2">
+<p><code>game-designer</code> 产出 GDD、feature spec、数值表。</p>
+</li>
+<li class="lvl-2">
+<p><code>unity-developer</code> 落地 Unity 代码和工程。</p>
+</li>
+<li class="lvl-2">
+<p><code>game-artist</code> 负责视觉资产。</p>
+</li>
+<li class="lvl-2">
+<p><code>technical-artist</code> 负责导入、Shader、特效和性能。</p>
+</li>
+<li class="lvl-2">
+<p><code>audio-designer</code> 负责 SFX、BGM、触发点和混音。</p>
+</li>
+<li class="lvl-2">
+<p><code>game-qa</code> 负责测试用例、回归和缺陷记录。</p>
+</li>
+</ul>
+<p>这不是为了形式化，而是为了让每个里程碑都能从“设计意图”走到“实现、验收、反馈”。M1 的角色控制就是沿着这个方式被拆成任务、实现和测试的。</p>
+<h2 id="M0-到-M7-的路线">M0 到 M7 的路线</h2>
+<p><code>project/PROJECT_PLAN.md</code> 把项目拆成七个后续里程碑：</p>
+<table>
+<thead>
+<tr>
+<th>里程碑</th>
+<th>目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>角色能动性：移动、跳跃、相机、测试场景</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>基础战斗：生命值、伤害、敌人雏形</td>
+</tr>
+<tr>
+<td>M3</td>
+<td>完整战斗：攻击链、技能、反馈和调参</td>
+</tr>
+<tr>
+<td>M4</td>
+<td>手工关卡与 Boss</td>
+</tr>
+<tr>
+<td>M5</td>
+<td>程序化关卡生成</td>
+</tr>
+<tr>
+<td>M6</td>
+<td>Roguelite Build 和永久升级</td>
+</tr>
+<tr>
+<td>M7</td>
+<td>完整可玩体验与打磨</td>
+</tr>
+</tbody>
+</table>
+<p>这个路线是合理的：先证明角色能动，再做战斗；先做手工关卡验证体验，再做程序生成；先把局内 Build 跑通，再考虑完整 Roguelite 循环。</p>
+<h2 id="M0-真正完成了什么">M0 真正完成了什么</h2>
+<p>M0 没有产出一个可玩的版本，但完成了四件更基础的事：</p>
+<ol>
+<li class="lvl-3">
+<p>项目定位明确：国风浪子剑客穿越三个末日异世界。</p>
+</li>
+<li class="lvl-3">
+<p>玩法骨架明确：横板动作、Roguelite、世界顺序、纯度系统、Boss 弱点。</p>
+</li>
+<li class="lvl-3">
+<p>视觉身份明确：v8 主角方向和三世界调色板。</p>
+</li>
+<li class="lvl-3">
+<p>工程落点明确：Unity 版本、模块结构、数据驱动、任务模板和验收方式。</p>
+</li>
+</ol>
+<p>这让 M1 不需要再争论“项目到底是什么”。M1 只需要回答一个更具体的问题：这个主角能不能在 Unity 里被稳定控制起来。</p>
+]]></content>
+      <tags>
+        <tag>ProjectV</tag>
+        <tag>Unity</tag>
+        <tag>Devlog</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>LeetcodeHard-871最低加油次数</title>
     <url>/2024/10/23/LeetcodeHard-871/</url>
     <content><![CDATA[<p>写在前面：该题转载至leetcode力扣 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy9taW5pbXVtLW51bWJlci1vZi1yZWZ1ZWxpbmctc3RvcHM=">No.871–最低加油次数<i class="fa fa-external-link-alt"></i></span></em> 😃</p>

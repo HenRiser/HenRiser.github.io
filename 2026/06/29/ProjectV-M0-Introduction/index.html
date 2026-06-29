@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"henriser.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="PROJECT-V 是一个国风浪子剑客穿越末日异世界的 2D 横板 Roguelite 动作游戏。M0 的任务不是做可玩 Demo，而是把项目“为什么成立、做成什么样、哪些东西不做、后续怎么落地”先锁住。 本文所有文档路径均以 PROJECT-V-game-docs 项目根目录为基准。">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="PROJECT-v M0：项目介绍与方向锁定">
+<meta property="og:url" content="https://henriser.github.io/2026/06/29/ProjectV-M0-Introduction/index.html">
+<meta property="og:site_name" content="Codeverse">
+<meta property="og:description" content="PROJECT-V 是一个国风浪子剑客穿越末日异世界的 2D 横板 Roguelite 动作游戏。M0 的任务不是做可玩 Demo，而是把项目“为什么成立、做成什么样、哪些东西不做、后续怎么落地”先锁住。 本文所有文档路径均以 PROJECT-V-game-docs 项目根目录为基准。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-06-29T03:30:00.000Z">
+<meta property="article:modified_time" content="2026-06-29T04:06:39.384Z">
+<meta property="article:author" content="HenRiser">
+<meta property="article:tag" content="ProjectV">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Devlog">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://henriser.github.io/2026/06/29/ProjectV-M0-Introduction/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://henriser.github.io/2026/06/29/ProjectV-M0-Introduction/","path":"2026/06/29/ProjectV-M0-Introduction/","title":"PROJECT-v M0：项目介绍与方向锁定"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PROJECT-v M0：项目介绍与方向锁定 | Codeverse</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Codeverse</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">HenRiser'blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/2024/10/19/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E5%AE%9A%E4%BD%8D"><span class="nav-text">一句话定位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M0-%E9%94%81%E5%AE%9A%E7%9A%84%E6%B8%B8%E6%88%8F%E5%BD%A2%E6%80%81"><span class="nav-text">M0 锁定的游戏形态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E6%9C%AB%E6%97%A5%E4%B8%96%E7%95%8C"><span class="nav-text">三个末日世界</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Roguelite-%E7%BB%93%E6%9E%84%E7%9A%84%E6%A0%B8%E5%BF%83"><span class="nav-text">Roguelite 结构的核心</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%AF%E5%BA%A6%E7%B3%BB%E7%BB%9F%E4%B8%8D%E6%98%AF%E9%81%93%E5%BE%B7%E5%80%BC"><span class="nav-text">纯度系统不是道德值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Boss-%E4%B8%8D%E6%98%AF%E8%A1%80%E6%9D%A1%E6%9C%A8%E6%A1%A9"><span class="nav-text">Boss 不是血条木桩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B0%B8%E4%B9%85%E5%8D%87%E7%BA%A7%E7%BA%BF"><span class="nav-text">永久升级线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%86%E8%A7%89%E8%BA%AB%E4%BB%BD"><span class="nav-text">视觉身份</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E6%96%B9%E5%90%91"><span class="nav-text">工程方向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E5%8D%8F%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="nav-text">生产协作方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M0-%E5%88%B0-M7-%E7%9A%84%E8%B7%AF%E7%BA%BF"><span class="nav-text">M0 到 M7 的路线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M0-%E7%9C%9F%E6%AD%A3%E5%AE%8C%E6%88%90%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-text">M0 真正完成了什么</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HenRiser"
+      src="/images/authorAvatar.jpg">
+  <p class="site-author-name" itemprop="name">HenRiser</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;HenRiser"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmhybG9uZ19Ab3V0bG9vay5jb20=" title="E-Mail → mailto:hrlong_@outlook.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9zdGVhbWNvbW11bml0eS5jb20vcHJvZmlsZXMvNzY1NjExOTg5NzY4OTM4MTYv" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198976893816&#x2F;"><i class="fab fa-steam fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="Back to top">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://henriser.github.io/2026/06/29/ProjectV-M0-Introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/authorAvatar.jpg">
+      <meta itemprop="name" content="HenRiser">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PROJECT-v M0：项目介绍与方向锁定 | Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PROJECT-v M0：项目介绍与方向锁定
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-06-29 11:30:00 / Modified: 12:06:39" itemprop="dateCreated datePublished" datetime="2026-06-29T11:30:00+08:00">2026-06-29</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>PROJECT-V 是一个国风浪子剑客穿越末日异世界的 2D 横板 Roguelite 动作游戏。M0 的任务不是做可玩 Demo，而是把项目“为什么成立、做成什么样、哪些东西不做、后续怎么落地”先锁住。</p>
+<p>本文所有文档路径均以 <code>PROJECT-V-game-docs</code> 项目根目录为基准。</p>
+<span id="more"></span>
+<h2 id="一句话定位">一句话定位</h2>
+<p>PROJECT-V 的核心表达可以压缩成一句话：</p>
+<blockquote>
+<p>天赋绝顶、放荡不羁的国风浪子剑客，被传送到三个末日异世界，在污染与力量之间做取舍，为回到原本世界而战。</p>
+</blockquote>
+<p>这个定位里有三个关键词：国风主角、末日异世界、Roguelite 取舍。</p>
+<p>项目不是单纯做“像素横板动作”，也不是单纯做“末日题材缝合”。它的第一锚点是一个稳定、有记忆点的主角：白袍、青绿色调、酒葫芦、浪子气质、天赋很高但不端着。三个世界不断改变外部规则和视觉氛围，但主角身份保持不变。</p>
+<h2 id="M0-锁定的游戏形态">M0 锁定的游戏形态</h2>
+<p>M0 在 <code>design/GDD.md</code> 中锁定了基础形态：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>类型：2D 横板 Roguelite 动作游戏。</p>
+</li>
+<li class="lvl-2">
+<p>平台：PC，优先 Steam。</p>
+</li>
+<li class="lvl-2">
+<p>引擎：Unity <code>2022.3.34f1c1</code>。</p>
+</li>
+<li class="lvl-2">
+<p>运行结构：每局由三个世界关卡组成，世界顺序可以变化。</p>
+</li>
+<li class="lvl-2">
+<p>每个世界有独立风格、敌人、Boss 和 Build 倾向。</p>
+</li>
+<li class="lvl-2">
+<p>单人体验，不在早期做多人、移动端、云同步或 Mod。</p>
+</li>
+</ul>
+<p>这类边界很重要。没有边界，项目会很快被“开放世界、联机、复杂剧情、多角色、全平台发布”之类愿望拖垮。M0 的价值就是先把诱惑砍掉，只保留能支撑核心体验的东西。</p>
+<h2 id="三个末日世界">三个末日世界</h2>
+<p>PROJECT-V 的世界观不是一个单一末日，而是三个不同异世界叠加到 Roguelite 结构里：</p>
+<table>
+<thead>
+<tr>
+<th>世界</th>
+<th>视觉关键词</th>
+<th>玩法倾向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>辐射废土</td>
+<td>铁锈、沙尘、灰烬、毒性绿色</td>
+<td>改装、辐射、硬派生存</td>
+</tr>
+<tr>
+<td>赛博朋克</td>
+<td>霓虹洋红、电光青、紫色、雨夜暗巷</td>
+<td>义体、黑客、护盾、控制</td>
+</tr>
+<tr>
+<td>生化危机</td>
+<td>血红、病态绿色、粉色肉质、真菌感</td>
+<td>变异、寄生、低血量爆发</td>
+</tr>
+</tbody>
+</table>
+<p>这三个世界的作用不是换皮。它们分别承载不同的 Build 方向和风险收益：废土偏改装与 DOT，赛博偏义体和控制，生化偏自伤与爆发。</p>
+<h2 id="Roguelite-结构的核心">Roguelite 结构的核心</h2>
+<p>M0 阶段确定的基础结构是：每局跑三章，但三章顺序可以变化。三世界排列本身就能产生不同体验，再叠加玩家在不同世界中拿到的升级线，构成 Roguelite 的主要变化来源。</p>
+<p>项目文档里还保留了一个更强的方向：不同世界组合会影响后续内容和 Build 走向。也就是说，PROJECT-V 不是只靠随机房间制造差异，而是让“世界顺序”和“世界污染”也参与构建玩家这一局的身份。</p>
+<h2 id="纯度系统不是道德值">纯度系统不是道德值</h2>
+<p>M0 对纯度系统做了一个关键修正：它不是传统善恶值，也不是简单剧情分支，而是更接近 Monster Train 式的平衡压力。</p>
+<p>玩家拿到异世界力量，会变强；同时怪物或世界也会获得强化。纯度影响主角视觉形态，也影响后续挑战结构。</p>
+<p>在 <code>design/data/purity_system.csv</code> 中，纯度被拆成几个区间：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>70-99</code>：轻度污染。</p>
+</li>
+<li class="lvl-2">
+<p><code>30-69</code>：中度污染。</p>
+</li>
+<li class="lvl-2">
+<p><code>0-29</code>：重度污染，并可能触发镜像纯净 Boss。</p>
+</li>
+<li class="lvl-2">
+<p>高纯度路线也可能触发镜像堕落 Boss。</p>
+</li>
+</ul>
+<p>这个设计的重点是“力量不是免费午餐”。玩家越依赖异世界改造，越可能被异世界反噬；玩家越追求极端纯净，也会面对另一个极端自己的挑战。</p>
+<h2 id="Boss-不是血条木桩">Boss 不是血条木桩</h2>
+<p>M0 还锁定了 Boss 弱点部位设计。<code>design/data/boss_weakpoints.csv</code> 里定义了废土军阀、赛博 AI、生化母体等 Boss 的弱点：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>废土 Boss 有背部反应堆、头部弱点。</p>
+</li>
+<li class="lvl-2">
+<p>赛博 Boss 有核心处理器、主眼。</p>
+</li>
+<li class="lvl-2">
+<p>生化 Boss 有心脏核心、背部肿瘤。</p>
+</li>
+</ul>
+<p>弱点不是纯装饰，而是会带来易伤、眩晕、召唤暂停、强制阶段切换等效果。这个方向能让横板 Boss 战从“贴脸输出”变成“识别窗口、攻击部位、打断机制”的结构化战斗。</p>
+<h2 id="永久升级线">永久升级线</h2>
+<p><code>design/data/upgrade_lines.csv</code> 把永久升级分成通用线和世界线。</p>
+<p>通用线负责所有角色基础成长：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>最大 HP。</p>
+</li>
+<li class="lvl-2">
+<p>攻击力。</p>
+</li>
+<li class="lvl-2">
+<p>闪避距离。</p>
+</li>
+<li class="lvl-2">
+<p>闪避无敌时间。</p>
+</li>
+<li class="lvl-2">
+<p>死亡后资源保留。</p>
+</li>
+</ul>
+<p>世界线则服务项目特色：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>废土线：锈毒 DOT、辐射抗性、蒸汽冲击。</p>
+</li>
+<li class="lvl-2">
+<p>赛博线：闪避残影、黑客控制、能量护盾。</p>
+</li>
+<li class="lvl-2">
+<p>生化线：低血量增伤、寄生召唤、狂暴模式。</p>
+</li>
+</ul>
+<p>这样设计的好处是，玩家既有稳定成长，也有世界身份。通用线保证长期推进，世界线保证每局和每个世界都不只是换敌人。</p>
+<h2 id="视觉身份">视觉身份</h2>
+<p>M0 在 <code>design/STYLE_GUIDE.md</code> 中锁定了 v8 视觉方向。</p>
+<p>主角固定为国风浪子剑客：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>年轻、瘦长、脸部轮廓清晰。</p>
+</li>
+<li class="lvl-2">
+<p>白袍带青绿色调。</p>
+</li>
+<li class="lvl-2">
+<p>腰带松散，带酒葫芦。</p>
+</li>
+<li class="lvl-2">
+<p>有狡黠笑意，不是苦大仇深的传统大侠。</p>
+</li>
+</ul>
+<p>三世界视觉不直接吞掉主角，而是逐渐附着在主角身上。废土给铁锈和毒性痕迹，赛博给霓虹和义体痕迹，生化给血肉和真菌痕迹。这个策略能保住 IP 识别度：世界可以变，主角不能丢。</p>
+<h2 id="工程方向">工程方向</h2>
+<p>M0 的工程文档没有停留在“以后再说”，而是提前定了技术骨架。</p>
+<p><code>project/DECISIONS.md</code> 锁定的核心技术决策包括：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Unity <code>2022.3.34f1c1</code>。</p>
+</li>
+<li class="lvl-2">
+<p>URP 2D Renderer。</p>
+</li>
+<li class="lvl-2">
+<p>新 Input System。</p>
+</li>
+<li class="lvl-2">
+<p>Addressables。</p>
+</li>
+<li class="lvl-2">
+<p>Unity Animation 先行，Spine 后续可接入。</p>
+</li>
+<li class="lvl-2">
+<p>ScriptableObject 数据驱动。</p>
+</li>
+<li class="lvl-2">
+<p>JSON 加二进制存档。</p>
+</li>
+<li class="lvl-2">
+<p>不使用 ECS/DOTS 作为早期主架构。</p>
+</li>
+</ul>
+<p><code>docs/ARCHITECTURE.md</code> 给出模块边界：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Core</code>：状态机、事件总线、对象池、数据基类。</p>
+</li>
+<li class="lvl-2">
+<p><code>Player</code>：玩家控制、状态、参数。</p>
+</li>
+<li class="lvl-2">
+<p><code>Enemies</code>：敌人与 Boss。</p>
+</li>
+<li class="lvl-2">
+<p><code>Combat</code>：伤害、命中、战斗反馈。</p>
+</li>
+<li class="lvl-2">
+<p><code>LevelGeneration</code>：房间、关卡生成。</p>
+</li>
+<li class="lvl-2">
+<p><code>Roguelite</code>：Build、永久升级、局外成长。</p>
+</li>
+<li class="lvl-2">
+<p><code>UI</code>、<code>Audio</code>、<code>Utils</code>：表现和基础工具。</p>
+</li>
+</ul>
+<p>这个架构对早期项目来说已经足够，不需要更复杂的框架。最重要的是依赖方向清楚：Core 在底层，玩法模块依赖 Core，而不是互相缠在一起。</p>
+<h2 id="生产协作方式">生产协作方式</h2>
+<p>M0 也建立了 agent 分工和交付模板：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>game-producer</code> 控范围、节奏、风险。</p>
+</li>
+<li class="lvl-2">
+<p><code>game-designer</code> 产出 GDD、feature spec、数值表。</p>
+</li>
+<li class="lvl-2">
+<p><code>unity-developer</code> 落地 Unity 代码和工程。</p>
+</li>
+<li class="lvl-2">
+<p><code>game-artist</code> 负责视觉资产。</p>
+</li>
+<li class="lvl-2">
+<p><code>technical-artist</code> 负责导入、Shader、特效和性能。</p>
+</li>
+<li class="lvl-2">
+<p><code>audio-designer</code> 负责 SFX、BGM、触发点和混音。</p>
+</li>
+<li class="lvl-2">
+<p><code>game-qa</code> 负责测试用例、回归和缺陷记录。</p>
+</li>
+</ul>
+<p>这不是为了形式化，而是为了让每个里程碑都能从“设计意图”走到“实现、验收、反馈”。M1 的角色控制就是沿着这个方式被拆成任务、实现和测试的。</p>
+<h2 id="M0-到-M7-的路线">M0 到 M7 的路线</h2>
+<p><code>project/PROJECT_PLAN.md</code> 把项目拆成七个后续里程碑：</p>
+<table>
+<thead>
+<tr>
+<th>里程碑</th>
+<th>目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>角色能动性：移动、跳跃、相机、测试场景</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>基础战斗：生命值、伤害、敌人雏形</td>
+</tr>
+<tr>
+<td>M3</td>
+<td>完整战斗：攻击链、技能、反馈和调参</td>
+</tr>
+<tr>
+<td>M4</td>
+<td>手工关卡与 Boss</td>
+</tr>
+<tr>
+<td>M5</td>
+<td>程序化关卡生成</td>
+</tr>
+<tr>
+<td>M6</td>
+<td>Roguelite Build 和永久升级</td>
+</tr>
+<tr>
+<td>M7</td>
+<td>完整可玩体验与打磨</td>
+</tr>
+</tbody>
+</table>
+<p>这个路线是合理的：先证明角色能动，再做战斗；先做手工关卡验证体验，再做程序生成；先把局内 Build 跑通，再考虑完整 Roguelite 循环。</p>
+<h2 id="M0-真正完成了什么">M0 真正完成了什么</h2>
+<p>M0 没有产出一个可玩的版本，但完成了四件更基础的事：</p>
+<ol>
+<li class="lvl-3">
+<p>项目定位明确：国风浪子剑客穿越三个末日异世界。</p>
+</li>
+<li class="lvl-3">
+<p>玩法骨架明确：横板动作、Roguelite、世界顺序、纯度系统、Boss 弱点。</p>
+</li>
+<li class="lvl-3">
+<p>视觉身份明确：v8 主角方向和三世界调色板。</p>
+</li>
+<li class="lvl-3">
+<p>工程落点明确：Unity 版本、模块结构、数据驱动、任务模板和验收方式。</p>
+</li>
+</ol>
+<p>这让 M1 不需要再争论“项目到底是什么”。M1 只需要回答一个更具体的问题：这个主角能不能在 Unity 里被稳定控制起来。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ProjectV/" rel="tag"><i class="fa fa-tag"></i> ProjectV</a>
+              <a href="/tags/Unity/" rel="tag"><i class="fa fa-tag"></i> Unity</a>
+              <a href="/tags/Devlog/" rel="tag"><i class="fa fa-tag"></i> Devlog</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/23/LeetcodeHard-871/" rel="prev" title="LeetcodeHard-871最低加油次数">
+                  <i class="fa fa-angle-left"></i> LeetcodeHard-871最低加油次数
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/06/29/ProjectV-M1-Implementation/" rel="next" title="PROJECT-v M1：角色能动闭环实现拆解">
+                  PROJECT-v M1：角色能动闭环实现拆解 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HenRiser</span>
+  </div>
+  <div class="powered-by">Powered by <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZw==">NexT.Gemini</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
+</html>
