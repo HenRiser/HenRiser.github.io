@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"henriser.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="M2 的目标是把 M1 的“角色能动”推进到“基础战斗”。这一阶段不追求完整动作游戏手感，也不做技能、武器 Build、Boss 或正式表现层，而是先证明最小战斗链路成立：玩家能攻击，敌人能受伤和死亡，敌人能靠近并攻击玩家，玩家能死亡和复活，难度缩放和自动化测试能覆盖这条链路。 本文所有文件路径均以 PROJECT-V 项目根目录为基准。">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="PROJECT-v M2：基础战斗闭环实现拆解">
+<meta property="og:url" content="https://henriser.github.io/2026/06/29/ProjectV-M2-Implementation/index.html">
+<meta property="og:site_name" content="Codeverse">
+<meta property="og:description" content="M2 的目标是把 M1 的“角色能动”推进到“基础战斗”。这一阶段不追求完整动作游戏手感，也不做技能、武器 Build、Boss 或正式表现层，而是先证明最小战斗链路成立：玩家能攻击，敌人能受伤和死亡，敌人能靠近并攻击玩家，玩家能死亡和复活，难度缩放和自动化测试能覆盖这条链路。 本文所有文件路径均以 PROJECT-V 项目根目录为基准。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-06-29T05:10:00.000Z">
+<meta property="article:modified_time" content="2026-06-29T10:16:22.471Z">
+<meta property="article:author" content="HenRiser">
+<meta property="article:tag" content="ProjectV">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Devlog">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://henriser.github.io/2026/06/29/ProjectV-M2-Implementation/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://henriser.github.io/2026/06/29/ProjectV-M2-Implementation/","path":"2026/06/29/ProjectV-M2-Implementation/","title":"PROJECT-v M2：基础战斗闭环实现拆解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PROJECT-v M2：基础战斗闭环实现拆解 | Codeverse</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Codeverse</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">HenRiser'blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/2024/10/19/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E6%8F%90%E4%BA%A4%E5%92%8C%E4%BE%9D%E6%8D%AE"><span class="nav-text">关联提交和依据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M2-%E7%9A%84%E7%9B%AE%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C"><span class="nav-text">M2 的目标和边界</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E7%94%9F%E6%88%90%E5%85%A5%E5%8F%A3"><span class="nav-text">工程生成入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%A9%E5%AE%B6%E6%94%BB%E5%87%BB%E7%B3%BB%E7%BB%9F"><span class="nav-text">玩家攻击系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%B8%AD%E6%A1%86%E5%92%8C%E9%87%8D%E5%A4%8D%E5%91%BD%E4%B8%AD%E4%BF%9D%E6%8A%A4"><span class="nav-text">命中框和重复命中保护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E3%80%81%E6%AD%BB%E4%BA%A1%E5%92%8C%E5%A4%8D%E6%B4%BB"><span class="nav-text">生命、死亡和复活</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%8C%E4%BA%BA%E9%85%8D%E7%BD%AE%E5%92%8C%E5%9F%BA%E7%A1%80-AI"><span class="nav-text">敌人配置和基础 AI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%BE%E5%BA%A6%E7%BC%A9%E6%94%BE"><span class="nav-text">难度缩放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M2-%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF"><span class="nav-text">M2 测试场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="nav-text">验证结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5%E9%99%90%E5%88%B6"><span class="nav-text">已知限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M2-%E7%95%99%E4%B8%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E4%B8%BB%E7%BA%BF"><span class="nav-text">M2 留下的工程主线</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HenRiser"
+      src="/images/authorAvatar.jpg">
+  <p class="site-author-name" itemprop="name">HenRiser</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;HenRiser"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmhybG9uZ19Ab3V0bG9vay5jb20=" title="E-Mail → mailto:hrlong_@outlook.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9zdGVhbWNvbW11bml0eS5jb20vcHJvZmlsZXMvNzY1NjExOTg5NzY4OTM4MTYv" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198976893816&#x2F;"><i class="fab fa-steam fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="Back to top">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://henriser.github.io/2026/06/29/ProjectV-M2-Implementation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/authorAvatar.jpg">
+      <meta itemprop="name" content="HenRiser">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PROJECT-v M2：基础战斗闭环实现拆解 | Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PROJECT-v M2：基础战斗闭环实现拆解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-06-29 13:10:00 / Modified: 18:16:22" itemprop="dateCreated datePublished" datetime="2026-06-29T13:10:00+08:00">2026-06-29</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>M2 的目标是把 M1 的“角色能动”推进到“基础战斗”。这一阶段不追求完整动作游戏手感，也不做技能、武器 Build、Boss 或正式表现层，而是先证明最小战斗链路成立：玩家能攻击，敌人能受伤和死亡，敌人能靠近并攻击玩家，玩家能死亡和复活，难度缩放和自动化测试能覆盖这条链路。</p>
+<p>本文所有文件路径均以 <code>PROJECT-V</code> 项目根目录为基准。</p>
+<span id="more"></span>
+<h2 id="关联提交和依据">关联提交和依据</h2>
+<p>M2 功能主体提交：</p>
+<table>
+<thead>
+<tr>
+<th>commit</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>f93faa4</code></td>
+<td><code>feat(m2): implement basic combat milestone</code>，M2 基础战斗里程碑实现</td>
+</tr>
+</tbody>
+</table>
+<p>分支状态：</p>
+<table>
+<thead>
+<tr>
+<th>分支</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>develop</code></td>
+<td>M2 实施分支</td>
+</tr>
+<tr>
+<td><code>origin/develop</code></td>
+<td>已推送远端分支</td>
+</tr>
+</tbody>
+</table>
+<p>主要参考产物：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>reports/M2_delivery_report.html</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reports/M2_test_report.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M2_basic_combat.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/results/M2_EditMode_TestResults.xml</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/results/M2_PlayMode_TestResults.xml</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/results/M2_RuntimeProbe.json</code></p>
+</li>
+</ul>
+<h2 id="M2-的目标和边界">M2 的目标和边界</h2>
+<p>M2 只做基础战斗闭环。它承接 M1 的移动、跳跃、相机和测试场景，不重写角色控制，而是在玩家、敌人和战斗模块之间接出一条最小可验证链路。</p>
+<p>M2 纳入实现的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>玩家轻攻击和重攻击。</p>
+</li>
+<li class="lvl-2">
+<p>攻击配置、命中框、重复命中保护、击退和 hitstop。</p>
+</li>
+<li class="lvl-2">
+<p>玩家 HP、敌人 HP、死亡事件、死亡后防重复处理。</p>
+</li>
+<li class="lvl-2">
+<p>玩家死亡后的输入锁定和复活。</p>
+</li>
+<li class="lvl-2">
+<p>三类普通敌人：废土、赛博、生化各一个。</p>
+</li>
+<li class="lvl-2">
+<p>敌人 Patrol / Approach / Telegraph / Attack / Recover / Dead 基础 AI。</p>
+</li>
+<li class="lvl-2">
+<p>难度缩放公式。</p>
+</li>
+<li class="lvl-2">
+<p><code>M2_BasicCombat.unity</code> 测试场景。</p>
+</li>
+<li class="lvl-2">
+<p>EditMode、PlayMode、Windows Development Build 和 Runtime Probe 验证。</p>
+</li>
+</ul>
+<p>M2 明确不做的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>连段树、闪避无敌、技能、武器池、符文和 Build 协同。</p>
+</li>
+<li class="lvl-2">
+<p>Boss、程序化关卡、正式关卡流程。</p>
+</li>
+<li class="lvl-2">
+<p>正式伤害数字、正式死亡 UI、最终音频和正式特效。</p>
+</li>
+<li class="lvl-2">
+<p>赛博敌人的完整 projectile 系统。</p>
+</li>
+<li class="lvl-2">
+<p>30 分钟 1080p 长时 soak。</p>
+</li>
+</ul>
+<p>这个边界决定了 M2 的实现方式：系统要能打通战斗因果链，但仍保持白盒、可测、可替换。</p>
+<h2 id="工程生成入口">工程生成入口</h2>
+<p>M2 的工程落地入口是 <code>unity-project/Assets/_Project/Editor/M2ProjectBuilder.cs</code>。</p>
+<p>它的职责比 M1 更重：不仅生成场景，还要把战斗资产、玩家 Prefab、敌人 Prefab 和验证入口全部拉齐。</p>
+<p>它会生成或更新这些内容：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>轻攻击配置</td>
+<td><code>unity-project/Assets/_Project/Combat/SO/AttackConfig_Light.asset</code></td>
+</tr>
+<tr>
+<td>重攻击配置</td>
+<td><code>unity-project/Assets/_Project/Combat/SO/AttackConfig_Heavy.asset</code></td>
+</tr>
+<tr>
+<td>玩家生命配置</td>
+<td><code>unity-project/Assets/_Project/Combat/SO/Health_Player.asset</code></td>
+</tr>
+<tr>
+<td>难度配置</td>
+<td><code>unity-project/Assets/_Project/Combat/SO/Difficulty_M2.asset</code></td>
+</tr>
+<tr>
+<td>三类敌人配置</td>
+<td><code>unity-project/Assets/_Project/Enemies/SO/</code></td>
+</tr>
+<tr>
+<td>三类敌人 Prefab</td>
+<td><code>unity-project/Assets/_Project/Enemies/Prefabs/</code></td>
+</tr>
+<tr>
+<td>M2 测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M2_BasicCombat.unity</code></td>
+</tr>
+<tr>
+<td>Runtime Probe</td>
+<td><code>unity-project/Assets/_Project/Player/Scripts/M2RuntimeProbe.cs</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>SetupM2()</code> 会先确保 M1 资源存在，再创建 <code>Combat</code>、<code>Enemies</code> 目录、<code>Enemy</code> Layer、<code>Player</code> Tag、敌人占位 Sprite、SO 配置、Prefab 和测试场景。<code>VerifyM2Setup()</code> 则检查配置参数、输入绑定、玩家 Prefab、敌人配置、场景内容和 runtime probe。</p>
+<p>这让 M2 仍保持一个重要原则：不要依赖某次 Unity Editor 里的手工摆放。战斗场景、敌人 Prefab、SO 参数和验证入口都能由同一套 Editor tooling 重建。</p>
+<h2 id="玩家攻击系统">玩家攻击系统</h2>
+<p>玩家攻击核心在 <code>unity-project/Assets/_Project/Player/Scripts/PlayerAttack.cs</code>。</p>
+<p>M2 把攻击拆成三层：</p>
+<ol>
+<li class="lvl-3">
+<p><code>PlayerInputHandler</code> 负责消费轻攻击、重攻击输入。</p>
+</li>
+<li class="lvl-3">
+<p><code>AttackConfigSO</code> 定义攻击类型、伤害、持续时间、命中窗口、命中框、目标 Layer、hitstop 和击退。</p>
+</li>
+<li class="lvl-3">
+<p><code>PlayerAttack</code> 用计时器进入命中窗口，并把命中结果转换成 <code>DamageInfo</code>。</p>
+</li>
+</ol>
+<p>轻重攻击参数如下：</p>
+<table>
+<thead>
+<tr>
+<th>攻击</th>
+<th>输入</th>
+<th style="text-align:right">伤害</th>
+<th style="text-align:right">总时长</th>
+<th style="text-align:right">命中开始</th>
+<th style="text-align:right">命中持续</th>
+<th style="text-align:right">hitstop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Light</td>
+<td><code>J</code></td>
+<td style="text-align:right"><code>12</code></td>
+<td style="text-align:right"><code>0.40s</code></td>
+<td style="text-align:right"><code>0.25s</code></td>
+<td style="text-align:right"><code>0.10s</code></td>
+<td style="text-align:right"><code>6</code> frames</td>
+</tr>
+<tr>
+<td>Heavy</td>
+<td><code>L</code></td>
+<td style="text-align:right"><code>30</code></td>
+<td style="text-align:right"><code>0.80s</code></td>
+<td style="text-align:right"><code>0.50s</code></td>
+<td style="text-align:right"><code>0.15s</code></td>
+<td style="text-align:right"><code>12</code> frames</td>
+</tr>
+</tbody>
+</table>
+<p>输入资产还配置了鼠标和手柄：</p>
+<table>
+<thead>
+<tr>
+<th>行为</th>
+<th>键盘</th>
+<th>鼠标</th>
+<th>手柄</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>轻攻击</td>
+<td><code>J</code></td>
+<td>左键</td>
+<td>buttonWest</td>
+</tr>
+<tr>
+<td>重攻击</td>
+<td><code>L</code></td>
+<td>右键</td>
+<td>buttonNorth</td>
+</tr>
+</tbody>
+</table>
+<p>需要注意的是，M2 报告只确认这些绑定存在；鼠标和手柄路径没有做真实外设人工测试。</p>
+<h2 id="命中框和重复命中保护">命中框和重复命中保护</h2>
+<p>命中检测由 <code>unity-project/Assets/_Project/Combat/Scripts/Hitbox2D.cs</code> 封装，底层使用 <code>Physics2D.OverlapBoxNonAlloc()</code>。这符合 M2 的白盒目标：先用简单、可控、无 GC 压力的盒形命中框跑通战斗。</p>
+<p><code>PlayerAttack</code> 中有一个关键结构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HashSet&lt;HealthComponent&gt; hitTargets</span><br></pre></td></tr></table></figure>
+<p>每次攻击开始时清空它；攻击命中窗口内，如果目标已经被当前攻击实例命中过，就跳过。这样可以保证“同一次攻击同一个目标只受伤一次”，但同一次攻击仍可以打到多个不同敌人。</p>
+<p>命中成功后，链路是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">AttackConfigSO</span><br><span class="line">  -&gt; PlayerAttack.ApplyHitbox()</span><br><span class="line">  -&gt; Hitbox2D.Overlap()</span><br><span class="line">  -&gt; HealthComponent.TakeDamage()</span><br><span class="line">  -&gt; OnAttackHit / OnDamageTaken / OnHealthChanged</span><br><span class="line">  -&gt; HitFeedback / Knockback / Hitstop</span><br></pre></td></tr></table></figure>
+<p>这条链路的重点不是表现效果，而是战斗事实：谁打了谁、造成多少伤害、是否死亡、事件是否只触发一次。</p>
+<h2 id="生命、死亡和复活">生命、死亡和复活</h2>
+<p>生命系统集中在 <code>unity-project/Assets/_Project/Combat/Scripts/HealthComponent.cs</code>。</p>
+<p><code>HealthComponent</code> 不只服务玩家，也服务敌人；实体类型通过 <code>HealthEntityKind</code> 区分：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Player</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Enemy</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Generic</code></p>
+</li>
+</ul>
+<p><code>TakeDamage()</code> 的守卫逻辑很明确：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>已死亡则不再受伤。</p>
+</li>
+<li class="lvl-2">
+<p>伤害小于等于 0 则不处理。</p>
+</li>
+<li class="lvl-2">
+<p>仍在受击无敌时间内则不处理。</p>
+</li>
+</ul>
+<p>有效伤害会触发：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>OnDamageTaken</code></p>
+</li>
+<li class="lvl-2">
+<p><code>OnHealthChanged</code></p>
+</li>
+<li class="lvl-2">
+<p>死亡时触发 <code>OnPlayerDeath</code> 或 <code>OnEnemyDeath</code></p>
+</li>
+</ul>
+<p>敌人死亡后会禁用子物体中的 Collider，避免死亡敌人继续参与命中或碰撞。测试也覆盖了“死亡事件只触发一次”和“死亡后不能重复受击”。</p>
+<p>玩家复活由 <code>unity-project/Assets/_Project/Player/Scripts/PlayerDeathController.cs</code> 接入。当前测试确认玩家死亡后不能攻击，复活后 HP 回到 <code>50</code>，并恢复攻击能力。复活输入在白盒实现中支持 <code>R</code> 或 <code>Enter</code>。</p>
+<h2 id="敌人配置和基础-AI">敌人配置和基础 AI</h2>
+<p>M2 新增 <code>Enemies</code> 模块，核心配置文件是 <code>unity-project/Assets/_Project/Enemies/Scripts/EnemyConfigSO.cs</code>，核心控制器是 <code>unity-project/Assets/_Project/Enemies/Scripts/EnemyController.cs</code>。</p>
+<p>三类普通敌人对应三个世界观：</p>
+<table>
+<thead>
+<tr>
+<th>敌人</th>
+<th>世界</th>
+<th style="text-align:right">基础 HP</th>
+<th style="text-align:right">基础伤害</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wasteland Raider</td>
+<td>Wasteland</td>
+<td style="text-align:right"><code>30</code></td>
+<td style="text-align:right"><code>8</code></td>
+<td>近战基础敌人</td>
+</tr>
+<tr>
+<td>Cyber Infantry</td>
+<td>Cyberpunk</td>
+<td style="text-align:right"><code>25</code></td>
+<td style="text-align:right"><code>10</code></td>
+<td>M2 用范围攻击近似远程</td>
+</tr>
+<tr>
+<td>Bio Parasite</td>
+<td>Biohazard</td>
+<td style="text-align:right"><code>40</code></td>
+<td style="text-align:right"><code>12</code></td>
+<td>更厚、更贴近</td>
+</tr>
+</tbody>
+</table>
+<p>敌人状态机是白盒版：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Patrol</span><br><span class="line">  -&gt; Approach</span><br><span class="line">  -&gt; Telegraph</span><br><span class="line">  -&gt; Attack</span><br><span class="line">  -&gt; Recover</span><br><span class="line">  -&gt; Patrol / Approach</span><br><span class="line">  -&gt; Dead</span><br></pre></td></tr></table></figure>
+<p>AI 逻辑先按距离找玩家：看见玩家进入 <code>Approach</code>，进入攻击距离后先 <code>Telegraph</code>，至少等待 <code>0.3s</code>，再进入 <code>Attack</code>。这一步是公平性底线：敌人不能一进范围就瞬间扣血。</p>
+<p>赛博敌人目前不是正式远程 projectile，而是用更大的 attack range 做白盒范围攻击。这个限制已经在 QA 报告中接受为 M2 范围内的残余项。</p>
+<h2 id="难度缩放">难度缩放</h2>
+<p>M2 的难度公式在 <code>unity-project/Assets/_Project/Combat/Scripts/DifficultyBalancing.cs</code>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">enemyHp     = baseHp     * (1 + 0.10 * upgradeCount)</span><br><span class="line">enemyDamage = baseDamage * (1 + 0.05 * upgradeCount)</span><br><span class="line">enemyCount  = baseCount  + floor(upgradeCount / 3)</span><br></pre></td></tr></table></figure>
+<p>实际实现会对 HP 和伤害做 <code>Mathf.Round()</code>，并保证 HP 至少为 1、敌人数至少为 1。<code>DifficultyBalancing.Calculate()</code> 还会发布 <code>OnDifficultyScaled</code>，方便后续 QA 或 UI 记录缩放结果。</p>
+<p>EditMode 测试覆盖了 <code>upgradeCount = 0 / 3 / 6 / 10</code>，证明公式在关键台阶上没有偏离。</p>
+<h2 id="M2-测试场景">M2 测试场景</h2>
+<p>M2 场景是 <code>unity-project/Assets/Scenes/TestScenes/M2_BasicCombat.unity</code>。</p>
+<p>场景结构很直接：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>一个玩家。</p>
+</li>
+<li class="lvl-2">
+<p>三个敌人，分别对应废土、赛博、生化。</p>
+</li>
+<li class="lvl-2">
+<p>主战斗平台、赛博远程测试平台和安全地板。</p>
+</li>
+<li class="lvl-2">
+<p>一个 <code>M2_RuntimeProbe</code>。</p>
+</li>
+</ul>
+<p>M2 没有做完整关卡，而是做一个可控的白盒战斗试验场。这个选择是对的：基础战斗还没稳定时，复杂关卡只会放大变量，让问题更难定位。</p>
+<h2 id="验证结果">验证结果</h2>
+<p>M2 当前验证结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>验证项</th>
+<th>证据</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M2ProjectBuilder.VerifyM2Setup</td>
+<td><code>unity-project/Logs/M2_Verify.log</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>EditMode</td>
+<td><code>qa/results/M2_EditMode_TestResults.xml</code></td>
+<td>13 passed / 0 failed</td>
+</tr>
+<tr>
+<td>PlayMode</td>
+<td><code>qa/results/M2_PlayMode_TestResults.xml</code></td>
+<td>4 passed / 0 failed</td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td><code>unity-project/Logs/M2_Build.log</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td>Runtime Probe</td>
+<td><code>qa/results/M2_RuntimeProbe.json</code></td>
+<td>Avg 60.165 FPS, Min 59.817 FPS</td>
+</tr>
+</tbody>
+</table>
+<p>EditMode 的 13 个用例包含 M1 回归 5 个和 M2 战斗 8 个，覆盖配置、HP/死亡/复活、死亡幂等、难度公式、Prefab、场景和输入绑定。</p>
+<p>PlayMode 的 4 个用例覆盖：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>轻攻击造成 <code>12</code> 点伤害。</p>
+</li>
+<li class="lvl-2">
+<p>重攻击造成 <code>30</code> 点伤害且同目标只命中一次。</p>
+</li>
+<li class="lvl-2">
+<p>玩家死亡后不能攻击，复活到半血。</p>
+</li>
+<li class="lvl-2">
+<p>敌人 telegraph 后再对玩家造成伤害。</p>
+</li>
+</ul>
+<p>Runtime Probe 结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th style="text-align:right">数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Warmup</td>
+<td style="text-align:right"><code>1s</code></td>
+</tr>
+<tr>
+<td>测量窗口</td>
+<td style="text-align:right"><code>5.003s</code></td>
+</tr>
+<tr>
+<td>帧数</td>
+<td style="text-align:right"><code>301</code></td>
+</tr>
+<tr>
+<td>平均 FPS</td>
+<td style="text-align:right"><code>60.165</code></td>
+</tr>
+<tr>
+<td>最低 FPS</td>
+<td style="text-align:right"><code>59.817</code></td>
+</tr>
+<tr>
+<td>最高 FPS</td>
+<td style="text-align:right"><code>367.245</code></td>
+</tr>
+<tr>
+<td>敌人数</td>
+<td style="text-align:right"><code>3</code></td>
+</tr>
+<tr>
+<td>玩家 HP</td>
+<td style="text-align:right"><code>38</code></td>
+</tr>
+<tr>
+<td>玩家死亡</td>
+<td style="text-align:right"><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p>这说明 M2 短程 smoke 达到当前 QA floor，但它仍然不能替代长时 release-grade 性能验证。</p>
+<h2 id="已知限制">已知限制</h2>
+<p>M2 已通过当前范围验收，但仍有明确限制：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>未执行 30 分钟 1080p soak；这仍是后续 release-grade QA gate。</p>
+</li>
+<li class="lvl-2">
+<p>Cyber Infantry 使用白盒范围攻击近似远程行为，还不是正式 projectile 系统。</p>
+</li>
+<li class="lvl-2">
+<p>伤害数字、正式死亡 UI、正式音频不在 M2 P0 范围内。</p>
+</li>
+<li class="lvl-2">
+<p>鼠标和手柄攻击路径已配置，但本轮未做真实外设人工测试。</p>
+</li>
+<li class="lvl-2">
+<p>当前测试场景是白盒战斗试验场，不代表正式关卡体验。</p>
+</li>
+</ul>
+<h2 id="M2-留下的工程主线">M2 留下的工程主线</h2>
+<p>M2 之后，PROJECT-V 的局内主链路变成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PlayerInputHandler</span><br><span class="line">  -&gt; PlayerAttack</span><br><span class="line">  -&gt; AttackConfigSO</span><br><span class="line">  -&gt; Hitbox2D</span><br><span class="line">  -&gt; HealthComponent</span><br><span class="line">  -&gt; EventBus</span><br><span class="line">  -&gt; EnemyController / PlayerDeathController</span><br><span class="line">  -&gt; M2CombatTests / M2CombatPlayModeTests / M2RuntimeProbe</span><br></pre></td></tr></table></figure>
+<p>这条链路把 M1 的“能走能跳”升级成了“能打、能受伤、能死、能复活、敌人能反击”。它仍然是白盒实现，但已经足够支撑 M3 继续做攻击链、闪避、技能、反馈调参和更复杂敌人行为。</p>
+<p>M3 不应该另起一套战斗框架，而应该沿着 M2 的 <code>AttackConfigSO</code>、<code>HealthComponent</code>、<code>EnemyController</code> 和事件钩子继续扩展。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ProjectV/" rel="tag"><i class="fa fa-tag"></i> ProjectV</a>
+              <a href="/tags/Unity/" rel="tag"><i class="fa fa-tag"></i> Unity</a>
+              <a href="/tags/Devlog/" rel="tag"><i class="fa fa-tag"></i> Devlog</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/06/29/ProjectV-M1-Implementation/" rel="prev" title="PROJECT-v M1：角色能动闭环实现拆解">
+                  <i class="fa fa-angle-left"></i> PROJECT-v M1：角色能动闭环实现拆解
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HenRiser</span>
+  </div>
+  <div class="powered-by">Powered by <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZw==">NexT.Gemini</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
+</html>
