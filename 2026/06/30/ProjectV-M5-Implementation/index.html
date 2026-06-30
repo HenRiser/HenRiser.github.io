@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"henriser.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="M5 的目标是把 M4 的手工 LevelConfigSO.orderedRooms 升级为可复现、可约束、可验证的程序生成链路。它不是简单随机抽房间，而是把 36 个房间原型、三世界顺序、房间类型强约束、平台可达性、Addressable 加载、难度曲线和 30-run QA gate 接成一条可测试的生成系统。 除注明 docs 仓库的文档外，本文所有工程路径均以 PROJECT-V 项目根目">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="PROJECT-v M5：种子驱动的程序生成关卡">
+<meta property="og:url" content="https://henriser.github.io/2026/06/30/ProjectV-M5-Implementation/index.html">
+<meta property="og:site_name" content="Codeverse">
+<meta property="og:description" content="M5 的目标是把 M4 的手工 LevelConfigSO.orderedRooms 升级为可复现、可约束、可验证的程序生成链路。它不是简单随机抽房间，而是把 36 个房间原型、三世界顺序、房间类型强约束、平台可达性、Addressable 加载、难度曲线和 30-run QA gate 接成一条可测试的生成系统。 除注明 docs 仓库的文档外，本文所有工程路径均以 PROJECT-V 项目根目">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-06-30T08:30:00.000Z">
+<meta property="article:modified_time" content="2026-06-30T14:31:55.589Z">
+<meta property="article:author" content="HenRiser">
+<meta property="article:tag" content="ProjectV">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Devlog">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://henriser.github.io/2026/06/30/ProjectV-M5-Implementation/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://henriser.github.io/2026/06/30/ProjectV-M5-Implementation/","path":"2026/06/30/ProjectV-M5-Implementation/","title":"PROJECT-v M5：种子驱动的程序生成关卡"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PROJECT-v M5：种子驱动的程序生成关卡 | Codeverse</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Codeverse</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">HenRiser'blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/2024/10/19/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E6%8F%90%E4%BA%A4%E5%92%8C%E4%BE%9D%E6%8D%AE"><span class="nav-text">关联提交和依据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M5-%E7%9A%84%E7%9B%AE%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C"><span class="nav-text">M5 的目标和边界</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E7%94%9F%E6%88%90%E5%85%A5%E5%8F%A3"><span class="nav-text">工程生成入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RoomPrototype%EF%BC%9A%E7%94%9F%E6%88%90%E5%89%8D%E5%85%88%E5%AE%9A%E4%B9%89%E5%8F%AF%E8%BE%BE%E6%80%A7"><span class="nav-text">RoomPrototype：生成前先定义可达性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#36-%E4%B8%AA%E6%88%BF%E9%97%B4%E5%8E%9F%E5%9E%8B"><span class="nav-text">36 个房间原型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SeedSystem%EF%BC%9A%E5%A4%8D%E7%8E%B0%E4%B8%8D%E6%98%AF%E9%99%84%E5%8A%A0%E5%8A%9F%E8%83%BD"><span class="nav-text">SeedSystem：复现不是附加功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LevelGenerator%EF%BC%9A%E5%BC%BA%E7%BA%A6%E6%9D%9F%E4%B8%8B%E7%9A%84%E9%9A%8F%E6%9C%BA"><span class="nav-text">LevelGenerator：强约束下的随机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%BE%E5%BA%A6%E6%9B%B2%E7%BA%BF%E5%A6%82%E4%BD%95%E6%8E%A5%E5%85%A5%E7%94%9F%E6%88%90"><span class="nav-text">难度曲线如何接入生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AddressableRoomLoader"><span class="nav-text">AddressableRoomLoader</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M5-Runtime-Probe"><span class="nav-text">M5 Runtime Probe</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA-Gate"><span class="nav-text">QA Gate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5%E9%A3%8E%E9%99%A9%E5%92%8C%E9%99%90%E5%88%B6"><span class="nav-text">已知风险和限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M6-%E6%96%B9%E5%90%91"><span class="nav-text">M6 方向</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HenRiser"
+      src="/images/authorAvatar.jpg">
+  <p class="site-author-name" itemprop="name">HenRiser</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;HenRiser"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmhybG9uZ19Ab3V0bG9vay5jb20=" title="E-Mail → mailto:hrlong_@outlook.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9zdGVhbWNvbW11bml0eS5jb20vcHJvZmlsZXMvNzY1NjExOTg5NzY4OTM4MTYv" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198976893816&#x2F;"><i class="fab fa-steam fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="Back to top">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://henriser.github.io/2026/06/30/ProjectV-M5-Implementation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/authorAvatar.jpg">
+      <meta itemprop="name" content="HenRiser">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PROJECT-v M5：种子驱动的程序生成关卡 | Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PROJECT-v M5：种子驱动的程序生成关卡
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-06-30 16:30:00 / Modified: 22:31:55" itemprop="dateCreated datePublished" datetime="2026-06-30T16:30:00+08:00">2026-06-30</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>M5 的目标是把 M4 的手工 <code>LevelConfigSO.orderedRooms</code> 升级为可复现、可约束、可验证的程序生成链路。它不是简单随机抽房间，而是把 36 个房间原型、三世界顺序、房间类型强约束、平台可达性、Addressable 加载、难度曲线和 30-run QA gate 接成一条可测试的生成系统。</p>
+<p>除注明 docs 仓库的文档外，本文所有工程路径均以 <code>PROJECT-V</code> 项目根目录为基准；docs 路径均以 <code>PROJECT-V-game-docs</code> 根目录为基准。</p>
+<span id="more"></span>
+<h2 id="关联提交和依据">关联提交和依据</h2>
+<p>M5 功能主体提交：</p>
+<table>
+<thead>
+<tr>
+<th>commit</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>c3840c7848cc4cab8b5ee17b3ea189e2364e6b52</code></td>
+<td><code>feat(levels): deliver M5 procedural generation</code>，程序生成里程碑实现</td>
+</tr>
+</tbody>
+</table>
+<p>分支状态：</p>
+<table>
+<thead>
+<tr>
+<th>分支</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>develop</code></td>
+<td>M5 实施分支</td>
+</tr>
+<tr>
+<td><code>origin/develop</code></td>
+<td>已推送</td>
+</tr>
+</tbody>
+</table>
+<p>主要参考产物：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M5 交付报告，docs 仓库</td>
+<td><code>reports/M5_delivery_report.html</code></td>
+</tr>
+<tr>
+<td>M5 QA 报告，docs 仓库</td>
+<td><code>qa/reports/M5_test_report.md</code></td>
+</tr>
+<tr>
+<td>30-run QA 报告，docs 仓库</td>
+<td><code>qa/reports/M5_30runs_test_report.md</code></td>
+</tr>
+<tr>
+<td>M5 程序生成 spec，docs 仓库</td>
+<td><code>design/feature_specs/M5_procedural.md</code></td>
+</tr>
+<tr>
+<td>M5 难度曲线，docs 仓库</td>
+<td><code>design/difficulty_curves/M5_difficulty_curve.md</code></td>
+</tr>
+<tr>
+<td>M5 房间分类，docs 仓库</td>
+<td><code>design/room_prototypes/M5_room_taxonomy.md</code></td>
+</tr>
+<tr>
+<td>EditMode 结果</td>
+<td><code>qa/results/M5_EditMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>PlayMode 结果</td>
+<td><code>qa/results/M5_PlayMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>60s Runtime Probe</td>
+<td><code>qa/results/M5_RuntimeProbe_60s.json</code></td>
+</tr>
+<tr>
+<td>30-run 生成日志</td>
+<td><code>qa/results/M5_30Runs_GenerationLog.json</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="M5-的目标和边界">M5 的目标和边界</h2>
+<p>M5 承接 M4 的 Level / Room / Boss / Difficulty 结构，但把“手工排好的 9 房间路线”替换为“seed 驱动的三世界生成 run”。</p>
+<p>M5 纳入实现的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>36 个 <code>RoomPrototype</code>：3 个异世界 × 12 个原型。</p>
+</li>
+<li class="lvl-2">
+<p>每个原型对应 <code>RoomConfigSO</code> 和房间 prefab。</p>
+</li>
+<li class="lvl-2">
+<p><code>RoomPrototypeRegistry</code>：按世界观、房间类型、房间序号和可达性筛选候选房间。</p>
+</li>
+<li class="lvl-2">
+<p><code>SeedSystem</code>：确定性 RNG、seed 派生、三世界顺序洗牌、run hash。</p>
+</li>
+<li class="lvl-2">
+<p><code>LevelGenerator</code>：生成三世界 run，强制 Start / Boss / Shop / Rest 结构。</p>
+</li>
+<li class="lvl-2">
+<p><code>AddressableRoomLoader</code>：按 room prefab key 异步加载 / 卸载生成房间 prefab。</p>
+</li>
+<li class="lvl-2">
+<p><code>M5RuntimeProbe</code>：60s 性能采样和 30 个派生 seed 的生成验证。</p>
+</li>
+<li class="lvl-2">
+<p><code>M5_ProceduralGeneration.unity</code> 测试场景。</p>
+</li>
+<li class="lvl-2">
+<p>BuildScript 集成 <code>M5ProjectBuilder.VerifyM5Setup()</code>。</p>
+</li>
+</ul>
+<p>M5 明确不做：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>不做最终房间美术。房间 tile 已接入三世界占位 sprite，但不是终局视觉。</p>
+</li>
+<li class="lvl-2">
+<p>不做正式 OGG 房间切换音频资产。当前完成 SFX hook，并绑定现有 WAV，这项债务留到 M6/M7 补齐。</p>
+</li>
+<li class="lvl-2">
+<p>不做玩家体感调参收口。当前难度曲线是工程可通关版本，不等于最终节奏。</p>
+</li>
+<li class="lvl-2">
+<p>不做 Roguelite 元进度、存档、纯度 UI，这些是 M6 范围。</p>
+</li>
+</ul>
+<p>这个边界合理。M5 真正要证明的是生成系统不会造出结构性坏关卡：无 Boss、无补给、入口/出口悬空、死路、不可复现路线、Addressable key 缺失和性能劣化。</p>
+<h2 id="工程生成入口">工程生成入口</h2>
+<p>M5 的入口是 <code>unity-project/Assets/_Project/Editor/M5ProjectBuilder.cs</code>。</p>
+<p><code>SetupM5()</code> 的流程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">EnsureFolders()</span><br><span class="line">  -&gt; CreateOrUpdatePrototypeRegistry()</span><br><span class="line">  -&gt; LoadM4LevelConfigs()</span><br><span class="line">  -&gt; LevelGenerator.GenerateRun(TestSeed, ...)</span><br><span class="line">  -&gt; CreateOrUpdateGeneratedLevel()</span><br><span class="line">  -&gt; CreateM5Scene()</span><br><span class="line">  -&gt; ConfigureAddressables()</span><br><span class="line">  -&gt; ConfigureBuildScenes()</span><br></pre></td></tr></table></figure>
+<p>核心产物：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原型注册表</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Prototypes/RoomPrototypeRegistry_M5.asset</code></td>
+</tr>
+<tr>
+<td>M5 房间配置</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/M5Rooms/</code></td>
+</tr>
+<tr>
+<td>M5 房间 prefab</td>
+<td><code>unity-project/Assets/_Project/Levels/Prefabs/M5Rooms/</code></td>
+</tr>
+<tr>
+<td>测试关卡</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Levels/Level_M5_Procedural_Test.asset</code></td>
+</tr>
+<tr>
+<td>测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M5_ProceduralGeneration.unity</code></td>
+</tr>
+<tr>
+<td>生成器</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/LevelGenerator.cs</code></td>
+</tr>
+<tr>
+<td>原型模型</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/RoomPrototype.cs</code></td>
+</tr>
+<tr>
+<td>原型注册表</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/RoomPrototypeRegistry.cs</code></td>
+</tr>
+<tr>
+<td>Seed 系统</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/SeedSystem.cs</code></td>
+</tr>
+<tr>
+<td>Addressable loader</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/AddressableRoomLoader.cs</code></td>
+</tr>
+<tr>
+<td>Runtime Probe</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/M5RuntimeProbe.cs</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>VerifyM5Setup()</code> 会先调用 <code>M4ProjectBuilder.VerifyM4Setup()</code>，再检查 M5 自身：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>registry 数量在 30-45 内，当前为 36。</p>
+</li>
+<li class="lvl-2">
+<p>三个世界观各至少 10 个原型，当前各 12。</p>
+</li>
+<li class="lvl-2">
+<p>每个世界观覆盖 Start / Combat / Elite / Reward / Shop / Rest / Boss。</p>
+</li>
+<li class="lvl-2">
+<p>所有原型可达。</p>
+</li>
+<li class="lvl-2">
+<p>Addressable entries 存在。</p>
+</li>
+<li class="lvl-2">
+<p>生成器能通过强约束验证。</p>
+</li>
+<li class="lvl-2">
+<p><code>M5_ProceduralGeneration.unity</code> 场景包含生成关卡 harness。</p>
+</li>
+</ul>
+<p>这延续了前几阶段的原则：阶段产物必须能被工具重建和校验，而不是靠一次手工编辑器状态维持。</p>
+<h2 id="RoomPrototype：生成前先定义可达性">RoomPrototype：生成前先定义可达性</h2>
+<p>M5 的最关键对象不是 <code>LevelGenerator</code>，而是 <code>RoomPrototype</code>。生成器只能在原型质量足够高时工作，否则随机抽取只会放大坏数据。</p>
+<p><code>RoomPrototype</code> 位于 <code>unity-project/Assets/_Project/Levels/Scripts/RoomPrototype.cs</code>，核心字段包括：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>worldview</code></td>
+<td>Wasteland / Cyberpunk / Biohazard</td>
+</tr>
+<tr>
+<td><code>roomType</code></td>
+<td>Start / Combat / Elite / Reward / Shop / Rest / Boss</td>
+</tr>
+<tr>
+<td><code>shapeType</code></td>
+<td>Horizontal / Platform / LShape / TShape / Vertical</td>
+</tr>
+<tr>
+<td><code>minRoomIndex</code> / <code>maxRoomIndex</code></td>
+<td>允许出现的房间序号范围</td>
+</tr>
+<tr>
+<td><code>selectionWeight</code></td>
+<td>生成权重</td>
+</tr>
+<tr>
+<td><code>entryLocalPosition</code> / <code>exitLocalPosition</code></td>
+<td>入口和出口点</td>
+</tr>
+<tr>
+<td><code>platforms</code></td>
+<td>平台段集合</td>
+</tr>
+<tr>
+<td><code>requiresJump</code> / <code>requiresVerticalTraversal</code></td>
+<td>生成与 QA 标签</td>
+</tr>
+<tr>
+<td><code>addressableKey</code> / <code>label</code></td>
+<td>prefab 加载地址</td>
+</tr>
+<tr>
+<td><code>roomTemplate</code></td>
+<td>对应 <code>RoomConfigSO</code></td>
+</tr>
+</tbody>
+</table>
+<p>M5 的可达性模型使用 M1 玩家能力作为保守边界：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th style="text-align:right">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最大水平间距</td>
+<td style="text-align:right"><code>2.75</code></td>
+</tr>
+<tr>
+<td>最大向上台阶</td>
+<td style="text-align:right"><code>2.10</code></td>
+</tr>
+<tr>
+<td>最大安全下落</td>
+<td style="text-align:right"><code>3.20</code></td>
+</tr>
+<tr>
+<td>入口 / 出口支撑容差</td>
+<td style="text-align:right"><code>0.35</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>RoomPrototype.ValidateReachability()</code> 的判断方式：</p>
+<ol>
+<li class="lvl-3">
+<p>检查 room size 和平台段尺寸。</p>
+</li>
+<li class="lvl-3">
+<p>找到支撑入口点的平台集合。</p>
+</li>
+<li class="lvl-3">
+<p>找到支撑出口点的平台集合。</p>
+</li>
+<li class="lvl-3">
+<p>把平台段看成图节点。</p>
+</li>
+<li class="lvl-3">
+<p>用 <code>CanTraverse()</code> 判断平台间是否可走、可跳或可下落。</p>
+</li>
+<li class="lvl-3">
+<p>从入口支撑平台做 BFS，只要能到达任一出口支撑平台就通过。</p>
+</li>
+</ol>
+<p>这个模型比“所有平台都必须互通”更合适。它允许奖励旁支、Boss 安全台、T 形分叉存在，但主路径不能断。</p>
+<p>M5 实施中修正过三类平台问题：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Platform 房出口高度与出口平台不一致。</p>
+</li>
+<li class="lvl-2">
+<p>Platform / LShape / TShape 主路径水平间距超过默认可跳距离。</p>
+</li>
+<li class="lvl-2">
+<p>Vertical 房最后一段到出口间距过大。</p>
+</li>
+</ul>
+<p>最终 36 个原型都通过了 EditMode 和 VerifyM5Setup 双重验证。</p>
+<h2 id="36-个房间原型">36 个房间原型</h2>
+<p>M5 每个异世界有 12 个原型：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th style="text-align:right">每异世界数量</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Start</td>
+<td style="text-align:right"><code>1</code></td>
+<td>开局安全房</td>
+</tr>
+<tr>
+<td>Combat</td>
+<td style="text-align:right"><code>5</code></td>
+<td>普通战斗</td>
+</tr>
+<tr>
+<td>Elite</td>
+<td style="text-align:right"><code>2</code></td>
+<td>中后段高压战斗</td>
+</tr>
+<tr>
+<td>Reward</td>
+<td style="text-align:right"><code>1</code></td>
+<td>构筑奖励</td>
+</tr>
+<tr>
+<td>Shop</td>
+<td style="text-align:right"><code>1</code></td>
+<td>中段补给</td>
+</tr>
+<tr>
+<td>Rest</td>
+<td style="text-align:right"><code>1</code></td>
+<td>Boss 前缓冲</td>
+</tr>
+<tr>
+<td>Boss</td>
+<td style="text-align:right"><code>1</code></td>
+<td>关卡终点</td>
+</tr>
+</tbody>
+</table>
+<p>形状覆盖：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Horizontal</p>
+</li>
+<li class="lvl-2">
+<p>Platform</p>
+</li>
+<li class="lvl-2">
+<p>LShape</p>
+</li>
+<li class="lvl-2">
+<p>TShape</p>
+</li>
+<li class="lvl-2">
+<p>Vertical</p>
+</li>
+</ul>
+<p>代表性原型：</p>
+<table>
+<thead>
+<tr>
+<th>世界观</th>
+<th>示例 ID</th>
+<th>类型</th>
+<th>形状</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wasteland</td>
+<td><code>waste_arrival_ruins</code></td>
+<td>Start</td>
+<td>Horizontal</td>
+</tr>
+<tr>
+<td>Wasteland</td>
+<td><code>waste_scrap_bridge</code></td>
+<td>Combat</td>
+<td>Platform</td>
+</tr>
+<tr>
+<td>Wasteland</td>
+<td><code>waste_radio_tower</code></td>
+<td>Elite</td>
+<td>Vertical</td>
+</tr>
+<tr>
+<td>Cyberpunk</td>
+<td><code>cyber_switchboard_t</code></td>
+<td>Combat</td>
+<td>TShape</td>
+</tr>
+<tr>
+<td>Cyberpunk</td>
+<td><code>cyber_clockwork_spiral</code></td>
+<td>Elite</td>
+<td>Vertical</td>
+</tr>
+<tr>
+<td>Cyberpunk</td>
+<td><code>cyber_mechanism_core</code></td>
+<td>Boss</td>
+<td>Horizontal</td>
+</tr>
+<tr>
+<td>Biohazard</td>
+<td><code>bio_clinic_l_shape</code></td>
+<td>Combat</td>
+<td>LShape</td>
+</tr>
+<tr>
+<td>Biohazard</td>
+<td><code>bio_spine_climb</code></td>
+<td>Elite</td>
+<td>Vertical</td>
+</tr>
+<tr>
+<td>Biohazard</td>
+<td><code>bio_maternal_core</code></td>
+<td>Boss</td>
+<td>Horizontal</td>
+</tr>
+</tbody>
+</table>
+<p><code>RoomPrototypeRegistry.Find()</code> 会按四个条件筛选：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">worldview</span><br><span class="line">roomType</span><br><span class="line">oneBasedRoomIndex</span><br><span class="line">requireReachable</span><br></pre></td></tr></table></figure>
+<p>这意味着生成器不会在第 2 房抽到只适合后段的 Elite，也不会抽到可达性失败的 prefab。</p>
+<h2 id="SeedSystem：复现不是附加功能">SeedSystem：复现不是附加功能</h2>
+<p>M5 的 seed 系统位于 <code>unity-project/Assets/_Project/Levels/Scripts/SeedSystem.cs</code>。</p>
+<p>它提供三类能力：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NormalizeSeed()</code></td>
+<td>处理输入 seed</td>
+</tr>
+<tr>
+<td><code>Derive()</code></td>
+<td>用 base seed + salt 派生子 seed</td>
+</tr>
+<tr>
+<td><code>GenerateWorldviewOrder()</code></td>
+<td>对三世界顺序做确定性洗牌</td>
+</tr>
+<tr>
+<td><code>HashGeneratedRun()</code></td>
+<td>把生成结果压成可复验 run hash</td>
+</tr>
+</tbody>
+</table>
+<p>随机数本身用 <code>SeededRandom</code>，内部是轻量 xorshift。M5 不需要加密随机数，需要的是低成本、可复现、跨测试稳定。</p>
+<p>同一 seed 必须稳定产生：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>三世界顺序。</p>
+</li>
+<li class="lvl-2">
+<p>每个世界的房间数。</p>
+</li>
+<li class="lvl-2">
+<p>每个房间的类型计划。</p>
+</li>
+<li class="lvl-2">
+<p>每个房间抽到的 prototype。</p>
+</li>
+<li class="lvl-2">
+<p>最终 run hash。</p>
+</li>
+</ul>
+<p>EditMode 的 <code>SeedSystemProducesStableRunHashAndVariedRoutes</code> 覆盖了两件事：同 seed 重复生成 hash 一致；30 个派生 seed 中至少有足够多不同 route hash，避免“看似随机，实际总是同一条路线”。</p>
+<h2 id="LevelGenerator：强约束下的随机">LevelGenerator：强约束下的随机</h2>
+<p>生成器位于 <code>unity-project/Assets/_Project/Levels/Scripts/LevelGenerator.cs</code>。</p>
+<p><code>GenerateRun()</code> 负责生成一个完整 run：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GenerateWorldviewOrder(seed)</span><br><span class="line">  -&gt; for each worldview:</span><br><span class="line">       GenerateLevel(Derive(seed, level-order-worldview), ...)</span><br><span class="line">  -&gt; HashGeneratedRun()</span><br></pre></td></tr></table></figure>
+<p>每个 <code>GeneratedLevel</code> 是 6-12 个房间。<code>BuildRoomPlan()</code> 先写死硬约束，再用 seed 填充可变节点：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">room[0] = Start</span><br><span class="line">room[last] = Boss</span><br><span class="line">room[last - 1] = Rest</span><br><span class="line">middle = Shop</span><br><span class="line">remaining = Combat</span><br><span class="line">then insert Elite / Reward by seed</span><br></pre></td></tr></table></figure>
+<p>关键规则：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Boss 固定最后一房。</p>
+</li>
+<li class="lvl-2">
+<p>Rest 固定倒数第二房。</p>
+</li>
+<li class="lvl-2">
+<p>Shop 固定中段。</p>
+</li>
+<li class="lvl-2">
+<p>Elite 最早第 4 房，且不相邻。</p>
+</li>
+<li class="lvl-2">
+<p>Reward 按剩余 Combat 位置插入。</p>
+</li>
+<li class="lvl-2">
+<p>每个候选房间都必须从 <code>RoomPrototypeRegistry.Find(..., requireReachable: true)</code> 获取。</p>
+</li>
+</ul>
+<p><code>ValidateRun()</code> 和 <code>ValidateLevel()</code> 是 M5 的防线：</p>
+<table>
+<thead>
+<tr>
+<th>验证</th>
+<th>失败条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>run level 数</td>
+<td>不是 3 个世界观 level</td>
+</tr>
+<tr>
+<td>level 房间数</td>
+<td>少于 6 或多于 12</td>
+</tr>
+<tr>
+<td>首房</td>
+<td>不是 Start</td>
+</tr>
+<tr>
+<td>末房</td>
+<td>不是 Boss</td>
+</tr>
+<tr>
+<td>房间数据</td>
+<td>prototype 或 room config 缺失</td>
+</tr>
+<tr>
+<td>可达性</td>
+<td>任一 room prototype 不可达</td>
+</tr>
+<tr>
+<td>Boss</td>
+<td>Boss 房不是正好 1 个</td>
+</tr>
+<tr>
+<td>Shop</td>
+<td>少于 1 个</td>
+</tr>
+<tr>
+<td>Rest</td>
+<td>少于 1 个</td>
+</tr>
+</tbody>
+</table>
+<p>这就是 M5 的核心工程决策：随机只在强约束内部发生。生成器可以改变路线，但不能改变关卡的最低可玩结构。</p>
+<h2 id="难度曲线如何接入生成">难度曲线如何接入生成</h2>
+<p>M5 没有重写 M4 的难度系统，而是复用 <code>DifficultyScaler.Evaluate()</code>。差异在于 M5 为每个生成房间构造 <code>RoomDifficultyContext</code>。</p>
+<p>关键输入：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>M5 输入</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>roomIndex</code></td>
+<td>当前房间序号</td>
+</tr>
+<tr>
+<td><code>totalRooms</code></td>
+<td>当前关房间总数</td>
+</tr>
+<tr>
+<td><code>levelOrderIndex</code></td>
+<td>本 run 中第几个异世界</td>
+</tr>
+<tr>
+<td><code>roomType</code></td>
+<td>Start / Combat / Elite / Reward / Shop / Rest / Boss</td>
+</tr>
+<tr>
+<td><code>worldview</code></td>
+<td>当前世界观</td>
+</tr>
+<tr>
+<td><code>upgradeScoreRaw</code></td>
+<td><code>(levelOrderIndex - 1) * 3 + roomIndex * 0.75</code>，上限 <code>18</code></td>
+</tr>
+<tr>
+<td><code>weaponWorldModCount</code></td>
+<td>当前关序号</td>
+</tr>
+<tr>
+<td><code>uniqueWorldviewCount</code></td>
+<td>当前关序号</td>
+</tr>
+<tr>
+<td><code>crossWorldSynergyCount</code></td>
+<td><code>levelOrderIndex - 1</code></td>
+</tr>
+<tr>
+<td><code>purity</code></td>
+<td>当前原型固定 <code>0.5</code></td>
+</tr>
+</tbody>
+</table>
+<p>这使得难度在两个方向上递增：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>关卡内：越靠后压力越高。</p>
+</li>
+<li class="lvl-2">
+<p>关卡间：第 1 / 2 / 3 个异世界逐步加压。</p>
+</li>
+</ul>
+<p>Elite、Boss 高于普通 Combat；Reward、Shop、Rest 不制造战斗压力。M5 当前曲线是工程可通关版本，后续仍需 playtest 调整 Elite 密度、Reward 数量、Rest 位置和 Boss 前压力上限。</p>
+<h2 id="AddressableRoomLoader">AddressableRoomLoader</h2>
+<p>M5 引入 <code>unity-project/Assets/_Project/Levels/Scripts/AddressableRoomLoader.cs</code>。</p>
+<p>它的职责很窄：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">LoadRoomAsync(RoomConfigSO, parent)</span><br><span class="line">  -&gt; Addressables.LoadAssetAsync&lt;GameObject&gt;(roomPrefabKey)</span><br><span class="line">  -&gt; Instantiate</span><br><span class="line">  -&gt; Configure RoomManager</span><br><span class="line">  -&gt; record handle</span><br><span class="line"></span><br><span class="line">UnloadRoom(key)</span><br><span class="line">  -&gt; Destroy instance</span><br><span class="line">  -&gt; Addressables.Release(handle)</span><br></pre></td></tr></table></figure>
+<p>测试覆盖 <code>AddressableRoomLoaderCanLoadAndUnloadGeneratedRoomPrefab</code>，确认生成关卡里的 room prefab key 能被加载，加载后 <code>LoadedCount = 1</code>，<code>UnloadAll()</code> 后回到 0。</p>
+<p>这一步不是为了炫技，而是为 M5/M6 后续关卡 streaming 做工程接口。即使当前仍是测试场景，也不能让生成系统只停留在 SO 数据层。</p>
+<h2 id="M5-Runtime-Probe">M5 Runtime Probe</h2>
+<p>M5 runtime probe 位于 <code>unity-project/Assets/_Project/Levels/Scripts/M5RuntimeProbe.cs</code>。</p>
+<p>它在 <code>Start()</code> 中先跑 30-run 生成批次，再开始性能采样：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">RunGenerationBatch()</span><br><span class="line">  -&gt; for 30 derived seeds:</span><br><span class="line">       LevelGenerator.GenerateRun()</span><br><span class="line">       LevelGenerator.ValidateRun()</span><br><span class="line">       write generation log</span><br><span class="line"></span><br><span class="line">then:</span><br><span class="line">  -&gt; BeginLevel()</span><br><span class="line">  -&gt; trigger dodge / U skill / Boss move / room advance</span><br><span class="line">  -&gt; collect FPS samples</span><br><span class="line">  -&gt; write runtime JSON</span><br></pre></td></tr></table></figure>
+<p>60s probe 结果：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;seed&quot;</span><span class="punctuation">:</span> <span class="string">&quot;00003539&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;warmupSeconds&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;totalElapsedSeconds&quot;</span><span class="punctuation">:</span> <span class="number">63.013</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;measuredSeconds&quot;</span><span class="punctuation">:</span> <span class="number">60.013</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;frameCount&quot;</span><span class="punctuation">:</span> <span class="number">3600</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;averageFps&quot;</span><span class="punctuation">:</span> <span class="number">59.987</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;minFps&quot;</span><span class="punctuation">:</span> <span class="number">49.857</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;maxFps&quot;</span><span class="punctuation">:</span> <span class="number">125.604</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p50Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.999</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p95Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.954</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p99Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.415</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;gcCollections&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;monoMemoryDeltaBytes&quot;</span><span class="punctuation">:</span> <span class="number">4096</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;m5SystemsReady&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;generatedRuns&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;thirtyRunGenerationPassed&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;reachableRoomsChecked&quot;</span><span class="punctuation">:</span> <span class="number">788</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;firstRunHash&quot;</span><span class="punctuation">:</span> <span class="string">&quot;F09EE655&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roomsTotal&quot;</span><span class="punctuation">:</span> <span class="number">6</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roomsCleared&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;dodgeStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;skillUActivated&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;bossMoveStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;addressableLoaderReady&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这里最重要的不是平均 FPS，而是 probe 同时证明了：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>30 个派生 seed 全部生成并验证通过。</p>
+</li>
+<li class="lvl-2">
+<p>788 个房间原型检查点通过。</p>
+</li>
+<li class="lvl-2">
+<p>P95 / P99 仍接近 60 FPS。</p>
+</li>
+<li class="lvl-2">
+<p>GC collections 为 0。</p>
+</li>
+<li class="lvl-2">
+<p>生成场景内仍能触发闪避、U 技能、Boss move 和房间推进。</p>
+</li>
+<li class="lvl-2">
+<p>Addressable loader 已挂入 runtime harness。</p>
+</li>
+</ul>
+<h2 id="QA-Gate">QA Gate</h2>
+<p>M5 验证结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>验证项</th>
+<th>证据</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SetupM5</td>
+<td><code>ProjectV.EditorTools.M5ProjectBuilder.SetupM5</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>VerifyM5Setup</td>
+<td><code>ProjectV.EditorTools.M5ProjectBuilder.VerifyM5Setup</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>尾随空格清理后 VerifyM5Setup</td>
+<td><code>ProjectV.EditorTools.M5ProjectBuilder.VerifyM5Setup</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>EditMode</td>
+<td><code>qa/results/M5_EditMode_TestResults.xml</code></td>
+<td>31 / 31 passed</td>
+</tr>
+<tr>
+<td>PlayMode</td>
+<td><code>qa/results/M5_PlayMode_TestResults.xml</code></td>
+<td>24 / 24 passed</td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td><code>unity-project/Builds/Windows/PROJECT-V.exe</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td>Runtime Probe 60s</td>
+<td><code>qa/results/M5_RuntimeProbe_60s.json</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>30-run 生成日志</td>
+<td><code>qa/results/M5_30Runs_GenerationLog.json</code></td>
+<td>30 / 30 passed</td>
+</tr>
+</tbody>
+</table>
+<p>EditMode 的新增 M5 用例覆盖：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>PrototypeRegistryContainsThirtySixReachableRoomsAcrossThreeWorldviews</code></p>
+</li>
+<li class="lvl-2">
+<p><code>EveryPrototypeHasReachableEntryExitAndAddressableRoomTemplate</code></p>
+</li>
+<li class="lvl-2">
+<p><code>SeedSystemProducesStableRunHashAndVariedRoutes</code></p>
+</li>
+<li class="lvl-2">
+<p><code>ThirtyGeneratedRunsSatisfyM5RouteConstraints</code></p>
+</li>
+<li class="lvl-2">
+<p><code>M5SceneContainsGeneratedLevelHarness</code></p>
+</li>
+<li class="lvl-2">
+<p><code>GeneratedLevelHasM5VisualAndAudioHooks</code></p>
+</li>
+</ul>
+<p>PlayMode 的新增 M5 用例覆盖：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>PlayerSpawnsOnReachableGeneratedPlatform</code></p>
+</li>
+<li class="lvl-2">
+<p><code>GeneratedSceneEntryAndExitPointsHaveGroundSupport</code></p>
+</li>
+<li class="lvl-2">
+<p><code>LevelManagerCanAdvanceThroughAllGeneratedRooms</code></p>
+</li>
+<li class="lvl-2">
+<p><code>AddressableRoomLoaderCanLoadAndUnloadGeneratedRoomPrefab</code></p>
+</li>
+<li class="lvl-2">
+<p><code>ThirtyGeneratedRunsValidateInPlayMode</code></p>
+</li>
+</ul>
+<p>这组测试把 M5 最容易出事故的地方都压住了：玩家出生悬空、entry/exit 没地面支撑、生成房间不可推进、Addressable key 假存在、30 个 seed 中出现坏路线。</p>
+<h2 id="已知风险和限制">已知风险和限制</h2>
+<p>M5 已通过核心工程与 QA gate，但仍有明确债务：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>正式 OGG 房间切换音频资产未生成。当前完成 SFX hook 并绑定现有 WAV，应作为 M6/M7 前音频资产补齐项。</p>
+</li>
+<li class="lvl-2">
+<p>当前难度曲线是工程可通关版本，尚未经过真实玩家体感 playtest。</p>
+</li>
+<li class="lvl-2">
+<p>程序生成已经能保底结构正确，但“路线是否有趣”仍需要后续内容调参和更多原型。</p>
+</li>
+<li class="lvl-2">
+<p>60s probe 是阶段工程验证，不等同于发布前长时段 soak。</p>
+</li>
+</ul>
+<p>这些限制不影响 M5 验收。M5 的完成标准是生成系统可靠、可复现、可加载、可达、可验证，而不是最终内容手感收口。</p>
+<h2 id="M6-方向">M6 方向</h2>
+<p>M5 之后，PROJECT-V 已经具备从房间原型库生成三世界 run 的基础。M6 不应该再重写生成器，而应在这条链路上接 Roguelite 元进度。</p>
+<p>合理方向：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>把生成 seed 暴露到后续 UI，支持复盘和分享。</p>
+</li>
+<li class="lvl-2">
+<p>将纯度、升级树、存档与 <code>LevelGenerator</code> 的 build context 对接。</p>
+</li>
+<li class="lvl-2">
+<p>补齐 OGG 房间切换和关卡完成音频资产。</p>
+</li>
+<li class="lvl-2">
+<p>基于真实 playtest 调整 Elite 密度、Reward 数量、Rest 位置和 Boss 前压力上限。</p>
+</li>
+<li class="lvl-2">
+<p>将 30-run gate 扩展到更多 seed 分布和更长 runtime window。</p>
+</li>
+</ul>
+<p>M5 的阶段价值在这里：PROJECT-V 现在不只是有手工关卡和 Boss，而是有一套可复现、带可达性约束、可被自动化验证的关卡生成基础。后续的重点可以转向“生成出来的 run 如何变得更有构筑价值和长期可玩性”。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ProjectV/" rel="tag"><i class="fa fa-tag"></i> ProjectV</a>
+              <a href="/tags/Unity/" rel="tag"><i class="fa fa-tag"></i> Unity</a>
+              <a href="/tags/Devlog/" rel="tag"><i class="fa fa-tag"></i> Devlog</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/06/30/ProjectV-M4-Implementation/" rel="prev" title="PROJECT-v M4：关卡原型与 Boss 压力验证">
+                  <i class="fa fa-angle-left"></i> PROJECT-v M4：关卡原型与 Boss 压力验证
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HenRiser</span>
+  </div>
+  <div class="powered-by">Powered by <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZw==">NexT.Gemini</span>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
+</html>

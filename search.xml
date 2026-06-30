@@ -1,6 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>LeetcodeHard-871最低加油次数</title>
+    <url>/2024/10/23/LeetcodeHard-871/</url>
+    <content><![CDATA[<p>写在前面：该题转载至leetcode力扣 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy9taW5pbXVtLW51bWJlci1vZi1yZWZ1ZWxpbmctc3RvcHM=">No.871–最低加油次数<i class="fa fa-external-link-alt"></i></span></em> 😃</p>
+<h2 id="题目描述：">题目描述：</h2>
+<h3 id="No-871最低加油次数">No.871最低加油次数</h3>
+<p>汽车从起点出发驶向目的地，该目的地位于出发位置东面 <em>target</em>英里处。</p>
+<p>沿途有加油站，用数组 <em>stations</em>表示。其中 <em>stations[i] = [position<sub>i</sub>, fuel<sub>i</sub>]</em> 表示第 <em>i</em> 个加油站位于出发位置东面 <em>position<sub>i</sub></em> 英里处，并且有 <em>fuel<sub>i</sub></em> 升汽油。</p>
+<p>假设汽车油箱的容量是无限的，其中最初有 <em>startFuel</em> 升燃料。它每行驶 <em>1</em> 英里就会用掉 <em>1</em> 升汽油。当汽车到达加油站时，它可能停下来加油，将所有汽油从加油站转移到汽车中。</p>
+<p>为了到达目的地，汽车所必要的最低加油次数是多少？如果无法到达目的地，则返回 <em>-1</em> 。</p>
+<p>注意：如果汽车到达加油站时剩余燃料为 <em>0</em>，它仍然可以在那里加油。如果汽车到达目的地时剩余燃料为 <em>0</em>，仍然认为它已经到达目的地。</p>
+<h4 id="示例1：">示例1：</h4>
+<blockquote>
+<p>输入：target = <code>1</code>, startFuel = <code>1</code>, stations = <code>[]</code><br>
+输出：<code>0</code>解释：可以在不加油的情况下到达目的地。</p>
+</blockquote>
+<span id="more"></span>
+<h4 id="示例2：">示例2：</h4>
+<blockquote>
+<p>输入：target = <code>100</code>, startFuel = <code>1</code>, stations = <code>[[10,100]]</code><br>
+输出：<code>-1</code>解释：无法抵达目的地，甚至无法到达第一个加油站。</p>
+</blockquote>
+<h4 id="示例3：">示例3：</h4>
+<blockquote>
+<p>输入：target = <code>100</code>, startFuel = <code>10</code>, stations = <code>[[10,60],[20,30],[30,30],[60,40]]</code><br>
+输出：<code>2</code>解释：出发时有 <code>10</code> 升燃料。开车来到距起点 <code>10</code> 英里处的加油站，消耗 <code>10</code>升燃料。将汽油从 <code>0</code> 升加到 <code>60</code> 升。然后，从 <code>10</code> 英里处的加油站开到 <code>60</code> 英里处的加油站（消耗 <code>50</code> 升燃料），并将汽油从 <code>10</code> 升加到 <code>50</code> 升。然后开车抵达目的地。沿途在两个加油站停靠，所以返回 <code>2</code> 。</p>
+</blockquote>
+<h4 id="数据范围：">数据范围：</h4>
+<blockquote>
+<p>1 &lt;= target, startFuel &lt;= 10<sup>9</sup><br>
+0 &lt;= stations.length &lt;= 500<br>
+1 &lt;= position<sub>i</sub> &lt; position<sub>i+1</sub> &lt; target<br>
+1 &lt;= fuel<sub>i</sub> &lt; 10<sup>9</sup></p>
+</blockquote>
+<h4 id="默认代码模板：">默认代码模板：</h4>
+<p>C:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">minRefuelStops</span><span class="params">(<span class="type">int</span> target, <span class="type">int</span> startFuel, <span class="type">int</span>** stations, <span class="type">int</span> stationsSize, <span class="type">int</span>* stationsColSize)</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Python3:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">minRefuelStops</span>(<span class="params">self, target: <span class="built_in">int</span>, startFuel: <span class="built_in">int</span>, stations: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]</span>) -&gt; <span class="built_in">int</span>:</span><br></pre></td></tr></table></figure>
+<h3 id="题目解析：">题目解析：</h3>
+<p>dp可以，贪心也可以，这里先说dp</p>
+<h4 id="动态规划：">动态规划：</h4>
+<p>转移方程：</p>
+<p><code>dp[j + 1] = max(dp[j + 1],dp[j] + stations[i][1])</code></p>
+<p><em>dp[j]<em>表示加了</em>j</em>次油的情况下最远行驶距离，如果在最新遍历到的一个加油站加油能够使行驶距离到新高的话就更新<em>dp[]</em>，</p>
+<p>每次途径一个加油站都往回遍历一遍已经走过的加油站更新<em>dp[i]</em>，</p>
+<p>如果目的地<code>target&lt;dp[i]</code>,就说明在i次加油的情况下能到目的地，在符合条件的<em>dp[i]<em>中选择最小的</em>i</em>值即为所求答案。</p>
+<!-- #### 效果示意： -->
+<h5 id="复杂度：">复杂度：</h5>
+<p>每次遍历到新的加油站都要回头看一遍遍历过的，所以时间复杂度<em>O(n<sup>2</sup>)</em>.</p>
+<p>要在程序中维护数组<em>dp[]</em>,其大小是<em>n</em>,空间复杂度<em>O(n)</em>.</p>
+<h5 id="完整代码：">完整代码：</h5>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">minRefuelStops</span><span class="params">(<span class="type">int</span> target, <span class="type">int</span> startFuel, <span class="type">int</span>** stations, <span class="type">int</span> stationsSize, <span class="type">int</span>* stationsColSize)</span>&#123;</span><br><span class="line">    <span class="type">long</span> dp[stationsSize+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=stationsSize;i++)</span><br><span class="line">        dp[i]=<span class="number">0</span>;</span><br><span class="line">    dp[<span class="number">0</span>] = startFuel;<span class="comment">//dp[i]为加i次油能到的最远距离</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; stationsSize; i++) <span class="comment">//途径的加油站</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i; j &gt;= <span class="number">0</span>; j--) <span class="comment">//每次遍历到一个新的加油站的时候回头看能否更新dp[]</span></span><br><span class="line">            <span class="keyword">if</span> (dp[j] &gt;= stations[i][<span class="number">0</span>]) </span><br><span class="line">                dp[j + <span class="number">1</span>] = dp[j + <span class="number">1</span>]&gt;dp[j] + stations[i][<span class="number">1</span>]?dp[j + <span class="number">1</span>]:dp[j] + stations[i][<span class="number">1</span>];<span class="comment">//如果在当前遍历到的加油站加油，会不会跑得更远？(dp[]变得更大)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= stationsSize; i++) </span><br><span class="line">        <span class="keyword">if</span> (dp[i] &gt;= target) <span class="comment">//i次是能到目的地的最小的加油次数</span></span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="反悔贪心：">反悔贪心：</h4>
+<p>用一个最大堆维护当前遍历到的加油站的加油量,如果当前行驶距离小于目的地的距离，就从最大堆中取出最大值，加到行驶范围中，加油次数自增，再做距离的判断。</p>
+<p>如果在某次判断中第一次行驶距离大于等于了目的地的距离，就返回当前的加油次数，如果堆已经空了都没到目的地就返回-1。</p>
+<h5 id="完整代码">完整代码</h5>
+<p>这里引用了 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy9taW5pbXVtLW51bWJlci1vZi1yZWZ1ZWxpbmctc3RvcHMvc29sdXRpb25zLzI5MjEwNjQvenVpLWRhLWR1aS10YW4teGluLXB5dGhvbmphdmFjZ29qc3J1c3QtYi15bGRwLw==">灵茶山艾府大佬的python题解<i class="fa fa-external-link-alt"></i></span></em></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">minRefuelStops</span>(<span class="params">self, target: <span class="built_in">int</span>, startFuel: <span class="built_in">int</span>, stations: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        stations.append((target, <span class="number">0</span>))</span><br><span class="line">        ans, miles = <span class="number">0</span>, startFuel</span><br><span class="line">        fuel_heap = []  <span class="comment"># 下面把堆中元素取反，当作最大堆用</span></span><br><span class="line">        <span class="keyword">for</span> position, fuel <span class="keyword">in</span> stations:</span><br><span class="line">            <span class="keyword">while</span> fuel_heap <span class="keyword">and</span> miles &lt; position:  <span class="comment"># 没有足够的油到达 position</span></span><br><span class="line">                miles -= heappop(fuel_heap)  <span class="comment"># 选油量最多的油桶</span></span><br><span class="line">                ans += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> miles &lt; position:  <span class="comment"># 无法到达</span></span><br><span class="line">                <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">            heappush(fuel_heap, -fuel)  <span class="comment"># 留着后面加油</span></span><br><span class="line">        <span class="keyword">return</span> ans</span><br><span class="line"></span><br><span class="line">作者：灵茶山艾府</span><br><span class="line">来源：力扣（LeetCode）</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br></pre></td></tr></table></figure>
+<hr>
+<p align="center"><img src="https://raw.githubusercontent.com/khoa083/khoa/main/Khoa_ne/img/Rainbow.gif" width="100%"></p>
+<h1 align="center"><i> Connect With Me <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/handShake.gif' width="50px" height=50px> </i></h1>
+<p align="center">
+<a href="mailto:hrlong_@outlook.com"><img title="Email" src="https://logospng.org/download/microsoft-outlook/logo-microsoft-outlook-1024.png"width="50px" height=50px></a><a href="https://github.com/HenRiser"><img title="Github" src="https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/github.gif"width="50px" height=50px,target="_blank"></a>
+</p>
+<h1 align="center"><i> TTTTTThank You! <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/winkFace.gif' width="50px" height=50px> </i></h1>]]></content>
+      <tags>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Something About Me</title>
     <url>/2024/10/19/aboutme/</url>
     <content><![CDATA[<h1 align="center"><i> Who am I ?<img src = "https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/wave.gif" width = 40px height=40px></i></h1>
@@ -30,13 +100,72 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
       </tags>
   </entry>
   <entry>
-    <title>PROJECT-v M4：关卡原型与 Boss 压力验证</title>
-    <url>/2026/06/30/ProjectV-M4-Implementation/</url>
-    <content><![CDATA[<p>M4 的目标不是继续给 M3 战斗链堆更多孤立功能，而是把已经接通的移动、攻击、闪避、技能、武器倍率和反馈链放进连续房间、难度缩放、Boss 弱点和镜像 Boss 的压力环境里验证。换句话说，M4 关心的是：PROJECT-V 是否已经从“单场景战斗能跑通”推进到“关卡和 Boss 语境下仍能形成可玩构成”。</p>
-<p>除注明 docs 仓库的文档外，本文所有工程路径均以 <code>PROJECT-V</code> 项目根目录为基准；docs 路径均以 <code>PROJECT-V-game-docs</code> 根目录为基准。</p>
+    <title>LeetcodeHard-42接雨水</title>
+    <url>/2024/10/22/LeetcodeHard-42/</url>
+    <content><![CDATA[<p>写在前面：该题转载至leetcode力扣 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy90cmFwcGluZy1yYWluLXdhdGVy">No.42–接雨水<i class="fa fa-external-link-alt"></i></span></em> 😃</p>
+<h2 id="题目描述：">题目描述：</h2>
+<h3 id="No-42接雨水">No.42接雨水</h3>
+<p>给定 <em>n</em> 个<em>非负整数</em>表示每个宽度为 <em>1</em> 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。</p>
+<h4 id="示例1：">示例1：</h4>
+ <img src="/2024/10/22/LeetcodeHard-42/example.png" class="" title="example_pic">
+<blockquote>
+<p>输入：<code>height = [0,1,0,2,1,0,1,3,2,1,2,1]</code><BR>输出：<code>6</code><BR>解释：上面是由数组 <code>[0,1,0,2,1,0,1,3,2,1,2,1]</code> 表示的高度图，在这种情况下，可以接 <code>6</code> 个单位的雨水（蓝色部分表示雨水）。</p>
+</blockquote>
+<span id="more"></span>
+<h4 id="示例2：">示例2：</h4>
+<blockquote>
+<p>输入：<code>height = [4,2,0,3,2,5]</code><BR>输出：<code>9</code></p>
+</blockquote>
+<h4 id="数据范围：">数据范围：</h4>
+<blockquote>
+<p>n == height.length<br>
+1 &lt;= n &lt;= 2 * 10<sup>4</sup><br>
+0 &lt;= height[i] &lt;= 10<sup>5</sup></p>
+</blockquote>
+<h4 id="默认代码模板：">默认代码模板：</h4>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">trap</span><span class="params">(<span class="type">int</span>* height, <span class="type">int</span> heightSize)</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="题目解析：">题目解析：</h4>
+<p>该题最容易想到的，也是性能最好的代码，是左右相向双指针。</p>
+<p>我们以<strong>样例1</strong>为例：</p>
+<p>下雨前：</p>
+<img src="/2024/10/22/LeetcodeHard-42/exampleEmpty.png" class="" title="example_pic">
+<p>想象<em>l</em>，<em>r</em>两个指针从左右两端向中间行进，我们需要维护左右两个指针，左右两个指针所经过的最大高度以及最后的返回值：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> l=<span class="number">0</span>,r= heightSize<span class="number">-1</span>,sum=<span class="number">0</span>,lMax=<span class="number">0</span>,rMax=<span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p>在左右指针相遇的时候就已经遍历了全体数组，而一个指针只有在遇到不比他矮的柱子后，他身后经过的空位才能接到雨水，所以只需要对全体数组进行一次遍历，结合遍历过程中指针每一步行进时的反馈，就可以得出全部的接到雨水数，也就是空缺数。</p>
+<p>所以我们用一个在左右指针相遇时停止的<em>while</em>循环进行数组遍历：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在每一次遍历中都更新左右指针所经过的最高柱子的高度：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">lMax = lMax&gt;height[l]?lMax:height[l];</span><br><span class="line">rMax = rMax&gt;height[r]?rMax:height[r];</span><br></pre></td></tr></table></figure>
+<details open>
+<summary><span class="pre-summary">&nbsp;</span><strong>为什么要维护最高柱子高度？</strong></summary><p>如果指针在记录到经过路径的最高柱子 <em>a</em> 的高度 <em>h</em> 后又遇到了新的不比 <em>a</em> 矮的柱子 <em>b</em> ，那么 <em>a</em> 和 <em>b</em> 之间的所有高度不高于 <em>h</em> 的柱子上方都可以被视为空缺，而 <em>h</em> 与中间的柱子 <em>a<sub>i</sub></em> 的高度 <em>h<sub>i</sub></em> 的高度之差 <em>h-h<sub>i</sub></em> 就是柱子 <em>a<sub>i</sub></em> 上方的空缺所能接的雨水量。</p>
+</details>
+<p>只有在遇到至少不比经过的柱子矮的柱子才能接到雨水，那岂不是在遇到符合条件的柱子前都不知道要不要将遍历到的柱子对应的空缺加入到 <em>sum</em> 里面？所以我们可以选择一个指针行进的条件----前方有不比自己经过的最高柱子矮的柱子时，才会向前行进，即：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(lMax&gt;rMax)&#123;</span><br><span class="line">            sum+=rMax-height[r];</span><br><span class="line">            r--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            sum+=lMax-height[l];</span><br><span class="line">            l++;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="效果示意：">效果示意：</h4>
+<img src="/2024/10/22/LeetcodeHard-42/step.gif" class="" title="example_pic">
+<p>这样，每次循环只移动一个指针行进一步，而这个指针定然会在两个指针顺利会师前遍历到符合条件的新柱子，而在路上遇到的所有矮柱子都会为<em>sum</em>的增长做贡献。</p>
+<h4 id="复杂度：">复杂度：</h4>
+<p>使用双指针求解只需要遍历一次，而且只需要维护常数个变量，所以空间复杂度是<em>O(1)</em>,时间复杂度是<em>O(n)</em>。</p>
+<h4 id="完整代码：">完整代码：</h4>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">trap</span><span class="params">(<span class="type">int</span>* height, <span class="type">int</span> heightSize)</span> &#123;</span><br><span class="line">    <span class="type">int</span> l=<span class="number">0</span>,r=heightSize<span class="number">-1</span>,sum=<span class="number">0</span>,lMax=<span class="number">0</span>,rMax=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        lMax = lMax&gt;height[l]?lMax:height[l];</span><br><span class="line">        rMax = rMax&gt;height[r]?rMax:height[r];</span><br><span class="line">        <span class="keyword">if</span>(lMax&gt;rMax)&#123;</span><br><span class="line">            sum+=rMax-height[r];</span><br><span class="line">            r--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            sum+=lMax-height[l];</span><br><span class="line">            l++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p align="center"><img src="https://raw.githubusercontent.com/khoa083/khoa/main/Khoa_ne/img/Rainbow.gif" width="100%"></p>
+<h1 align="center"><i> Connect With Me <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/handShake.gif' width="50px" height=50px> </i></h1>
+<p align="center">
+<a href="mailto:hrlong_@outlook.com"><img title="Email" src="https://logospng.org/download/microsoft-outlook/logo-microsoft-outlook-1024.png"width="50px" height=50px></a><a href="https://github.com/HenRiser"><img title="Github" src="https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/github.gif"width="50px" height=50px,target="_blank"></a>
+</p>
+<h1 align="center"><i> TTTTTThank You! <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/winkFace.gif' width="50px" height=50px> </i></h1>]]></content>
+      <tags>
+        <tag>Leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PROJECT-v M1：角色能动闭环实现拆解</title>
+    <url>/2026/06/29/ProjectV-M1-Implementation/</url>
+    <content><![CDATA[<p>M1 不是一个“项目进度汇报”节点，而是 PROJECT-V 的第一条可运行实现链路：玩家输入进入 Unity，新 Input System 被消费，<code>Rigidbody2D</code> 接收移动与跳跃，状态机更新视觉状态，相机跟随，测试场景验证角色可以从起点平台移动到目标平台。</p>
+<p>本文所有文件路径均以 <code>PROJECT-V</code> 项目根目录为基准。</p>
 <span id="more"></span>
 <h2 id="关联提交和依据">关联提交和依据</h2>
-<p>M4 功能主体提交：</p>
+<p>这篇 M1 记录对应两类提交：</p>
 <table>
 <thead>
 <tr>
@@ -46,8 +175,787 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td><code>6baacf6</code></td>
-<td><code>feat(levels): deliver M4 level and boss prototype</code>，关卡原型与 Boss 里程碑实现</td>
+<td><code>576d81e</code></td>
+<td><code>feat(m1): implement player movement milestone</code>，M1 功能主体实现</td>
+</tr>
+<tr>
+<td><code>94a125c</code></td>
+<td><code>docs: add phase completion blog hook</code>，阶段完成后的博客钩子说明</td>
+</tr>
+</tbody>
+</table>
+<p>主要参考产物是：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>reports/M1_delivery_report.html</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reports/M1_test_report.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reports/T-DEV01_compile_verified.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_smoke_checklist.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_player_movement.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_visual_validation.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/test_cases/M1_performance_baseline.md</code></p>
+</li>
+</ul>
+<h2 id="M1-的实现边界">M1 的实现边界</h2>
+<p>M1 只做 character agency，也就是“角色能动性”。这个边界很窄，但它是后续战斗、敌人、关卡、Build 和表现层的共同底座。</p>
+<p>M1 纳入实现的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Unity 工程初始化与 Core 模板接入。</p>
+</li>
+<li class="lvl-2">
+<p>玩家输入、移动、跳跃、短跳、土狼时间和跳跃缓冲。</p>
+</li>
+<li class="lvl-2">
+<p>Player Prefab 及其物理组件配置。</p>
+</li>
+<li class="lvl-2">
+<p>横向 2D 相机跟随。</p>
+</li>
+<li class="lvl-2">
+<p>M1 测试场景和自动化验证。</p>
+</li>
+</ul>
+<p>M1 明确不做的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>战斗、受击、死亡、敌人、Boss。</p>
+</li>
+<li class="lvl-2">
+<p>程序化房间、关卡选择、Roguelite Build。</p>
+</li>
+<li class="lvl-2">
+<p>Steam 集成、正式 UI、正式角色动画和正式美术资产。</p>
+</li>
+</ul>
+<p>这个边界直接决定了实现方式：M1 没有急着堆玩法系统，而是先把“输入到物理反馈”的主链路做成可复现、可测试、可继续扩展的工程结构。</p>
+<h2 id="工程生成入口">工程生成入口</h2>
+<p>M1 的工程落地入口不是手动在 Unity 里拖一堆对象，而是 <code>unity-project/Assets/_Project/Editor/M1ProjectBuilder.cs</code>。</p>
+<p>这个 Editor 脚本负责一次性生成和校验 M1 需要的基础内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>创建 <code>Ground</code>、<code>Player</code> 物理 Layer。</p>
+</li>
+<li class="lvl-2">
+<p>创建玩家与地块占位 Sprite。</p>
+</li>
+<li class="lvl-2">
+<p>写入 <code>PlayerStatsConfig.asset</code>。</p>
+</li>
+<li class="lvl-2">
+<p>生成 <code>Player.prefab</code>。</p>
+</li>
+<li class="lvl-2">
+<p>生成 <code>_Init.unity</code> 和 <code>M1_PlayerMovement.unity</code> 两个测试场景。</p>
+</li>
+<li class="lvl-2">
+<p>把 M1 场景加入 Build Settings。</p>
+</li>
+<li class="lvl-2">
+<p>验证 Prefab、场景、配置资产和核心组件是否存在。</p>
+</li>
+</ul>
+<p>这一步的关键价值不是“省事”，而是避免 M1 依赖某一次本地 Unity 场景手工操作。Player Prefab、测试场景和基础配置可以由脚本稳定重建，后续如果场景被误删或配置漂移，也能通过同一个入口恢复。</p>
+<p>M1 生成和验证涉及的关键产物路径如下：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unity 工程</td>
+<td><code>unity-project/</code></td>
+</tr>
+<tr>
+<td>Core 脚本</td>
+<td><code>unity-project/Assets/_Project/Scripts/Core/</code></td>
+</tr>
+<tr>
+<td>Player 脚本</td>
+<td><code>unity-project/Assets/_Project/Player/Scripts/</code></td>
+</tr>
+<tr>
+<td>输入资产</td>
+<td><code>unity-project/Assets/_Project/Player/InputActions/DefaultInputActions.inputactions</code></td>
+</tr>
+<tr>
+<td>Stats 资产</td>
+<td><code>unity-project/Assets/_Project/Player/SO/PlayerStatsConfig.asset</code></td>
+</tr>
+<tr>
+<td>Player Prefab</td>
+<td><code>unity-project/Assets/_Project/Player/Prefabs/Player.prefab</code></td>
+</tr>
+<tr>
+<td>M1 测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M1_PlayerMovement.unity</code></td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td><code>unity-project/Builds/Windows/PROJECT-V.exe</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="Player-Prefab-的组成">Player Prefab 的组成</h2>
+<p>玩家对象落在 <code>unity-project/Assets/_Project/Player/Prefabs/Player.prefab</code>，它把 M1 需要的几类职责拆成明确组件：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SpriteRenderer</code></td>
+<td>显示当前运动状态的占位 Sprite</td>
+</tr>
+<tr>
+<td><code>Rigidbody2D</code></td>
+<td>承接水平速度、跳跃速度和下落速度</td>
+</tr>
+<tr>
+<td><code>BoxCollider2D</code></td>
+<td>提供玩家碰撞体和地面检测尺寸来源</td>
+</tr>
+<tr>
+<td><code>PlayerInputHandler</code></td>
+<td>读取移动与跳跃输入</td>
+</tr>
+<tr>
+<td><code>PlayerStatsComponent</code></td>
+<td>暴露移动参数配置</td>
+</tr>
+<tr>
+<td><code>PlayerController</code></td>
+<td>组织输入、物理、状态、事件和视觉切换</td>
+</tr>
+</tbody>
+</table>
+<p>Prefab 的物理设置偏保守：<code>Rigidbody2D</code> 使用动态刚体，冻结旋转，并开启更稳定的碰撞与插值设置。M1 只做横板基础移动，所以不让角色因为物理碰撞产生旋转，是一个必要的约束。</p>
+<h2 id="输入层：缓存意图，不直接改物理">输入层：缓存意图，不直接改物理</h2>
+<p>输入实现位于 <code>unity-project/Assets/_Project/Player/Scripts/PlayerInputHandler.cs</code>。</p>
+<p>M1 没有把输入读取塞进 <code>FixedUpdate</code>，而是在输入层缓存“玩家意图”：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Move</code> 读取水平轴。</p>
+</li>
+<li class="lvl-2">
+<p><code>Jump</code> 记录按下与松开。</p>
+</li>
+<li class="lvl-2">
+<p><code>ConsumeJumpPressed()</code> 和 <code>ConsumeJumpReleased()</code> 用一次性消费的方式交给控制器。</p>
+</li>
+</ul>
+<p>这样做的好处是，跳跃这种瞬时输入不会因为物理帧和渲染帧不同步而丢失。玩家在两次 <code>FixedUpdate</code> 之间按下跳跃键，<code>Update</code> 仍能记录下来，随后由控制器在物理帧里处理。</p>
+<p>M1 支持的输入来源：</p>
+<table>
+<thead>
+<tr>
+<th>行为</th>
+<th>键鼠</th>
+<th>手柄</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>水平移动</td>
+<td><code>A/D</code>、方向键</td>
+<td>左摇杆、D-pad</td>
+</tr>
+<tr>
+<td>跳跃</td>
+<td><code>Space</code>、<code>W</code>、上方向键</td>
+<td>south button</td>
+</tr>
+</tbody>
+</table>
+<p>工程里同时保留 <code>unity-project/Assets/_Project/Player/InputActions/DefaultInputActions.inputactions</code>，自动化测试会检查 Player/UI map 和关键绑定是否存在。这给后续把输入资产完全纳入编辑器流程留下空间。</p>
+<h2 id="控制器：Update-处理状态，FixedUpdate-处理物理">控制器：Update 处理状态，FixedUpdate 处理物理</h2>
+<p>核心控制逻辑位于 <code>unity-project/Assets/_Project/Player/Scripts/PlayerController.cs</code>。</p>
+<p>M1 的控制器分两条节奏运行：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Update</code>：消费跳跃按下/松开，记录跳跃缓冲，处理短跳请求，更新运动状态。</p>
+</li>
+<li class="lvl-2">
+<p><code>FixedUpdate</code>：刷新接地状态，更新土狼时间和跳跃缓冲计时，执行跳跃，应用水平速度，应用短跳，限制最大下落速度。</p>
+</li>
+</ul>
+<p>这个拆分比较重要。输入和状态是“玩家感知层”，应该跟随渲染帧及时响应；速度、重力、接地检测是“物理层”，应该放在固定时间步里更新，避免不同机器帧率下行为漂移。</p>
+<h2 id="移动参数来自-ScriptableObject">移动参数来自 ScriptableObject</h2>
+<p>玩家移动数值由 <code>unity-project/Assets/_Project/Player/Scripts/PlayerStatsConfigSO.cs</code> 定义，并由 <code>unity-project/Assets/_Project/Player/SO/PlayerStatsConfig.asset</code> 承载。</p>
+<p>M1 当前核心参数如下：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th style="text-align:right">当前值</th>
+<th>实现含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>moveSpeed</code></td>
+<td style="text-align:right"><code>5</code></td>
+<td>地面水平移动速度</td>
+</tr>
+<tr>
+<td><code>airControlMultiplier</code></td>
+<td style="text-align:right"><code>0.8</code></td>
+<td>空中横向控制倍率</td>
+</tr>
+<tr>
+<td><code>jumpForce</code></td>
+<td style="text-align:right"><code>12</code></td>
+<td>起跳时的纵向速度</td>
+</tr>
+<tr>
+<td><code>jumpCutMultiplier</code></td>
+<td style="text-align:right"><code>0.5</code></td>
+<td>松开跳跃后的短跳削减倍率</td>
+</tr>
+<tr>
+<td><code>maxJumps</code></td>
+<td style="text-align:right"><code>1</code></td>
+<td>M1 禁止二段跳</td>
+</tr>
+<tr>
+<td><code>coyoteTime</code></td>
+<td style="text-align:right"><code>0.1s</code></td>
+<td>离地后仍允许跳跃的宽限窗口</td>
+</tr>
+<tr>
+<td><code>jumpBufferTime</code></td>
+<td style="text-align:right"><code>0.1s</code></td>
+<td>落地前提前按跳的缓存窗口</td>
+</tr>
+<tr>
+<td><code>gravity</code></td>
+<td style="text-align:right"><code>-25</code></td>
+<td>M1 控制器施加的重力</td>
+</tr>
+<tr>
+<td><code>maxFallSpeed</code></td>
+<td style="text-align:right"><code>20</code></td>
+<td>最大下落速度限制</td>
+</tr>
+</tbody>
+</table>
+<p>这些值没有写死在控制器里，是为了让后续手感调参不需要改代码。M1 的代码负责解释参数，参数本身留给配置资产。</p>
+<h2 id="跳跃手感的四个细节">跳跃手感的四个细节</h2>
+<p>M1 的跳跃不是简单的“按键就给一个 Y 速度”，而是补了横板动作游戏最基本的容错。</p>
+<p>第一，接地检测使用基于 Collider 尺寸的 <code>BoxCast</code>，检测目标是 <code>Ground</code> Layer。这样平台宽度、角色碰撞体变化时，检测区域仍能跟着 Collider 走。</p>
+<p>第二，土狼时间通过离地后的计时器实现。角色刚离开平台边缘时，<code>coyoteTime</code> 还没有归零，玩家仍能跳。这解决的是“玩家肉眼觉得还在边缘，但物理上已经离地”的手感落差。</p>
+<p>第三，跳跃缓冲通过 <code>jumpBufferTime</code> 实现。玩家落地前提前按跳，控制器会短暂保留这个输入；只要缓存窗口内重新接地，跳跃就会被消费。</p>
+<p>第四，短跳通过松开跳跃键后的速度削减实现。当玩家提前松开跳跃，<code>PlayerController</code> 会把上升速度乘以 <code>jumpCutMultiplier</code>，从而让长按和轻点产生不同高度。</p>
+<p>在测试中，理论跳高按 <code>jumpForce^2 / (2 * abs(gravity))</code> 估算：<code>12^2 / (2 * 25) = 2.88m</code>。这个结果落在 M1 预期的 2.8m 到 3.0m 区间内。</p>
+<h2 id="状态机目前只做视觉切换">状态机目前只做视觉切换</h2>
+<p>M1 已接入 Core 状态机模板，但没有提前把移动逻辑拆散到多个复杂状态里。现在的状态集合很小：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Idle</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Move</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Jump</code></p>
+</li>
+</ul>
+<p>对应文件包括：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerMotionState.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerStateMachine.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerIdleState.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerMoveState.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerJumpState.cs</code></p>
+</li>
+</ul>
+<p>这些状态在 M1 阶段主要调用 <code>SetVisualState()</code>，切换占位 Sprite、颜色和朝向。真正的移动和跳跃仍集中在 <code>PlayerController</code>，这是有意保守的实现：M1 的状态机先验证接入方式，不急着把物理行为拆到状态类里，避免在玩法尚未展开时制造过度抽象。</p>
+<h2 id="事件只暴露起跳与落地">事件只暴露起跳与落地</h2>
+<p>M1 里已经把起跳和落地作为事件抛出：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>OnPlayerJump</code></p>
+</li>
+<li class="lvl-2">
+<p><code>OnPlayerLand</code></p>
+</li>
+</ul>
+<p>这两个事件不是为了 M1 立刻做完整音效和特效，而是给后续反馈层留接口。到 M2/M3 引入音频、粒子、受击或战斗反馈时，不需要再回头侵入跳跃主逻辑，只要订阅事件即可。</p>
+<h2 id="相机跟随保持简单">相机跟随保持简单</h2>
+<p>相机逻辑位于 <code>unity-project/Assets/_Project/Player/Scripts/CameraFollow.cs</code>。</p>
+<p>M1 没有引入 Cinemachine 虚拟相机配置，而是用一个轻量脚本做目标跟随：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>在 <code>LateUpdate</code> 中读取玩家位置。</p>
+</li>
+<li class="lvl-2">
+<p>添加固定 offset。</p>
+</li>
+<li class="lvl-2">
+<p>用 <code>Vector3.SmoothDamp</code> 平滑移动。</p>
+</li>
+</ul>
+<p>这个实现足够验证横板移动和跳跃场景。更复杂的镜头边界、房间锁定、Boss 战震屏和镜头权重，都应该留到关卡和战斗系统出现之后再做。</p>
+<h2 id="M1-测试场景怎么验证移动">M1 测试场景怎么验证移动</h2>
+<p>测试场景是 <code>unity-project/Assets/Scenes/TestScenes/M1_PlayerMovement.unity</code>。</p>
+<p>场景里不是随便摆几个方块，而是按移动验证拆了平台：</p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A_Start_Wasteland</code></td>
+<td>起点平台，验证站立、起步和基础移动</td>
+</tr>
+<tr>
+<td><code>B_Cyberpunk_Rise</code></td>
+<td>上升平台，验证跳跃高度和空中控制</td>
+</tr>
+<tr>
+<td><code>C_Biohazard_Rise</code></td>
+<td>第二段上升平台，验证连续平台移动</td>
+</tr>
+<tr>
+<td><code>D_Landing_Return</code></td>
+<td>落点平台，验证落地状态回切</td>
+</tr>
+<tr>
+<td><code>Safety_Floor</code></td>
+<td>兜底地面，避免角色永久掉出场景</td>
+</tr>
+</tbody>
+</table>
+<p><code>unity-project/Assets/_Project/Tests/EditMode/M1SetupTests.cs</code> 会检查配置默认值、Prefab 组件、输入资产、场景存在性和平台间距。这里的测试重点不是“玩家主观手感已经完美”，而是证明 M1 的工程结构没有断：Prefab 没丢组件、场景能被找到、关键平台在可达范围内、核心参数没有被误改。</p>
+<h2 id="运行探针用于短时工程验证">运行探针用于短时工程验证</h2>
+<p>M1 还提供了 <code>unity-project/Assets/_Project/Player/Scripts/M1RuntimeProbe.cs</code>。它会在运行时按目标帧率采样，并把结果写入日志文件。</p>
+<p>完整的本地验证结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>验证项</th>
+<th>证据</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unity 资源生成</td>
+<td><code>logs/unity_setup_m1_final.log</code></td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>M1 setup verification</td>
+<td><code>logs/unity_verify_m1_final.log</code></td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>EditMode tests</td>
+<td><code>logs/editmode-results-final.xml</code></td>
+<td>5 passed / 0 failed</td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td><code>logs/unity_build_windows_final.log</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td>Runtime probe</td>
+<td><code>logs/m1-runtime-probe-final.json</code></td>
+<td>平均 59.943 FPS</td>
+</tr>
+</tbody>
+</table>
+<p>短时探针结果显示：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th style="text-align:right">数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>测量帧数</td>
+<td style="text-align:right"><code>480</code></td>
+</tr>
+<tr>
+<td>平均 FPS</td>
+<td style="text-align:right"><code>59.943</code></td>
+</tr>
+<tr>
+<td>最低 FPS</td>
+<td style="text-align:right"><code>49.590</code></td>
+</tr>
+<tr>
+<td>最高 FPS</td>
+<td style="text-align:right"><code>62.887</code></td>
+</tr>
+<tr>
+<td>目标 FPS</td>
+<td style="text-align:right"><code>60</code></td>
+</tr>
+</tbody>
+</table>
+<p>这只能说明 M1 简单场景的短时运行没有明显性能问题，不能替代 30 分钟 soak，也不能代表后续战斗场景性能。<code>qa/reports/M1_test_report.md</code> 已明确记录：30 分钟 1080p 长时性能 soak 没有执行，它仍然是后续 release-grade QA gate。</p>
+<h2 id="M1-之后真正留下了什么">M1 之后真正留下了什么</h2>
+<p>M1 最重要的产物不是一段能移动的角色代码，而是一条清楚的实现主线：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Input System</span><br><span class="line">  -&gt; PlayerInputHandler</span><br><span class="line">  -&gt; PlayerController</span><br><span class="line">  -&gt; Rigidbody2D / Collider2D</span><br><span class="line">  -&gt; PlayerMotionState</span><br><span class="line">  -&gt; CameraFollow</span><br><span class="line">  -&gt; M1SetupTests / M1RuntimeProbe</span><br></pre></td></tr></table></figure>
+<p>这条链路让 PROJECT-V 从“文档和设定”进入“可运行工程”。它仍然很小，但已经有了后续扩展需要的关键接口：参数资产、状态机、事件、Prefab、场景生成脚本、自动化测试和短时运行探针。</p>
+<p>下一步如果进入 M2，应该沿着这条链路增加生命值、受击、伤害入口和最小敌人，而不是另起一套控制框架。</p>
+]]></content>
+      <tags>
+        <tag>ProjectV</tag>
+        <tag>Unity</tag>
+        <tag>Devlog</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PROJECT-v M0：项目介绍与方向锁定</title>
+    <url>/2026/06/29/ProjectV-M0-Introduction/</url>
+    <content><![CDATA[<p>PROJECT-V 是一个国风浪子剑客穿越末日异世界的 2D 横板 Roguelite 动作游戏。M0 的任务不是做可玩 Demo，而是把项目“为什么成立、做成什么样、哪些东西不做、后续怎么落地”先锁住。</p>
+<p>本文所有文档路径均以 <code>PROJECT-V-game-docs</code> 项目根目录为基准。</p>
+<span id="more"></span>
+<h2 id="一句话定位">一句话定位</h2>
+<p>PROJECT-V 的核心表达可以压缩成一句话：</p>
+<blockquote>
+<p>天赋绝顶、放荡不羁的国风浪子剑客，被传送到三个末日异世界，在污染与力量之间做取舍，为回到原本世界而战。</p>
+</blockquote>
+<p>这个定位里有三个关键词：国风主角、末日异世界、Roguelite 取舍。</p>
+<p>项目不是单纯做“像素横板动作”，也不是单纯做“末日题材缝合”。它的第一锚点是一个稳定、有记忆点的主角：白袍、青绿色调、酒葫芦、浪子气质、天赋很高但不端着。三个世界不断改变外部规则和视觉氛围，但主角身份保持不变。</p>
+<h2 id="M0-锁定的游戏形态">M0 锁定的游戏形态</h2>
+<p>M0 在 <code>design/GDD.md</code> 中锁定了基础形态：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>类型：2D 横板 Roguelite 动作游戏。</p>
+</li>
+<li class="lvl-2">
+<p>平台：PC，优先 Steam。</p>
+</li>
+<li class="lvl-2">
+<p>引擎：Unity <code>2022.3.34f1c1</code>。</p>
+</li>
+<li class="lvl-2">
+<p>运行结构：每局由三个世界关卡组成，世界顺序可以变化。</p>
+</li>
+<li class="lvl-2">
+<p>每个世界有独立风格、敌人、Boss 和 Build 倾向。</p>
+</li>
+<li class="lvl-2">
+<p>单人体验，不在早期做多人、移动端、云同步或 Mod。</p>
+</li>
+</ul>
+<p>这类边界很重要。没有边界，项目会很快被“开放世界、联机、复杂剧情、多角色、全平台发布”之类愿望拖垮。M0 的价值就是先把诱惑砍掉，只保留能支撑核心体验的东西。</p>
+<h2 id="三个末日世界">三个末日世界</h2>
+<p>PROJECT-V 的世界观不是一个单一末日，而是三个不同异世界叠加到 Roguelite 结构里：</p>
+<table>
+<thead>
+<tr>
+<th>世界</th>
+<th>视觉关键词</th>
+<th>玩法倾向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>辐射废土</td>
+<td>铁锈、沙尘、灰烬、毒性绿色</td>
+<td>改装、辐射、硬派生存</td>
+</tr>
+<tr>
+<td>赛博朋克</td>
+<td>霓虹洋红、电光青、紫色、雨夜暗巷</td>
+<td>义体、黑客、护盾、控制</td>
+</tr>
+<tr>
+<td>生化危机</td>
+<td>血红、病态绿色、粉色肉质、真菌感</td>
+<td>变异、寄生、低血量爆发</td>
+</tr>
+</tbody>
+</table>
+<p>这三个世界的作用不是换皮。它们分别承载不同的 Build 方向和风险收益：废土偏改装与 DOT，赛博偏义体和控制，生化偏自伤与爆发。</p>
+<h2 id="Roguelite-结构的核心">Roguelite 结构的核心</h2>
+<p>M0 阶段确定的基础结构是：每局跑三章，但三章顺序可以变化。三世界排列本身就能产生不同体验，再叠加玩家在不同世界中拿到的升级线，构成 Roguelite 的主要变化来源。</p>
+<p>项目文档里还保留了一个更强的方向：不同世界组合会影响后续内容和 Build 走向。也就是说，PROJECT-V 不是只靠随机房间制造差异，而是让“世界顺序”和“世界污染”也参与构建玩家这一局的身份。</p>
+<h2 id="纯度系统不是道德值">纯度系统不是道德值</h2>
+<p>M0 对纯度系统做了一个关键修正：它不是传统善恶值，也不是简单剧情分支，而是更接近 Monster Train 式的平衡压力。</p>
+<p>玩家拿到异世界力量，会变强；同时怪物或世界也会获得强化。纯度影响主角视觉形态，也影响后续挑战结构。</p>
+<p>在 <code>design/data/purity_system.csv</code> 中，纯度被拆成几个区间：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>70-99</code>：轻度污染。</p>
+</li>
+<li class="lvl-2">
+<p><code>30-69</code>：中度污染。</p>
+</li>
+<li class="lvl-2">
+<p><code>0-29</code>：重度污染，并可能触发镜像纯净 Boss。</p>
+</li>
+<li class="lvl-2">
+<p>高纯度路线也可能触发镜像堕落 Boss。</p>
+</li>
+</ul>
+<p>这个设计的重点是“力量不是免费午餐”。玩家越依赖异世界改造，越可能被异世界反噬；玩家越追求极端纯净，也会面对另一个极端自己的挑战。</p>
+<h2 id="Boss-不是血条木桩">Boss 不是血条木桩</h2>
+<p>M0 还锁定了 Boss 弱点部位设计。<code>design/data/boss_weakpoints.csv</code> 里定义了废土军阀、赛博 AI、生化母体等 Boss 的弱点：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>废土 Boss 有背部反应堆、头部弱点。</p>
+</li>
+<li class="lvl-2">
+<p>赛博 Boss 有核心处理器、主眼。</p>
+</li>
+<li class="lvl-2">
+<p>生化 Boss 有心脏核心、背部肿瘤。</p>
+</li>
+</ul>
+<p>弱点不是纯装饰，而是会带来易伤、眩晕、召唤暂停、强制阶段切换等效果。这个方向能让横板 Boss 战从“贴脸输出”变成“识别窗口、攻击部位、打断机制”的结构化战斗。</p>
+<h2 id="永久升级线">永久升级线</h2>
+<p><code>design/data/upgrade_lines.csv</code> 把永久升级分成通用线和世界线。</p>
+<p>通用线负责所有角色基础成长：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>最大 HP。</p>
+</li>
+<li class="lvl-2">
+<p>攻击力。</p>
+</li>
+<li class="lvl-2">
+<p>闪避距离。</p>
+</li>
+<li class="lvl-2">
+<p>闪避无敌时间。</p>
+</li>
+<li class="lvl-2">
+<p>死亡后资源保留。</p>
+</li>
+</ul>
+<p>世界线则服务项目特色：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>废土线：锈毒 DOT、辐射抗性、蒸汽冲击。</p>
+</li>
+<li class="lvl-2">
+<p>赛博线：闪避残影、黑客控制、能量护盾。</p>
+</li>
+<li class="lvl-2">
+<p>生化线：低血量增伤、寄生召唤、狂暴模式。</p>
+</li>
+</ul>
+<p>这样设计的好处是，玩家既有稳定成长，也有世界身份。通用线保证长期推进，世界线保证每局和每个世界都不只是换敌人。</p>
+<h2 id="视觉身份">视觉身份</h2>
+<p>M0 在 <code>design/STYLE_GUIDE.md</code> 中锁定了 v8 视觉方向。</p>
+<p>主角固定为国风浪子剑客：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>年轻、瘦长、脸部轮廓清晰。</p>
+</li>
+<li class="lvl-2">
+<p>白袍带青绿色调。</p>
+</li>
+<li class="lvl-2">
+<p>腰带松散，带酒葫芦。</p>
+</li>
+<li class="lvl-2">
+<p>有狡黠笑意，不是苦大仇深的传统大侠。</p>
+</li>
+</ul>
+<p>三世界视觉不直接吞掉主角，而是逐渐附着在主角身上。废土给铁锈和毒性痕迹，赛博给霓虹和义体痕迹，生化给血肉和真菌痕迹。这个策略能保住 IP 识别度：世界可以变，主角不能丢。</p>
+<h2 id="工程方向">工程方向</h2>
+<p>M0 的工程文档没有停留在“以后再说”，而是提前定了技术骨架。</p>
+<p><code>project/DECISIONS.md</code> 锁定的核心技术决策包括：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Unity <code>2022.3.34f1c1</code>。</p>
+</li>
+<li class="lvl-2">
+<p>URP 2D Renderer。</p>
+</li>
+<li class="lvl-2">
+<p>新 Input System。</p>
+</li>
+<li class="lvl-2">
+<p>Addressables。</p>
+</li>
+<li class="lvl-2">
+<p>Unity Animation 先行，Spine 后续可接入。</p>
+</li>
+<li class="lvl-2">
+<p>ScriptableObject 数据驱动。</p>
+</li>
+<li class="lvl-2">
+<p>JSON 加二进制存档。</p>
+</li>
+<li class="lvl-2">
+<p>不使用 ECS/DOTS 作为早期主架构。</p>
+</li>
+</ul>
+<p><code>docs/ARCHITECTURE.md</code> 给出模块边界：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Core</code>：状态机、事件总线、对象池、数据基类。</p>
+</li>
+<li class="lvl-2">
+<p><code>Player</code>：玩家控制、状态、参数。</p>
+</li>
+<li class="lvl-2">
+<p><code>Enemies</code>：敌人与 Boss。</p>
+</li>
+<li class="lvl-2">
+<p><code>Combat</code>：伤害、命中、战斗反馈。</p>
+</li>
+<li class="lvl-2">
+<p><code>LevelGeneration</code>：房间、关卡生成。</p>
+</li>
+<li class="lvl-2">
+<p><code>Roguelite</code>：Build、永久升级、局外成长。</p>
+</li>
+<li class="lvl-2">
+<p><code>UI</code>、<code>Audio</code>、<code>Utils</code>：表现和基础工具。</p>
+</li>
+</ul>
+<p>这个架构对早期项目来说已经足够，不需要更复杂的框架。最重要的是依赖方向清楚：Core 在底层，玩法模块依赖 Core，而不是互相缠在一起。</p>
+<h2 id="生产协作方式">生产协作方式</h2>
+<p>M0 也建立了 agent 分工和交付模板：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>game-producer</code> 控范围、节奏、风险。</p>
+</li>
+<li class="lvl-2">
+<p><code>game-designer</code> 产出 GDD、feature spec、数值表。</p>
+</li>
+<li class="lvl-2">
+<p><code>unity-developer</code> 落地 Unity 代码和工程。</p>
+</li>
+<li class="lvl-2">
+<p><code>game-artist</code> 负责视觉资产。</p>
+</li>
+<li class="lvl-2">
+<p><code>technical-artist</code> 负责导入、Shader、特效和性能。</p>
+</li>
+<li class="lvl-2">
+<p><code>audio-designer</code> 负责 SFX、BGM、触发点和混音。</p>
+</li>
+<li class="lvl-2">
+<p><code>game-qa</code> 负责测试用例、回归和缺陷记录。</p>
+</li>
+</ul>
+<p>这不是为了形式化，而是为了让每个里程碑都能从“设计意图”走到“实现、验收、反馈”。M1 的角色控制就是沿着这个方式被拆成任务、实现和测试的。</p>
+<h2 id="M0-到-M7-的路线">M0 到 M7 的路线</h2>
+<p><code>project/PROJECT_PLAN.md</code> 把项目拆成七个后续里程碑：</p>
+<table>
+<thead>
+<tr>
+<th>里程碑</th>
+<th>目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>角色能动性：移动、跳跃、相机、测试场景</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>基础战斗：生命值、伤害、敌人雏形</td>
+</tr>
+<tr>
+<td>M3</td>
+<td>完整战斗：攻击链、技能、反馈和调参</td>
+</tr>
+<tr>
+<td>M4</td>
+<td>手工关卡与 Boss</td>
+</tr>
+<tr>
+<td>M5</td>
+<td>程序化关卡生成</td>
+</tr>
+<tr>
+<td>M6</td>
+<td>Roguelite Build 和永久升级</td>
+</tr>
+<tr>
+<td>M7</td>
+<td>完整可玩体验与打磨</td>
+</tr>
+</tbody>
+</table>
+<p>这个路线是合理的：先证明角色能动，再做战斗；先做手工关卡验证体验，再做程序生成；先把局内 Build 跑通，再考虑完整 Roguelite 循环。</p>
+<h2 id="M0-真正完成了什么">M0 真正完成了什么</h2>
+<p>M0 没有产出一个可玩的版本，但完成了四件更基础的事：</p>
+<ol>
+<li class="lvl-3">
+<p>项目定位明确：国风浪子剑客穿越三个末日异世界。</p>
+</li>
+<li class="lvl-3">
+<p>玩法骨架明确：横板动作、Roguelite、世界顺序、纯度系统、Boss 弱点。</p>
+</li>
+<li class="lvl-3">
+<p>视觉身份明确：v8 主角方向和三世界调色板。</p>
+</li>
+<li class="lvl-3">
+<p>工程落点明确：Unity 版本、模块结构、数据驱动、任务模板和验收方式。</p>
+</li>
+</ol>
+<p>这让 M1 不需要再争论“项目到底是什么”。M1 只需要回答一个更具体的问题：这个主角能不能在 Unity 里被稳定控制起来。</p>
+]]></content>
+      <tags>
+        <tag>ProjectV</tag>
+        <tag>Unity</tag>
+        <tag>Devlog</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PROJECT-v M2：基础战斗闭环实现拆解</title>
+    <url>/2026/06/29/ProjectV-M2-Implementation/</url>
+    <content><![CDATA[<p>M2 的目标是把 M1 的“角色能动”推进到“基础战斗”。这一阶段不追求完整动作游戏手感，也不做技能、武器 Build、Boss 或正式表现层，而是先证明最小战斗链路成立：玩家能攻击，敌人能受伤和死亡，敌人能靠近并攻击玩家，玩家能死亡和复活，难度缩放和自动化测试能覆盖这条链路。</p>
+<p>本文所有文件路径均以 <code>PROJECT-V</code> 项目根目录为基准。</p>
+<span id="more"></span>
+<h2 id="关联提交和依据">关联提交和依据</h2>
+<p>M2 功能主体提交：</p>
+<table>
+<thead>
+<tr>
+<th>commit</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>f93faa4</code></td>
+<td><code>feat(m2): implement basic combat milestone</code>，M2 基础战斗里程碑实现</td>
 </tr>
 </tbody>
 </table>
@@ -62,138 +970,90 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 <tbody>
 <tr>
 <td><code>develop</code></td>
-<td>M4 实施分支</td>
+<td>M2 实施分支</td>
 </tr>
 <tr>
 <td><code>origin/develop</code></td>
-<td>已推送</td>
+<td>已推送远端分支</td>
 </tr>
 </tbody>
 </table>
 <p>主要参考产物：</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>路径</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>交付报告</td>
-<td><code>reports/M4_delivery_report.html</code></td>
-</tr>
-<tr>
-<td>QA 报告</td>
-<td><code>qa/reports/M4_test_report.md</code></td>
-</tr>
-<tr>
-<td>完整关卡测试用例</td>
-<td><code>qa/test_cases/M4_full_level.md</code></td>
-</tr>
-<tr>
-<td>Boss 行为矩阵</td>
-<td><code>qa/test_cases/M4_boss_matrix.md</code></td>
-</tr>
-<tr>
-<td>T-DEV30 回归结果</td>
-<td><code>qa/results/M4_Pre_TDEV30_PlayMode.xml</code></td>
-</tr>
-<tr>
-<td>EditMode 结果</td>
-<td><code>qa/results/M4_EditMode_TestResults.xml</code></td>
-</tr>
-<tr>
-<td>PlayMode 结果</td>
-<td><code>qa/results/M4_PlayMode_TestResults.xml</code></td>
-</tr>
-<tr>
-<td>60s Runtime Probe</td>
-<td><code>qa/results/M4_RuntimeProbe_60s.json</code></td>
-</tr>
-<tr>
-<td>Sprint 状态，docs 仓库</td>
-<td><code>project/sprints/SPRINT_04.md</code></td>
-</tr>
-<tr>
-<td>Project State，docs 仓库</td>
-<td><code>project/PROJECT_STATE.md</code></td>
-</tr>
-<tr>
-<td>M4 关卡 spec，docs 仓库</td>
-<td><code>design/feature_specs/M4_levels.md</code></td>
-</tr>
-<tr>
-<td>M4 Boss 行为，docs 仓库</td>
-<td><code>design/boss_behavior/M4_boss_behaviors.md</code></td>
-</tr>
-<tr>
-<td>M4 难度缩放，docs 仓库</td>
-<td><code>design/difficulty_scaling/M4_difficulty_scaling.md</code></td>
-</tr>
-</tbody>
-</table>
-<h2 id="M4-的目标和边界">M4 的目标和边界</h2>
-<p>M4 只做关卡原型和 Boss 压力验证。它不改变 M3 的主角战斗边界，也不进入 M5 的程序生成算法。</p>
-<p>M4 纳入实现的内容：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p>3 个异世界手工关卡原型：废土、赛博、生化。</p>
+<p><code>reports/M2_delivery_report.html</code></p>
 </li>
 <li class="lvl-2">
-<p>27 个房间配置：每个异世界 9 个房间。</p>
+<p><code>qa/reports/M2_test_report.md</code></p>
 </li>
 <li class="lvl-2">
-<p><code>LevelManager</code> / <code>RoomManager</code> 关卡与房间状态流。</p>
+<p><code>qa/test_cases/M2_basic_combat.md</code></p>
 </li>
 <li class="lvl-2">
-<p><code>LevelConfigSO</code> / <code>RoomConfigSO</code> 数据化房间序列、清理条件、奖励、商店、休息点和 Boss 房。</p>
+<p><code>qa/results/M2_EditMode_TestResults.xml</code></p>
 </li>
 <li class="lvl-2">
-<p>怪物火车式难度缩放：升级强度、房间进度和世界观压力共同影响 HP、伤害、数量、冷却和 telegraph。</p>
+<p><code>qa/results/M2_PlayMode_TestResults.xml</code></p>
 </li>
 <li class="lvl-2">
-<p>3 个 Boss：废土军阀、机关头领、变异母体。</p>
-</li>
-<li class="lvl-2">
-<p>Boss telegraph、招式激活、弱点暴露、弱点破坏和阶段切换事件。</p>
-</li>
-<li class="lvl-2">
-<p>镜像 Boss 参数化系统。</p>
-</li>
-<li class="lvl-2">
-<p>T-DEV30 接地稳定性修复。</p>
-</li>
-<li class="lvl-2">
-<p>M4 runtime probe：P50/P95/P99 FPS、GC collections、Mono memory delta、房间/Boss/镜像 Boss 检查。</p>
-</li>
-<li class="lvl-2">
-<p>EditMode、PlayMode、T-DEV30 回归、Windows Development Build 和 60s probe 验证。</p>
+<p><code>qa/results/M2_RuntimeProbe.json</code></p>
 </li>
 </ul>
-<p>M4 明确不做：</p>
+<h2 id="M2-的目标和边界">M2 的目标和边界</h2>
+<p>M2 只做基础战斗闭环。它承接 M1 的移动、跳跃、相机和测试场景，不重写角色控制，而是在玩家、敌人和战斗模块之间接出一条最小可验证链路。</p>
+<p>M2 纳入实现的内容：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p>程序生成路线。M4 用手工房间控制变量，M5 再做 seed、强约束生成和回归验证。</p>
+<p>玩家轻攻击和重攻击。</p>
 </li>
 <li class="lvl-2">
-<p>正式美术与正式音频。视觉、BGM、SFX 仍为占位资源。</p>
+<p>攻击配置、命中框、重复命中保护、击退和 hitstop。</p>
 </li>
 <li class="lvl-2">
-<p>自定义关卡编辑器。</p>
+<p>玩家 HP、敌人 HP、死亡事件、死亡后防重复处理。</p>
 </li>
 <li class="lvl-2">
-<p>联网、云存档、排行榜或远程资源下载。</p>
+<p>玩家死亡后的输入锁定和复活。</p>
 </li>
 <li class="lvl-2">
-<p>新的主角玩法边界，不引入枪械、魔法、光剑、火球、召唤物或能量武器玩法。</p>
+<p>三类普通敌人：废土、赛博、生化各一个。</p>
+</li>
+<li class="lvl-2">
+<p>敌人 Patrol / Approach / Telegraph / Attack / Recover / Dead 基础 AI。</p>
+</li>
+<li class="lvl-2">
+<p>难度缩放公式。</p>
+</li>
+<li class="lvl-2">
+<p><code>M2_BasicCombat.unity</code> 测试场景。</p>
+</li>
+<li class="lvl-2">
+<p>EditMode、PlayMode、Windows Development Build 和 Runtime Probe 验证。</p>
 </li>
 </ul>
-<p>这个边界比“多做几个功能”更重要。M4 如果同时做程序生成、最终美术、正式 Boss 表现和复杂 UI，任何问题都无法判断到底来自生成算法、战斗手感、内容节奏还是表现资源。先用手工关卡压测战斗链，是更稳的顺序。</p>
+<p>M2 明确不做的内容：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>连段树、闪避无敌、技能、武器池、符文和 Build 协同。</p>
+</li>
+<li class="lvl-2">
+<p>Boss、程序化关卡、正式关卡流程。</p>
+</li>
+<li class="lvl-2">
+<p>正式伤害数字、正式死亡 UI、最终音频和正式特效。</p>
+</li>
+<li class="lvl-2">
+<p>赛博敌人的完整 projectile 系统。</p>
+</li>
+<li class="lvl-2">
+<p>30 分钟 1080p 长时 soak。</p>
+</li>
+</ul>
+<p>这个边界决定了 M2 的实现方式：系统要能打通战斗因果链，但仍保持白盒、可测、可替换。</p>
 <h2 id="工程生成入口">工程生成入口</h2>
-<p>M4 的工程入口是 <code>unity-project/Assets/_Project/Editor/M4ProjectBuilder.cs</code>。</p>
-<p><code>SetupM4()</code> 首先调用 <code>M3ProjectBuilder.SetupM3()</code>，再生成 M4 资源。这说明 M4 是对 M3 的增量验证，而不是另起一套关卡或 Boss 框架。</p>
-<p>核心生成物：</p>
+<p>M2 的工程落地入口是 <code>unity-project/Assets/_Project/Editor/M2ProjectBuilder.cs</code>。</p>
+<p>它的职责比 M1 更重：不仅生成场景，还要把战斗资产、玩家 Prefab、敌人 Prefab 和验证入口全部拉齐。</p>
+<p>它会生成或更新这些内容：</p>
 <table>
 <thead>
 <tr>
@@ -203,458 +1063,229 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td>难度缩放配置</td>
-<td><code>unity-project/Assets/_Project/Levels/SO/Difficulty/DifficultyScaling_M4.asset</code></td>
+<td>轻攻击配置</td>
+<td><code>unity-project/Assets/_Project/Combat/SO/AttackConfig_Light.asset</code></td>
 </tr>
 <tr>
-<td>Boss 配置目录</td>
-<td><code>unity-project/Assets/_Project/Combat/SO/Bosses/</code></td>
+<td>重攻击配置</td>
+<td><code>unity-project/Assets/_Project/Combat/SO/AttackConfig_Heavy.asset</code></td>
 </tr>
 <tr>
-<td>Level 配置目录</td>
-<td><code>unity-project/Assets/_Project/Levels/SO/Levels/</code></td>
+<td>玩家生命配置</td>
+<td><code>unity-project/Assets/_Project/Combat/SO/Health_Player.asset</code></td>
 </tr>
 <tr>
-<td>Room 配置目录</td>
-<td><code>unity-project/Assets/_Project/Levels/SO/Rooms/</code></td>
+<td>难度配置</td>
+<td><code>unity-project/Assets/_Project/Combat/SO/Difficulty_M2.asset</code></td>
 </tr>
 <tr>
-<td>M4 测试场景</td>
-<td><code>unity-project/Assets/Scenes/TestScenes/M4_FullLevel.unity</code></td>
+<td>三类敌人配置</td>
+<td><code>unity-project/Assets/_Project/Enemies/SO/</code></td>
 </tr>
 <tr>
-<td>废土关卡场景</td>
-<td><code>unity-project/Assets/Scenes/Levels/Wasteland/Wasteland_Level1.unity</code></td>
+<td>三类敌人 Prefab</td>
+<td><code>unity-project/Assets/_Project/Enemies/Prefabs/</code></td>
 </tr>
 <tr>
-<td>赛博关卡场景</td>
-<td><code>unity-project/Assets/Scenes/Levels/Cyberpunk/Cyberpunk_Level1.unity</code></td>
+<td>M2 测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M2_BasicCombat.unity</code></td>
 </tr>
 <tr>
-<td>生化关卡场景</td>
-<td><code>unity-project/Assets/Scenes/Levels/Biohazard/Biohazard_Level1.unity</code></td>
+<td>Runtime Probe</td>
+<td><code>unity-project/Assets/_Project/Player/Scripts/M2RuntimeProbe.cs</code></td>
 </tr>
 </tbody>
 </table>
-<p><code>VerifyM4Setup()</code> 的验收点包括：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>M4 难度配置存在。</p>
-</li>
-<li class="lvl-2">
-<p>镜像 Boss 配置存在。</p>
-</li>
-<li class="lvl-2">
-<p>3 个 Boss 配置存在且名称正确。</p>
-</li>
-<li class="lvl-2">
-<p>3 个 Level 配置存在，世界观和 Boss id 对齐。</p>
-</li>
-<li class="lvl-2">
-<p>3 个正式关卡场景和 <code>M4_FullLevel.unity</code> 存在。</p>
-</li>
-<li class="lvl-2">
-<p>M4 full level scene 包含可运行的关卡、Boss、镜像 Boss 和 runtime probe harness。</p>
-</li>
-</ul>
-<p>这套 builder 延续了 M1-M3 的工程路线：阶段交付不是靠某次手工 Unity 场景状态，而是靠可重建、可验证的 Editor tooling。</p>
-<h2 id="Level-和-Room-数据结构">Level 和 Room 数据结构</h2>
-<p>M4 新增 Levels 模块：</p>
-<table>
-<thead>
-<tr>
-<th>文件</th>
-<th>职责</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>unity-project/Assets/_Project/Levels/Scripts/LevelTypes.cs</code></td>
-<td>定义房间类型、清理条件、奖励、商店、休息、Boss 房和难度上下文</td>
-</tr>
-<tr>
-<td><code>unity-project/Assets/_Project/Levels/Scripts/LevelConfigSO.cs</code></td>
-<td>定义一整关的世界观、章节、Boss、房间序列、奖励池和过渡参数</td>
-</tr>
-<tr>
-<td><code>unity-project/Assets/_Project/Levels/Scripts/RoomConfigSO.cs</code></td>
-<td>定义单个房间的类型、场景 key、门、清理条件、刷怪、奖励、商店、休息点和 Boss 配置</td>
-</tr>
-<tr>
-<td><code>unity-project/Assets/_Project/Levels/Scripts/LevelManager.cs</code></td>
-<td>管一整关的开始、房间推进、房间清理统计、Boss 房进入和章节完成事件</td>
-</tr>
-<tr>
-<td><code>unity-project/Assets/_Project/Levels/Scripts/RoomManager.cs</code></td>
-<td>管单个房间的进入、清理、敌人死亡监听、Boss 死亡监听和出口请求</td>
-</tr>
-</tbody>
-</table>
-<p>房间类型：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Start</span><br><span class="line">Combat</span><br><span class="line">Elite</span><br><span class="line">Reward</span><br><span class="line">Shop</span><br><span class="line">Rest</span><br><span class="line">Boss</span><br><span class="line">MirrorBoss</span><br></pre></td></tr></table></figure>
-<p>房间清理条件：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">None</span><br><span class="line">DefeatAllEnemies</span><br><span class="line">DefeatElite</span><br><span class="line">ClaimReward</span><br><span class="line">LeaveShop</span><br><span class="line">UseRestPoint</span><br><span class="line">DefeatBoss</span><br></pre></td></tr></table></figure>
-<p>M4 每个异世界关卡当前是 9 房间路线：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Start -&gt; Combat -&gt; Reward -&gt; Elite -&gt; Combat -&gt; Shop -&gt; Rest -&gt; Combat -&gt; Boss</span><br></pre></td></tr></table></figure>
-<p>实际落地的 Level 配置：</p>
-<table>
-<thead>
-<tr>
-<th>世界观</th>
-<th>Level 配置</th>
-<th style="text-align:right">房间数</th>
-<th>Boss</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Wasteland</td>
-<td><code>unity-project/Assets/_Project/Levels/SO/Levels/Level_Wasteland_Chapter1.asset</code></td>
-<td style="text-align:right"><code>9</code></td>
-<td><code>boss_wasteland_warlord</code></td>
-</tr>
-<tr>
-<td>Cyberpunk</td>
-<td><code>unity-project/Assets/_Project/Levels/SO/Levels/Level_Cyberpunk_Chapter1.asset</code></td>
-<td style="text-align:right"><code>9</code></td>
-<td><code>boss_mechanism_chief</code></td>
-</tr>
-<tr>
-<td>Biohazard</td>
-<td><code>unity-project/Assets/_Project/Levels/SO/Levels/Level_Biohazard_Chapter1.asset</code></td>
-<td style="text-align:right"><code>9</code></td>
-<td><code>boss_mutation_matriarch</code></td>
-</tr>
-</tbody>
-</table>
-<p><code>LevelManager</code> 的关键职责是只管关卡推进，不接管敌人 AI 和 Boss 招式：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">BeginLevel()</span><br><span class="line">  -&gt; OnLevelStarted</span><br><span class="line">  -&gt; AdvanceToRoom(0)</span><br><span class="line">  -&gt; OnRoomEntered</span><br><span class="line">  -&gt; RoomManager.MarkCleared()</span><br><span class="line">  -&gt; OnRoomCleared</span><br><span class="line">  -&gt; RequestAdvanceFrom()</span><br><span class="line">  -&gt; OnRoomTransitionStarted</span><br><span class="line">  -&gt; OnRoomTransitionCompleted</span><br><span class="line">  -&gt; Boss room: OnBossRoomEntered</span><br><span class="line">  -&gt; Boss defeated: OnLevelCompleted</span><br></pre></td></tr></table></figure>
-<p>QA 中发现的一个真实运行时问题是：生成场景中的 <code>RoomManager.owner</code> 不会被 Unity 序列化。现在 <code>LevelManager.Awake()</code> 会调用 <code>Configure(config, rooms, purity)</code>，遍历所有 <code>RoomManager</code> 并重绑 owner 和对应 <code>RoomConfigSO</code>。这个修复很关键，否则 PlayMode 里房间能被清理，但出口推进会因为 owner 为空而失败。</p>
-<h2 id="难度缩放">难度缩放</h2>
-<p>M4 的难度缩放不是简单沿用 M2 的敌人数量/HP 公式，而是升级成三类压力输入：</p>
-<table>
-<thead>
-<tr>
-<th>输入</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>upgradeIntensity</code></td>
-<td>本局升级强度归一化，来自通用升级、世界观被动、主动技能、武器世界观修饰和协同</td>
-</tr>
-<tr>
-<td><code>roomProgress</code></td>
-<td>当前房间在整条路线中的进度</td>
-</tr>
-<tr>
-<td><code>worldPressure</code></td>
-<td>武器世界观修饰、build 涉及的世界观数量、跨世界观协同、房间/主 build 世界观不匹配</td>
-</tr>
-</tbody>
-</table>
-<p>核心实现位于：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>unity-project/Assets/_Project/Levels/Scripts/DifficultyScalingConfigSO.cs</code></p>
-</li>
-<li class="lvl-2">
-<p><code>unity-project/Assets/_Project/Levels/Scripts/DifficultyScaler.cs</code></p>
-</li>
-</ul>
-<p><code>DifficultyScaler.Evaluate()</code> 会计算：</p>
-<table>
-<thead>
-<tr>
-<th>输出</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>enemyHpMultiplier</code></td>
-<td>敌人 HP 倍率</td>
-</tr>
-<tr>
-<td><code>enemyDamageMultiplier</code></td>
-<td>敌人伤害倍率</td>
-</tr>
-<tr>
-<td><code>enemyCountMultiplier</code></td>
-<td>spawn budget / 目标敌人数压力</td>
-</tr>
-<tr>
-<td><code>enemyCooldownMultiplier</code></td>
-<td>攻击冷却倍率，越低越频繁</td>
-</tr>
-<tr>
-<td><code>enemyTelegraphMultiplier</code></td>
-<td>telegraph 压缩倍率，但有下限</td>
-</tr>
-<tr>
-<td><code>targetEnemyCount</code></td>
-<td>当前房间目标敌人数</td>
-</tr>
-</tbody>
-</table>
-<p>这套公式的重点是“房间越靠后、build 越强、世界观压力越高，敌人压力越高”，但所有数值都经过 clamp。它避免了两个极端：玩家 build 强到后半局无脑碾压，或者系统为了追压力直接生成不可读、不可反应的攻击。</p>
-<p>Boss 压力也独立评估：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">bossPressure =</span><br><span class="line">  levelOrder pressure</span><br><span class="line">  + upgrade intensity pressure</span><br><span class="line">  + world pressure</span><br></pre></td></tr></table></figure>
-<p>M4 没有把难度和程序生成绑定死。它先让手工房间能被数值公式评估，为 M5 的 seed route 和强约束生成保留入口。</p>
-<h2 id="Boss-系统">Boss 系统</h2>
-<p>Boss 系统由配置、控制器和弱点三个核心层组成：</p>
-<table>
-<thead>
-<tr>
-<th>文件</th>
-<th>职责</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>unity-project/Assets/_Project/Combat/Scripts/BossConfigSO.cs</code></td>
-<td>Boss 基础数值、招式、weakpoint、phase 和资源字段</td>
-</tr>
-<tr>
-<td><code>unity-project/Assets/_Project/Combat/Scripts/BossController.cs</code></td>
-<td>配置 HP、运行招式 coroutine、发布 telegraph/activation/defeated/phase 事件</td>
-</tr>
-<tr>
-<td><code>unity-project/Assets/_Project/Combat/Scripts/BossWeakpoint.cs</code></td>
-<td>管弱点暴露、破坏槽、弱点击中、弱点破坏和阶段触发</td>
-</tr>
-</tbody>
-</table>
-<p>M4 的三个 Boss 配置：</p>
-<table>
-<thead>
-<tr>
-<th>Boss</th>
-<th>世界观</th>
-<th style="text-align:right">HP</th>
-<th style="text-align:right">招式数</th>
-<th style="text-align:right">弱点数</th>
-<th>验证重点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Wasteland Warlord / 废土军阀</td>
-<td>Wasteland</td>
-<td style="text-align:right"><code>850</code></td>
-<td style="text-align:right"><code>5</code></td>
-<td style="text-align:right"><code>3</code></td>
-<td>慢起手、重压迫、绕背惩罚</td>
-</tr>
-<tr>
-<td>Mechanism Chief / 机关头领</td>
-<td>Cyberpunk</td>
-<td style="text-align:right"><code>760</code></td>
-<td style="text-align:right"><code>5</code></td>
-<td style="text-align:right"><code>3</code></td>
-<td>中高速节奏、机关、短窗口打点</td>
-</tr>
-<tr>
-<td>Mutation Matriarch / 变异母体</td>
-<td>Biohazard</td>
-<td style="text-align:right"><code>950</code></td>
-<td style="text-align:right"><code>5</code></td>
-<td style="text-align:right"><code>2</code></td>
-<td>大体型控场、召出压力、清场优先级</td>
-</tr>
-</tbody>
-</table>
-<p>Boss 招式是数据化的 <code>BossMoveConfig</code>，字段包括：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>moveType</code></p>
-</li>
-<li class="lvl-2">
-<p><code>telegraphLevel</code></p>
-</li>
-<li class="lvl-2">
-<p><code>telegraphDuration</code></p>
-</li>
-<li class="lvl-2">
-<p><code>activeDuration</code></p>
-</li>
-<li class="lvl-2">
-<p><code>recoveryDuration</code></p>
-</li>
-<li class="lvl-2">
-<p><code>cooldown</code></p>
-</li>
-<li class="lvl-2">
-<p><code>damageMultiplier</code></p>
-</li>
-<li class="lvl-2">
-<p><code>hitboxShape</code></p>
-</li>
-<li class="lvl-2">
-<p><code>dodgeRule</code></p>
-</li>
-<li class="lvl-2">
-<p><code>exposedWeakpointId</code></p>
-</li>
-<li class="lvl-2">
-<p><code>weakpointExposeDuration</code></p>
-</li>
-<li class="lvl-2">
-<p><code>weight</code></p>
-</li>
-</ul>
-<p><code>BossController.BeginMove()</code> 会启动招式流程：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">OnBossMoveTelegraphStarted</span><br><span class="line">  -&gt; wait telegraphDuration</span><br><span class="line">  -&gt; OnBossMoveActivated</span><br><span class="line">  -&gt; expose configured weakpoint</span><br><span class="line">  -&gt; wait activeDuration + recoveryDuration</span><br></pre></td></tr></table></figure>
-<p>这意味着 Boss 攻击不是瞬时扣血，而是有可测试的预警、激活、恢复和弱点窗口。PlayMode 可以断言 telegraph 事件、activation 事件和弱点暴露，而不是只看 Boss 有没有动。</p>
-<p>弱点系统负责把“打 Boss”变成更具体的战斗目标。<code>BossWeakpoint.RegisterHit()</code> 在弱点暴露时扣破坏槽，发布 <code>OnBossWeakpointHit</code>，破坏后发布 <code>OnBossWeakpointDestroyed</code>，并可调用 <code>BossController.ForcePhase()</code> 推进阶段。</p>
-<h2 id="镜像-Boss">镜像 Boss</h2>
-<p>镜像 Boss 实现位于：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>unity-project/Assets/_Project/Combat/Scripts/MirrorBossConfigSO.cs</code></p>
-</li>
-<li class="lvl-2">
-<p><code>unity-project/Assets/_Project/Combat/Scripts/MirrorBossController.cs</code></p>
-</li>
-</ul>
-<p>M4 的镜像 Boss 不直接复制玩家数值。它只读取纯度、build 强度和关卡序号，输出一组参数化结果：</p>
-<table>
-<thead>
-<tr>
-<th>输出</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>shouldSpawn</code></td>
-<td>是否触发镜像 Boss</td>
-</tr>
-<tr>
-<td><code>mirrorForm</code></td>
-<td><code>pure</code> / <code>corrupted</code> / <code>none</code></td>
-</tr>
-<tr>
-<td><code>hpMultiplier</code></td>
-<td>镜像 Boss HP 倍率</td>
-</tr>
-<tr>
-<td><code>attackMultiplier</code></td>
-<td>攻击倍率</td>
-</tr>
-<tr>
-<td><code>skillCount</code></td>
-<td>镜像技能数量</td>
-</tr>
-<tr>
-<td><code>passiveUpgradeRate</code></td>
-<td>被动升级比例</td>
-</tr>
-<tr>
-<td><code>cooldownMultiplier</code></td>
-<td>冷却倍率</td>
-</tr>
-<tr>
-<td><code>telegraphMultiplier</code></td>
-<td>telegraph 倍率</td>
-</tr>
-</tbody>
-</table>
-<p>触发规则：</p>
-<table>
-<thead>
-<tr>
-<th>纯度</th>
-<th>行为</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>&lt; 30%</code></td>
-<td>触发 <code>pure</code> 镜像形态</td>
-</tr>
-<tr>
-<td><code>30%-70%</code></td>
-<td>不触发</td>
-</tr>
-<tr>
-<td><code>&gt; 70%</code></td>
-<td>触发 <code>corrupted</code> 镜像形态</td>
-</tr>
-</tbody>
-</table>
-<p>这个设计避免了一个常见错误：把镜像 Boss 做成“玩家 build 的数值复制体”。复制玩家数值很容易制造无解情况，尤其是 cooldown、无敌帧和技能堆叠。M4 的做法是抽取 build 强度，再通过配置上下界约束。</p>
-<h2 id="T-DEV30-接地稳定性修复">T-DEV30 接地稳定性修复</h2>
-<p>M4 开始前处理了一个影响关卡体验的 P1 问题：角色在平台边缘、墙边或实体边界悬空时，可能因为接地检测误判而不自然下落。</p>
-<p>修复涉及：</p>
-<table>
-<thead>
-<tr>
-<th>文件</th>
-<th>变化</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>unity-project/Assets/_Project/Player/Scripts/GroundCheckHelper.cs</code></td>
-<td>新增多点 raycast 接地检测</td>
-</tr>
-<tr>
-<td><code>unity-project/Assets/_Project/Player/Scripts/PlayerController.cs</code></td>
-<td>接入新检测、跳跃后接地 lockout、碰撞退出后重查接地</td>
-</tr>
-</tbody>
-</table>
-<p><code>GroundCheckHelper.IsGrounded()</code> 的关键规则：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>上升速度大于 <code>0.01</code> 时直接判定未接地。</p>
-</li>
-<li class="lvl-2">
-<p>从 collider 左脚、中脚、右脚三个点向下 raycast。</p>
-</li>
-<li class="lvl-2">
-<p>命中的 surface normal 必须 <code>normal.y &gt;= 0.55</code>，避免墙面/侧边误判为地面。</p>
-</li>
-<li class="lvl-2">
-<p>raycast 起点略微抬高，减少 collider 边缘浮动误差。</p>
-</li>
-</ul>
-<p><code>PlayerController</code> 还增加了 <code>GroundingLockoutAfterJump = 0.08s</code>，跳起后短时间内强制不接地。这能防止刚起跳的物理接触残留把角色立刻拉回 grounded 状态。</p>
-<p>这个修复对 M4 很实际。关卡里开始有更多平台、边缘、墙体和 Boss arena，M1/M2 测试场景里不显眼的接地误判会在 M4 被放大。</p>
-<h2 id="Runtime-Probe-增强">Runtime Probe 增强</h2>
-<p>M3 已经有 60s probe，但只有平均 FPS、min/max 和系统就绪字段。M4 的 probe 解决了 M3 留下的一个问题：单个 min FPS outlier 不能说明整体帧稳定性。</p>
-<p>实现位于 <code>unity-project/Assets/_Project/Levels/Scripts/M4RuntimeProbe.cs</code>。</p>
-<p>M4 probe 的运行逻辑：</p>
+<p><code>SetupM2()</code> 会先确保 M1 资源存在，再创建 <code>Combat</code>、<code>Enemies</code> 目录、<code>Enemy</code> Layer、<code>Player</code> Tag、敌人占位 Sprite、SO 配置、Prefab 和测试场景。<code>VerifyM2Setup()</code> 则检查配置参数、输入绑定、玩家 Prefab、敌人配置、场景内容和 runtime probe。</p>
+<p>这让 M2 仍保持一个重要原则：不要依赖某次 Unity Editor 里的手工摆放。战斗场景、敌人 Prefab、SO 参数和验证入口都能由同一套 Editor tooling 重建。</p>
+<h2 id="玩家攻击系统">玩家攻击系统</h2>
+<p>玩家攻击核心在 <code>unity-project/Assets/_Project/Player/Scripts/PlayerAttack.cs</code>。</p>
+<p>M2 把攻击拆成三层：</p>
 <ol>
 <li class="lvl-3">
-<p>识别 <code>-m4Probe</code> 参数。</p>
+<p><code>PlayerInputHandler</code> 负责消费轻攻击、重攻击输入。</p>
 </li>
 <li class="lvl-3">
-<p>设置 <code>Application.targetFrameRate = 60</code>，关闭 vSync。</p>
+<p><code>AttackConfigSO</code> 定义攻击类型、伤害、持续时间、命中窗口、命中框、目标 Layer、hitstop 和击退。</p>
 </li>
 <li class="lvl-3">
-<p>记录 GC collection 起始计数和 Mono memory。</p>
-</li>
-<li class="lvl-3">
-<p>自动 <code>BeginLevel()</code>。</p>
-</li>
-<li class="lvl-3">
-<p>warmup 后触发脚本动作：闪避、U 技能、Boss 招式、清理前三个房间、镜像 Boss 评估。</p>
-</li>
-<li class="lvl-3">
-<p>收集每帧 FPS 样本。</p>
-</li>
-<li class="lvl-3">
-<p>输出 average/min/max、P50/P95/P99、GC、memory delta 和系统就绪字段。</p>
+<p><code>PlayerAttack</code> 用计时器进入命中窗口，并把命中结果转换成 <code>DamageInfo</code>。</p>
 </li>
 </ol>
-<p>60s 结果：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;warmupSeconds&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;totalElapsedSeconds&quot;</span><span class="punctuation">:</span> <span class="number">63.006</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;measuredSeconds&quot;</span><span class="punctuation">:</span> <span class="number">60.006</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;frameCount&quot;</span><span class="punctuation">:</span> <span class="number">3600</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;averageFps&quot;</span><span class="punctuation">:</span> <span class="number">59.994</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;minFps&quot;</span><span class="punctuation">:</span> <span class="number">56.584</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;maxFps&quot;</span><span class="punctuation">:</span> <span class="number">75.133</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p50Fps&quot;</span><span class="punctuation">:</span> <span class="number">60</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p95Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.996</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p99Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.793</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;gcCollections&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;monoMemoryDeltaBytes&quot;</span><span class="punctuation">:</span> <span class="number">8192</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;m4SystemsReady&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roomsTotal&quot;</span><span class="punctuation">:</span> <span class="number">9</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roomsCleared&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;dodgeStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;skillUActivated&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;bossMoveStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;mirrorSpawned&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>这组结果比 M3 的 probe 更有解释力。平均 FPS <code>59.994</code> 只是表层结果，真正重要的是 P95/P99 仍贴近 60、<code>gcCollections</code> 为 0，并且 probe 实际触发了房间推进、闪避、技能、Boss move 和镜像 Boss。</p>
+<p>轻重攻击参数如下：</p>
+<table>
+<thead>
+<tr>
+<th>攻击</th>
+<th>输入</th>
+<th style="text-align:right">伤害</th>
+<th style="text-align:right">总时长</th>
+<th style="text-align:right">命中开始</th>
+<th style="text-align:right">命中持续</th>
+<th style="text-align:right">hitstop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Light</td>
+<td><code>J</code></td>
+<td style="text-align:right"><code>12</code></td>
+<td style="text-align:right"><code>0.40s</code></td>
+<td style="text-align:right"><code>0.25s</code></td>
+<td style="text-align:right"><code>0.10s</code></td>
+<td style="text-align:right"><code>6</code> frames</td>
+</tr>
+<tr>
+<td>Heavy</td>
+<td><code>L</code></td>
+<td style="text-align:right"><code>30</code></td>
+<td style="text-align:right"><code>0.80s</code></td>
+<td style="text-align:right"><code>0.50s</code></td>
+<td style="text-align:right"><code>0.15s</code></td>
+<td style="text-align:right"><code>12</code> frames</td>
+</tr>
+</tbody>
+</table>
+<p>输入资产还配置了鼠标和手柄：</p>
+<table>
+<thead>
+<tr>
+<th>行为</th>
+<th>键盘</th>
+<th>鼠标</th>
+<th>手柄</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>轻攻击</td>
+<td><code>J</code></td>
+<td>左键</td>
+<td>buttonWest</td>
+</tr>
+<tr>
+<td>重攻击</td>
+<td><code>L</code></td>
+<td>右键</td>
+<td>buttonNorth</td>
+</tr>
+</tbody>
+</table>
+<p>需要注意的是，M2 报告只确认这些绑定存在；鼠标和手柄路径没有做真实外设人工测试。</p>
+<h2 id="命中框和重复命中保护">命中框和重复命中保护</h2>
+<p>命中检测由 <code>unity-project/Assets/_Project/Combat/Scripts/Hitbox2D.cs</code> 封装，底层使用 <code>Physics2D.OverlapBoxNonAlloc()</code>。这符合 M2 的白盒目标：先用简单、可控、无 GC 压力的盒形命中框跑通战斗。</p>
+<p><code>PlayerAttack</code> 中有一个关键结构：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">HashSet&lt;HealthComponent&gt; hitTargets</span><br></pre></td></tr></table></figure>
+<p>每次攻击开始时清空它；攻击命中窗口内，如果目标已经被当前攻击实例命中过，就跳过。这样可以保证“同一次攻击同一个目标只受伤一次”，但同一次攻击仍可以打到多个不同敌人。</p>
+<p>命中成功后，链路是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">AttackConfigSO</span><br><span class="line">  -&gt; PlayerAttack.ApplyHitbox()</span><br><span class="line">  -&gt; Hitbox2D.Overlap()</span><br><span class="line">  -&gt; HealthComponent.TakeDamage()</span><br><span class="line">  -&gt; OnAttackHit / OnDamageTaken / OnHealthChanged</span><br><span class="line">  -&gt; HitFeedback / Knockback / Hitstop</span><br></pre></td></tr></table></figure>
+<p>这条链路的重点不是表现效果，而是战斗事实：谁打了谁、造成多少伤害、是否死亡、事件是否只触发一次。</p>
+<h2 id="生命、死亡和复活">生命、死亡和复活</h2>
+<p>生命系统集中在 <code>unity-project/Assets/_Project/Combat/Scripts/HealthComponent.cs</code>。</p>
+<p><code>HealthComponent</code> 不只服务玩家，也服务敌人；实体类型通过 <code>HealthEntityKind</code> 区分：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>Player</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Enemy</code></p>
+</li>
+<li class="lvl-2">
+<p><code>Generic</code></p>
+</li>
+</ul>
+<p><code>TakeDamage()</code> 的守卫逻辑很明确：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>已死亡则不再受伤。</p>
+</li>
+<li class="lvl-2">
+<p>伤害小于等于 0 则不处理。</p>
+</li>
+<li class="lvl-2">
+<p>仍在受击无敌时间内则不处理。</p>
+</li>
+</ul>
+<p>有效伤害会触发：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>OnDamageTaken</code></p>
+</li>
+<li class="lvl-2">
+<p><code>OnHealthChanged</code></p>
+</li>
+<li class="lvl-2">
+<p>死亡时触发 <code>OnPlayerDeath</code> 或 <code>OnEnemyDeath</code></p>
+</li>
+</ul>
+<p>敌人死亡后会禁用子物体中的 Collider，避免死亡敌人继续参与命中或碰撞。测试也覆盖了“死亡事件只触发一次”和“死亡后不能重复受击”。</p>
+<p>玩家复活由 <code>unity-project/Assets/_Project/Player/Scripts/PlayerDeathController.cs</code> 接入。当前测试确认玩家死亡后不能攻击，复活后 HP 回到 <code>50</code>，并恢复攻击能力。复活输入在白盒实现中支持 <code>R</code> 或 <code>Enter</code>。</p>
+<h2 id="敌人配置和基础-AI">敌人配置和基础 AI</h2>
+<p>M2 新增 <code>Enemies</code> 模块，核心配置文件是 <code>unity-project/Assets/_Project/Enemies/Scripts/EnemyConfigSO.cs</code>，核心控制器是 <code>unity-project/Assets/_Project/Enemies/Scripts/EnemyController.cs</code>。</p>
+<p>三类普通敌人对应三个世界观：</p>
+<table>
+<thead>
+<tr>
+<th>敌人</th>
+<th>世界</th>
+<th style="text-align:right">基础 HP</th>
+<th style="text-align:right">基础伤害</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wasteland Raider</td>
+<td>Wasteland</td>
+<td style="text-align:right"><code>30</code></td>
+<td style="text-align:right"><code>8</code></td>
+<td>近战基础敌人</td>
+</tr>
+<tr>
+<td>Cyber Infantry</td>
+<td>Cyberpunk</td>
+<td style="text-align:right"><code>25</code></td>
+<td style="text-align:right"><code>10</code></td>
+<td>M2 用范围攻击近似远程</td>
+</tr>
+<tr>
+<td>Bio Parasite</td>
+<td>Biohazard</td>
+<td style="text-align:right"><code>40</code></td>
+<td style="text-align:right"><code>12</code></td>
+<td>更厚、更贴近</td>
+</tr>
+</tbody>
+</table>
+<p>敌人状态机是白盒版：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Patrol</span><br><span class="line">  -&gt; Approach</span><br><span class="line">  -&gt; Telegraph</span><br><span class="line">  -&gt; Attack</span><br><span class="line">  -&gt; Recover</span><br><span class="line">  -&gt; Patrol / Approach</span><br><span class="line">  -&gt; Dead</span><br></pre></td></tr></table></figure>
+<p>AI 逻辑先按距离找玩家：看见玩家进入 <code>Approach</code>，进入攻击距离后先 <code>Telegraph</code>，至少等待 <code>0.3s</code>，再进入 <code>Attack</code>。这一步是公平性底线：敌人不能一进范围就瞬间扣血。</p>
+<p>赛博敌人目前不是正式远程 projectile，而是用更大的 attack range 做白盒范围攻击。这个限制已经在 QA 报告中接受为 M2 范围内的残余项。</p>
+<h2 id="难度缩放">难度缩放</h2>
+<p>M2 的难度公式在 <code>unity-project/Assets/_Project/Combat/Scripts/DifficultyBalancing.cs</code>：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">enemyHp     = baseHp     * (1 + 0.10 * upgradeCount)</span><br><span class="line">enemyDamage = baseDamage * (1 + 0.05 * upgradeCount)</span><br><span class="line">enemyCount  = baseCount  + floor(upgradeCount / 3)</span><br></pre></td></tr></table></figure>
+<p>实际实现会对 HP 和伤害做 <code>Mathf.Round()</code>，并保证 HP 至少为 1、敌人数至少为 1。<code>DifficultyBalancing.Calculate()</code> 还会发布 <code>OnDifficultyScaled</code>，方便后续 QA 或 UI 记录缩放结果。</p>
+<p>EditMode 测试覆盖了 <code>upgradeCount = 0 / 3 / 6 / 10</code>，证明公式在关键台阶上没有偏离。</p>
+<h2 id="M2-测试场景">M2 测试场景</h2>
+<p>M2 场景是 <code>unity-project/Assets/Scenes/TestScenes/M2_BasicCombat.unity</code>。</p>
+<p>场景结构很直接：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>一个玩家。</p>
+</li>
+<li class="lvl-2">
+<p>三个敌人，分别对应废土、赛博、生化。</p>
+</li>
+<li class="lvl-2">
+<p>主战斗平台、赛博远程测试平台和安全地板。</p>
+</li>
+<li class="lvl-2">
+<p>一个 <code>M2_RuntimeProbe</code>。</p>
+</li>
+</ul>
+<p>M2 没有做完整关卡，而是做一个可控的白盒战斗试验场。这个选择是对的：基础战斗还没稳定时，复杂关卡只会放大变量，让问题更难定位。</p>
 <h2 id="验证结果">验证结果</h2>
-<p>M4 当前验证结果如下：</p>
+<p>M2 当前验证结果如下：</p>
 <table>
 <thead>
 <tr>
@@ -665,141 +1296,120 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td>M4 setup generation</td>
-<td><code>ProjectV.EditorTools.M4ProjectBuilder.SetupM4</code></td>
+<td>M2ProjectBuilder.VerifyM2Setup</td>
+<td><code>unity-project/Logs/M2_Verify.log</code></td>
 <td>Passed</td>
-</tr>
-<tr>
-<td>M4 setup verification</td>
-<td><code>ProjectV.EditorTools.M4ProjectBuilder.VerifyM4Setup</code></td>
-<td>Passed</td>
-</tr>
-<tr>
-<td>T-DEV30 grounding precheck</td>
-<td><code>qa/results/M4_Pre_TDEV30_PlayMode.xml</code></td>
-<td>14 / 14 passed</td>
 </tr>
 <tr>
 <td>EditMode</td>
-<td><code>qa/results/M4_EditMode_TestResults.xml</code></td>
-<td>25 / 25 passed</td>
+<td><code>qa/results/M2_EditMode_TestResults.xml</code></td>
+<td>13 passed / 0 failed</td>
 </tr>
 <tr>
 <td>PlayMode</td>
-<td><code>qa/results/M4_PlayMode_TestResults.xml</code></td>
-<td>19 / 19 passed</td>
+<td><code>qa/results/M2_PlayMode_TestResults.xml</code></td>
+<td>4 passed / 0 failed</td>
 </tr>
 <tr>
 <td>Windows Development Build</td>
-<td><code>unity-project/Builds/Windows/PROJECT-V.exe</code></td>
-<td>exit 0</td>
+<td><code>unity-project/Logs/M2_Build.log</code></td>
+<td>Success</td>
 </tr>
 <tr>
-<td>Runtime Probe 60s</td>
-<td><code>qa/results/M4_RuntimeProbe_60s.json</code></td>
-<td>Avg <code>59.994</code> FPS，P95 <code>59.996</code> FPS，GC <code>0</code></td>
+<td>Runtime Probe</td>
+<td><code>qa/results/M2_RuntimeProbe.json</code></td>
+<td>Avg 60.165 FPS, Min 59.817 FPS</td>
 </tr>
 </tbody>
 </table>
-<p>EditMode 的 25 个测试包含：</p>
+<p>EditMode 的 13 个用例包含 M1 回归 5 个和 M2 战斗 8 个，覆盖配置、HP/死亡/复活、死亡幂等、难度公式、Prefab、场景和输入绑定。</p>
+<p>PlayMode 的 4 个用例覆盖：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p>M1 setup 回归：5 个。</p>
+<p>轻攻击造成 <code>12</code> 点伤害。</p>
 </li>
 <li class="lvl-2">
-<p>M2 combat 回归：8 个。</p>
+<p>重攻击造成 <code>30</code> 点伤害且同目标只命中一次。</p>
 </li>
 <li class="lvl-2">
-<p>M3 full combat 回归：7 个。</p>
+<p>玩家死亡后不能攻击，复活到半血。</p>
 </li>
 <li class="lvl-2">
-<p>M4 full level：5 个。</p>
+<p>敌人 telegraph 后再对玩家造成伤害。</p>
 </li>
 </ul>
-<p>PlayMode 的 19 个测试包含：</p>
+<p>Runtime Probe 结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th style="text-align:right">数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Warmup</td>
+<td style="text-align:right"><code>1s</code></td>
+</tr>
+<tr>
+<td>测量窗口</td>
+<td style="text-align:right"><code>5.003s</code></td>
+</tr>
+<tr>
+<td>帧数</td>
+<td style="text-align:right"><code>301</code></td>
+</tr>
+<tr>
+<td>平均 FPS</td>
+<td style="text-align:right"><code>60.165</code></td>
+</tr>
+<tr>
+<td>最低 FPS</td>
+<td style="text-align:right"><code>59.817</code></td>
+</tr>
+<tr>
+<td>最高 FPS</td>
+<td style="text-align:right"><code>367.245</code></td>
+</tr>
+<tr>
+<td>敌人数</td>
+<td style="text-align:right"><code>3</code></td>
+</tr>
+<tr>
+<td>玩家 HP</td>
+<td style="text-align:right"><code>38</code></td>
+</tr>
+<tr>
+<td>玩家死亡</td>
+<td style="text-align:right"><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p>这说明 M2 短程 smoke 达到当前 QA floor，但它仍然不能替代长时 release-grade 性能验证。</p>
+<h2 id="已知限制">已知限制</h2>
+<p>M2 已通过当前范围验收，但仍有明确限制：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p>M2 combat 回归：4 个。</p>
+<p>未执行 30 分钟 1080p soak；这仍是后续 release-grade QA gate。</p>
 </li>
 <li class="lvl-2">
-<p>M3 full combat 回归：6 个。</p>
+<p>Cyber Infantry 使用白盒范围攻击近似远程行为，还不是正式 projectile 系统。</p>
 </li>
 <li class="lvl-2">
-<p>M4 full level / Boss：5 个。</p>
+<p>伤害数字、正式死亡 UI、正式音频不在 M2 P0 范围内。</p>
 </li>
 <li class="lvl-2">
-<p>M4 grounding：4 个。</p>
+<p>鼠标和手柄攻击路径已配置，但本轮未做真实外设人工测试。</p>
+</li>
+<li class="lvl-2">
+<p>当前测试场景是白盒战斗试验场，不代表正式关卡体验。</p>
 </li>
 </ul>
-<p>M4 full level 测试覆盖：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>三个世界观 LevelConfig。</p>
-</li>
-<li class="lvl-2">
-<p>6-12 房间范围、首房和 Boss 终房。</p>
-</li>
-<li class="lvl-2">
-<p><code>LevelManager</code> 开局、房间清理和推进。</p>
-</li>
-<li class="lvl-2">
-<p>早期低 build 与后期高 build 的难度缩放差异。</p>
-</li>
-<li class="lvl-2">
-<p>Boss telegraph 和 activation 事件。</p>
-</li>
-<li class="lvl-2">
-<p>暴露弱点被玩家攻击命中。</p>
-</li>
-<li class="lvl-2">
-<p>弱点破坏推动 Boss phase。</p>
-</li>
-<li class="lvl-2">
-<p>纯度极端时触发镜像 Boss。</p>
-</li>
-</ul>
-<p>这说明 M4 不是只生成场景资产，而是把关卡、Boss、镜像 Boss、难度、玩家修复和性能探针都纳入自动化验证。</p>
-<h2 id="已知风险和限制">已知风险和限制</h2>
-<p>M4 已完成玩法/系统闭环，但仍有明确限制：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>视觉资源仍是占位质量。Boss、房间、弱点提示和章节结束 UI 还不是最终美术。</p>
-</li>
-<li class="lvl-2">
-<p>音频仍为占位或沿用 M3 placeholder，正式 BGM、Boss SFX、弱点破坏音效和混音留到后续阶段。</p>
-</li>
-<li class="lvl-2">
-<p>M4 是手工关卡原型，不验证程序生成质量；M5 才需要种子复现、非法路线防回归和房间原型库抽象。</p>
-</li>
-<li class="lvl-2">
-<p>Addressables-style 异步房间加载目前主要通过配置 key 和 scene-level room managers 表达，生产级 streaming 可以在 M5/M7 扩展。</p>
-</li>
-<li class="lvl-2">
-<p>当前 probe 是 60s 工程验证，不等于完整发布前 soak。后续仍需要更长时段、更多场景和真实硬件覆盖。</p>
-</li>
-</ul>
-<p>这些限制不阻止 M4 验收，因为 M4 的目标是工程原型闭环，不是内容生产收口。</p>
-<h2 id="M5-方向">M5 方向</h2>
-<p>docs 仓库的 <code>project/PROJECT_STATE.md</code> 已将状态推进到 M4 完成、准备 M5。M5 的重点应该建立在 M4 的 LevelConfig / RoomConfig / DifficultyScaler 之上，而不是重做关卡框架。</p>
-<p>M5 的合理方向：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>从 M4 的 27 个 <code>RoomConfigSO</code> 抽象房间原型库。</p>
-</li>
-<li class="lvl-2">
-<p>引入 seed 生成，保证路线可复现。</p>
-</li>
-<li class="lvl-2">
-<p>做强约束生成：Boss 终房、休息房位置、精英房间隔、商店/奖励频率、不可达路线防护。</p>
-</li>
-<li class="lvl-2">
-<p>建立生成覆盖率和非法路线回归矩阵。</p>
-</li>
-<li class="lvl-2">
-<p>将 M4 的 runtime probe 扩展到多 seed、多世界观和更长窗口。</p>
-</li>
-</ul>
-<p>M4 的阶段价值在这里：PROJECT-V 已经有一条从手工房间、难度缩放、Boss telegraph、弱点、镜像 Boss 到 runtime probe 的可验证关卡链路。M5 可以专注于“如何生成好路线”，而不是补 M4 应该完成的关卡基础设施。</p>
+<h2 id="M2-留下的工程主线">M2 留下的工程主线</h2>
+<p>M2 之后，PROJECT-V 的局内主链路变成：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">PlayerInputHandler</span><br><span class="line">  -&gt; PlayerAttack</span><br><span class="line">  -&gt; AttackConfigSO</span><br><span class="line">  -&gt; Hitbox2D</span><br><span class="line">  -&gt; HealthComponent</span><br><span class="line">  -&gt; EventBus</span><br><span class="line">  -&gt; EnemyController / PlayerDeathController</span><br><span class="line">  -&gt; M2CombatTests / M2CombatPlayModeTests / M2RuntimeProbe</span><br></pre></td></tr></table></figure>
+<p>这条链路把 M1 的“能走能跳”升级成了“能打、能受伤、能死、能复活、敌人能反击”。它仍然是白盒实现，但已经足够支撑 M3 继续做攻击链、闪避、技能、反馈调参和更复杂敌人行为。</p>
+<p>M3 不应该另起一套战斗框架，而应该沿着 M2 的 <code>AttackConfigSO</code>、<code>HealthComponent</code>、<code>EnemyController</code> 和事件钩子继续扩展。</p>
 ]]></content>
       <tags>
         <tag>ProjectV</tag>
@@ -1584,13 +2194,13 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
       </tags>
   </entry>
   <entry>
-    <title>PROJECT-v M2：基础战斗闭环实现拆解</title>
-    <url>/2026/06/29/ProjectV-M2-Implementation/</url>
-    <content><![CDATA[<p>M2 的目标是把 M1 的“角色能动”推进到“基础战斗”。这一阶段不追求完整动作游戏手感，也不做技能、武器 Build、Boss 或正式表现层，而是先证明最小战斗链路成立：玩家能攻击，敌人能受伤和死亡，敌人能靠近并攻击玩家，玩家能死亡和复活，难度缩放和自动化测试能覆盖这条链路。</p>
-<p>本文所有文件路径均以 <code>PROJECT-V</code> 项目根目录为基准。</p>
+    <title>PROJECT-v M4：关卡原型与 Boss 压力验证</title>
+    <url>/2026/06/30/ProjectV-M4-Implementation/</url>
+    <content><![CDATA[<p>M4 的目标不是继续给 M3 战斗链堆更多孤立功能，而是把已经接通的移动、攻击、闪避、技能、武器倍率和反馈链放进连续房间、难度缩放、Boss 弱点和镜像 Boss 的压力环境里验证。换句话说，M4 关心的是：PROJECT-V 是否已经从“单场景战斗能跑通”推进到“关卡和 Boss 语境下仍能形成可玩构成”。</p>
+<p>除注明 docs 仓库的文档外，本文所有工程路径均以 <code>PROJECT-V</code> 项目根目录为基准；docs 路径均以 <code>PROJECT-V-game-docs</code> 根目录为基准。</p>
 <span id="more"></span>
 <h2 id="关联提交和依据">关联提交和依据</h2>
-<p>M2 功能主体提交：</p>
+<p>M4 功能主体提交：</p>
 <table>
 <thead>
 <tr>
@@ -1600,8 +2210,8 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td><code>f93faa4</code></td>
-<td><code>feat(m2): implement basic combat milestone</code>，M2 基础战斗里程碑实现</td>
+<td><code>6baacf6</code></td>
+<td><code>feat(levels): deliver M4 level and boss prototype</code>，关卡原型与 Boss 里程碑实现</td>
 </tr>
 </tbody>
 </table>
@@ -1616,90 +2226,138 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 <tbody>
 <tr>
 <td><code>develop</code></td>
-<td>M2 实施分支</td>
+<td>M4 实施分支</td>
 </tr>
 <tr>
 <td><code>origin/develop</code></td>
-<td>已推送远端分支</td>
+<td>已推送</td>
 </tr>
 </tbody>
 </table>
 <p>主要参考产物：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交付报告</td>
+<td><code>reports/M4_delivery_report.html</code></td>
+</tr>
+<tr>
+<td>QA 报告</td>
+<td><code>qa/reports/M4_test_report.md</code></td>
+</tr>
+<tr>
+<td>完整关卡测试用例</td>
+<td><code>qa/test_cases/M4_full_level.md</code></td>
+</tr>
+<tr>
+<td>Boss 行为矩阵</td>
+<td><code>qa/test_cases/M4_boss_matrix.md</code></td>
+</tr>
+<tr>
+<td>T-DEV30 回归结果</td>
+<td><code>qa/results/M4_Pre_TDEV30_PlayMode.xml</code></td>
+</tr>
+<tr>
+<td>EditMode 结果</td>
+<td><code>qa/results/M4_EditMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>PlayMode 结果</td>
+<td><code>qa/results/M4_PlayMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>60s Runtime Probe</td>
+<td><code>qa/results/M4_RuntimeProbe_60s.json</code></td>
+</tr>
+<tr>
+<td>Sprint 状态，docs 仓库</td>
+<td><code>project/sprints/SPRINT_04.md</code></td>
+</tr>
+<tr>
+<td>Project State，docs 仓库</td>
+<td><code>project/PROJECT_STATE.md</code></td>
+</tr>
+<tr>
+<td>M4 关卡 spec，docs 仓库</td>
+<td><code>design/feature_specs/M4_levels.md</code></td>
+</tr>
+<tr>
+<td>M4 Boss 行为，docs 仓库</td>
+<td><code>design/boss_behavior/M4_boss_behaviors.md</code></td>
+</tr>
+<tr>
+<td>M4 难度缩放，docs 仓库</td>
+<td><code>design/difficulty_scaling/M4_difficulty_scaling.md</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="M4-的目标和边界">M4 的目标和边界</h2>
+<p>M4 只做关卡原型和 Boss 压力验证。它不改变 M3 的主角战斗边界，也不进入 M5 的程序生成算法。</p>
+<p>M4 纳入实现的内容：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p><code>reports/M2_delivery_report.html</code></p>
+<p>3 个异世界手工关卡原型：废土、赛博、生化。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/reports/M2_test_report.md</code></p>
+<p>27 个房间配置：每个异世界 9 个房间。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/test_cases/M2_basic_combat.md</code></p>
+<p><code>LevelManager</code> / <code>RoomManager</code> 关卡与房间状态流。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/results/M2_EditMode_TestResults.xml</code></p>
+<p><code>LevelConfigSO</code> / <code>RoomConfigSO</code> 数据化房间序列、清理条件、奖励、商店、休息点和 Boss 房。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/results/M2_PlayMode_TestResults.xml</code></p>
+<p>怪物火车式难度缩放：升级强度、房间进度和世界观压力共同影响 HP、伤害、数量、冷却和 telegraph。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/results/M2_RuntimeProbe.json</code></p>
+<p>3 个 Boss：废土军阀、机关头领、变异母体。</p>
+</li>
+<li class="lvl-2">
+<p>Boss telegraph、招式激活、弱点暴露、弱点破坏和阶段切换事件。</p>
+</li>
+<li class="lvl-2">
+<p>镜像 Boss 参数化系统。</p>
+</li>
+<li class="lvl-2">
+<p>T-DEV30 接地稳定性修复。</p>
+</li>
+<li class="lvl-2">
+<p>M4 runtime probe：P50/P95/P99 FPS、GC collections、Mono memory delta、房间/Boss/镜像 Boss 检查。</p>
+</li>
+<li class="lvl-2">
+<p>EditMode、PlayMode、T-DEV30 回归、Windows Development Build 和 60s probe 验证。</p>
 </li>
 </ul>
-<h2 id="M2-的目标和边界">M2 的目标和边界</h2>
-<p>M2 只做基础战斗闭环。它承接 M1 的移动、跳跃、相机和测试场景，不重写角色控制，而是在玩家、敌人和战斗模块之间接出一条最小可验证链路。</p>
-<p>M2 纳入实现的内容：</p>
+<p>M4 明确不做：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p>玩家轻攻击和重攻击。</p>
+<p>程序生成路线。M4 用手工房间控制变量，M5 再做 seed、强约束生成和回归验证。</p>
 </li>
 <li class="lvl-2">
-<p>攻击配置、命中框、重复命中保护、击退和 hitstop。</p>
+<p>正式美术与正式音频。视觉、BGM、SFX 仍为占位资源。</p>
 </li>
 <li class="lvl-2">
-<p>玩家 HP、敌人 HP、死亡事件、死亡后防重复处理。</p>
+<p>自定义关卡编辑器。</p>
 </li>
 <li class="lvl-2">
-<p>玩家死亡后的输入锁定和复活。</p>
+<p>联网、云存档、排行榜或远程资源下载。</p>
 </li>
 <li class="lvl-2">
-<p>三类普通敌人：废土、赛博、生化各一个。</p>
-</li>
-<li class="lvl-2">
-<p>敌人 Patrol / Approach / Telegraph / Attack / Recover / Dead 基础 AI。</p>
-</li>
-<li class="lvl-2">
-<p>难度缩放公式。</p>
-</li>
-<li class="lvl-2">
-<p><code>M2_BasicCombat.unity</code> 测试场景。</p>
-</li>
-<li class="lvl-2">
-<p>EditMode、PlayMode、Windows Development Build 和 Runtime Probe 验证。</p>
+<p>新的主角玩法边界，不引入枪械、魔法、光剑、火球、召唤物或能量武器玩法。</p>
 </li>
 </ul>
-<p>M2 明确不做的内容：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>连段树、闪避无敌、技能、武器池、符文和 Build 协同。</p>
-</li>
-<li class="lvl-2">
-<p>Boss、程序化关卡、正式关卡流程。</p>
-</li>
-<li class="lvl-2">
-<p>正式伤害数字、正式死亡 UI、最终音频和正式特效。</p>
-</li>
-<li class="lvl-2">
-<p>赛博敌人的完整 projectile 系统。</p>
-</li>
-<li class="lvl-2">
-<p>30 分钟 1080p 长时 soak。</p>
-</li>
-</ul>
-<p>这个边界决定了 M2 的实现方式：系统要能打通战斗因果链，但仍保持白盒、可测、可替换。</p>
+<p>这个边界比“多做几个功能”更重要。M4 如果同时做程序生成、最终美术、正式 Boss 表现和复杂 UI，任何问题都无法判断到底来自生成算法、战斗手感、内容节奏还是表现资源。先用手工关卡压测战斗链，是更稳的顺序。</p>
 <h2 id="工程生成入口">工程生成入口</h2>
-<p>M2 的工程落地入口是 <code>unity-project/Assets/_Project/Editor/M2ProjectBuilder.cs</code>。</p>
-<p>它的职责比 M1 更重：不仅生成场景，还要把战斗资产、玩家 Prefab、敌人 Prefab 和验证入口全部拉齐。</p>
-<p>它会生成或更新这些内容：</p>
+<p>M4 的工程入口是 <code>unity-project/Assets/_Project/Editor/M4ProjectBuilder.cs</code>。</p>
+<p><code>SetupM4()</code> 首先调用 <code>M3ProjectBuilder.SetupM3()</code>，再生成 M4 资源。这说明 M4 是对 M3 的增量验证，而不是另起一套关卡或 Boss 框架。</p>
+<p>核心生成物：</p>
 <table>
 <thead>
 <tr>
@@ -1709,229 +2367,458 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td>轻攻击配置</td>
-<td><code>unity-project/Assets/_Project/Combat/SO/AttackConfig_Light.asset</code></td>
+<td>难度缩放配置</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Difficulty/DifficultyScaling_M4.asset</code></td>
 </tr>
 <tr>
-<td>重攻击配置</td>
-<td><code>unity-project/Assets/_Project/Combat/SO/AttackConfig_Heavy.asset</code></td>
+<td>Boss 配置目录</td>
+<td><code>unity-project/Assets/_Project/Combat/SO/Bosses/</code></td>
 </tr>
 <tr>
-<td>玩家生命配置</td>
-<td><code>unity-project/Assets/_Project/Combat/SO/Health_Player.asset</code></td>
+<td>Level 配置目录</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Levels/</code></td>
 </tr>
 <tr>
-<td>难度配置</td>
-<td><code>unity-project/Assets/_Project/Combat/SO/Difficulty_M2.asset</code></td>
+<td>Room 配置目录</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Rooms/</code></td>
 </tr>
 <tr>
-<td>三类敌人配置</td>
-<td><code>unity-project/Assets/_Project/Enemies/SO/</code></td>
+<td>M4 测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M4_FullLevel.unity</code></td>
 </tr>
 <tr>
-<td>三类敌人 Prefab</td>
-<td><code>unity-project/Assets/_Project/Enemies/Prefabs/</code></td>
+<td>废土关卡场景</td>
+<td><code>unity-project/Assets/Scenes/Levels/Wasteland/Wasteland_Level1.unity</code></td>
 </tr>
 <tr>
-<td>M2 测试场景</td>
-<td><code>unity-project/Assets/Scenes/TestScenes/M2_BasicCombat.unity</code></td>
+<td>赛博关卡场景</td>
+<td><code>unity-project/Assets/Scenes/Levels/Cyberpunk/Cyberpunk_Level1.unity</code></td>
 </tr>
 <tr>
-<td>Runtime Probe</td>
-<td><code>unity-project/Assets/_Project/Player/Scripts/M2RuntimeProbe.cs</code></td>
+<td>生化关卡场景</td>
+<td><code>unity-project/Assets/Scenes/Levels/Biohazard/Biohazard_Level1.unity</code></td>
 </tr>
 </tbody>
 </table>
-<p><code>SetupM2()</code> 会先确保 M1 资源存在，再创建 <code>Combat</code>、<code>Enemies</code> 目录、<code>Enemy</code> Layer、<code>Player</code> Tag、敌人占位 Sprite、SO 配置、Prefab 和测试场景。<code>VerifyM2Setup()</code> 则检查配置参数、输入绑定、玩家 Prefab、敌人配置、场景内容和 runtime probe。</p>
-<p>这让 M2 仍保持一个重要原则：不要依赖某次 Unity Editor 里的手工摆放。战斗场景、敌人 Prefab、SO 参数和验证入口都能由同一套 Editor tooling 重建。</p>
-<h2 id="玩家攻击系统">玩家攻击系统</h2>
-<p>玩家攻击核心在 <code>unity-project/Assets/_Project/Player/Scripts/PlayerAttack.cs</code>。</p>
-<p>M2 把攻击拆成三层：</p>
+<p><code>VerifyM4Setup()</code> 的验收点包括：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>M4 难度配置存在。</p>
+</li>
+<li class="lvl-2">
+<p>镜像 Boss 配置存在。</p>
+</li>
+<li class="lvl-2">
+<p>3 个 Boss 配置存在且名称正确。</p>
+</li>
+<li class="lvl-2">
+<p>3 个 Level 配置存在，世界观和 Boss id 对齐。</p>
+</li>
+<li class="lvl-2">
+<p>3 个正式关卡场景和 <code>M4_FullLevel.unity</code> 存在。</p>
+</li>
+<li class="lvl-2">
+<p>M4 full level scene 包含可运行的关卡、Boss、镜像 Boss 和 runtime probe harness。</p>
+</li>
+</ul>
+<p>这套 builder 延续了 M1-M3 的工程路线：阶段交付不是靠某次手工 Unity 场景状态，而是靠可重建、可验证的 Editor tooling。</p>
+<h2 id="Level-和-Room-数据结构">Level 和 Room 数据结构</h2>
+<p>M4 新增 Levels 模块：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/LevelTypes.cs</code></td>
+<td>定义房间类型、清理条件、奖励、商店、休息、Boss 房和难度上下文</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/LevelConfigSO.cs</code></td>
+<td>定义一整关的世界观、章节、Boss、房间序列、奖励池和过渡参数</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/RoomConfigSO.cs</code></td>
+<td>定义单个房间的类型、场景 key、门、清理条件、刷怪、奖励、商店、休息点和 Boss 配置</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/LevelManager.cs</code></td>
+<td>管一整关的开始、房间推进、房间清理统计、Boss 房进入和章节完成事件</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/RoomManager.cs</code></td>
+<td>管单个房间的进入、清理、敌人死亡监听、Boss 死亡监听和出口请求</td>
+</tr>
+</tbody>
+</table>
+<p>房间类型：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Start</span><br><span class="line">Combat</span><br><span class="line">Elite</span><br><span class="line">Reward</span><br><span class="line">Shop</span><br><span class="line">Rest</span><br><span class="line">Boss</span><br><span class="line">MirrorBoss</span><br></pre></td></tr></table></figure>
+<p>房间清理条件：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">None</span><br><span class="line">DefeatAllEnemies</span><br><span class="line">DefeatElite</span><br><span class="line">ClaimReward</span><br><span class="line">LeaveShop</span><br><span class="line">UseRestPoint</span><br><span class="line">DefeatBoss</span><br></pre></td></tr></table></figure>
+<p>M4 每个异世界关卡当前是 9 房间路线：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Start -&gt; Combat -&gt; Reward -&gt; Elite -&gt; Combat -&gt; Shop -&gt; Rest -&gt; Combat -&gt; Boss</span><br></pre></td></tr></table></figure>
+<p>实际落地的 Level 配置：</p>
+<table>
+<thead>
+<tr>
+<th>世界观</th>
+<th>Level 配置</th>
+<th style="text-align:right">房间数</th>
+<th>Boss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wasteland</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Levels/Level_Wasteland_Chapter1.asset</code></td>
+<td style="text-align:right"><code>9</code></td>
+<td><code>boss_wasteland_warlord</code></td>
+</tr>
+<tr>
+<td>Cyberpunk</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Levels/Level_Cyberpunk_Chapter1.asset</code></td>
+<td style="text-align:right"><code>9</code></td>
+<td><code>boss_mechanism_chief</code></td>
+</tr>
+<tr>
+<td>Biohazard</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Levels/Level_Biohazard_Chapter1.asset</code></td>
+<td style="text-align:right"><code>9</code></td>
+<td><code>boss_mutation_matriarch</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>LevelManager</code> 的关键职责是只管关卡推进，不接管敌人 AI 和 Boss 招式：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">BeginLevel()</span><br><span class="line">  -&gt; OnLevelStarted</span><br><span class="line">  -&gt; AdvanceToRoom(0)</span><br><span class="line">  -&gt; OnRoomEntered</span><br><span class="line">  -&gt; RoomManager.MarkCleared()</span><br><span class="line">  -&gt; OnRoomCleared</span><br><span class="line">  -&gt; RequestAdvanceFrom()</span><br><span class="line">  -&gt; OnRoomTransitionStarted</span><br><span class="line">  -&gt; OnRoomTransitionCompleted</span><br><span class="line">  -&gt; Boss room: OnBossRoomEntered</span><br><span class="line">  -&gt; Boss defeated: OnLevelCompleted</span><br></pre></td></tr></table></figure>
+<p>QA 中发现的一个真实运行时问题是：生成场景中的 <code>RoomManager.owner</code> 不会被 Unity 序列化。现在 <code>LevelManager.Awake()</code> 会调用 <code>Configure(config, rooms, purity)</code>，遍历所有 <code>RoomManager</code> 并重绑 owner 和对应 <code>RoomConfigSO</code>。这个修复很关键，否则 PlayMode 里房间能被清理，但出口推进会因为 owner 为空而失败。</p>
+<h2 id="难度缩放">难度缩放</h2>
+<p>M4 的难度缩放不是简单沿用 M2 的敌人数量/HP 公式，而是升级成三类压力输入：</p>
+<table>
+<thead>
+<tr>
+<th>输入</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>upgradeIntensity</code></td>
+<td>本局升级强度归一化，来自通用升级、世界观被动、主动技能、武器世界观修饰和协同</td>
+</tr>
+<tr>
+<td><code>roomProgress</code></td>
+<td>当前房间在整条路线中的进度</td>
+</tr>
+<tr>
+<td><code>worldPressure</code></td>
+<td>武器世界观修饰、build 涉及的世界观数量、跨世界观协同、房间/主 build 世界观不匹配</td>
+</tr>
+</tbody>
+</table>
+<p>核心实现位于：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Levels/Scripts/DifficultyScalingConfigSO.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Levels/Scripts/DifficultyScaler.cs</code></p>
+</li>
+</ul>
+<p><code>DifficultyScaler.Evaluate()</code> 会计算：</p>
+<table>
+<thead>
+<tr>
+<th>输出</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enemyHpMultiplier</code></td>
+<td>敌人 HP 倍率</td>
+</tr>
+<tr>
+<td><code>enemyDamageMultiplier</code></td>
+<td>敌人伤害倍率</td>
+</tr>
+<tr>
+<td><code>enemyCountMultiplier</code></td>
+<td>spawn budget / 目标敌人数压力</td>
+</tr>
+<tr>
+<td><code>enemyCooldownMultiplier</code></td>
+<td>攻击冷却倍率，越低越频繁</td>
+</tr>
+<tr>
+<td><code>enemyTelegraphMultiplier</code></td>
+<td>telegraph 压缩倍率，但有下限</td>
+</tr>
+<tr>
+<td><code>targetEnemyCount</code></td>
+<td>当前房间目标敌人数</td>
+</tr>
+</tbody>
+</table>
+<p>这套公式的重点是“房间越靠后、build 越强、世界观压力越高，敌人压力越高”，但所有数值都经过 clamp。它避免了两个极端：玩家 build 强到后半局无脑碾压，或者系统为了追压力直接生成不可读、不可反应的攻击。</p>
+<p>Boss 压力也独立评估：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">bossPressure =</span><br><span class="line">  levelOrder pressure</span><br><span class="line">  + upgrade intensity pressure</span><br><span class="line">  + world pressure</span><br></pre></td></tr></table></figure>
+<p>M4 没有把难度和程序生成绑定死。它先让手工房间能被数值公式评估，为 M5 的 seed route 和强约束生成保留入口。</p>
+<h2 id="Boss-系统">Boss 系统</h2>
+<p>Boss 系统由配置、控制器和弱点三个核心层组成：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unity-project/Assets/_Project/Combat/Scripts/BossConfigSO.cs</code></td>
+<td>Boss 基础数值、招式、weakpoint、phase 和资源字段</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Combat/Scripts/BossController.cs</code></td>
+<td>配置 HP、运行招式 coroutine、发布 telegraph/activation/defeated/phase 事件</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Combat/Scripts/BossWeakpoint.cs</code></td>
+<td>管弱点暴露、破坏槽、弱点击中、弱点破坏和阶段触发</td>
+</tr>
+</tbody>
+</table>
+<p>M4 的三个 Boss 配置：</p>
+<table>
+<thead>
+<tr>
+<th>Boss</th>
+<th>世界观</th>
+<th style="text-align:right">HP</th>
+<th style="text-align:right">招式数</th>
+<th style="text-align:right">弱点数</th>
+<th>验证重点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wasteland Warlord / 废土军阀</td>
+<td>Wasteland</td>
+<td style="text-align:right"><code>850</code></td>
+<td style="text-align:right"><code>5</code></td>
+<td style="text-align:right"><code>3</code></td>
+<td>慢起手、重压迫、绕背惩罚</td>
+</tr>
+<tr>
+<td>Mechanism Chief / 机关头领</td>
+<td>Cyberpunk</td>
+<td style="text-align:right"><code>760</code></td>
+<td style="text-align:right"><code>5</code></td>
+<td style="text-align:right"><code>3</code></td>
+<td>中高速节奏、机关、短窗口打点</td>
+</tr>
+<tr>
+<td>Mutation Matriarch / 变异母体</td>
+<td>Biohazard</td>
+<td style="text-align:right"><code>950</code></td>
+<td style="text-align:right"><code>5</code></td>
+<td style="text-align:right"><code>2</code></td>
+<td>大体型控场、召出压力、清场优先级</td>
+</tr>
+</tbody>
+</table>
+<p>Boss 招式是数据化的 <code>BossMoveConfig</code>，字段包括：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>moveType</code></p>
+</li>
+<li class="lvl-2">
+<p><code>telegraphLevel</code></p>
+</li>
+<li class="lvl-2">
+<p><code>telegraphDuration</code></p>
+</li>
+<li class="lvl-2">
+<p><code>activeDuration</code></p>
+</li>
+<li class="lvl-2">
+<p><code>recoveryDuration</code></p>
+</li>
+<li class="lvl-2">
+<p><code>cooldown</code></p>
+</li>
+<li class="lvl-2">
+<p><code>damageMultiplier</code></p>
+</li>
+<li class="lvl-2">
+<p><code>hitboxShape</code></p>
+</li>
+<li class="lvl-2">
+<p><code>dodgeRule</code></p>
+</li>
+<li class="lvl-2">
+<p><code>exposedWeakpointId</code></p>
+</li>
+<li class="lvl-2">
+<p><code>weakpointExposeDuration</code></p>
+</li>
+<li class="lvl-2">
+<p><code>weight</code></p>
+</li>
+</ul>
+<p><code>BossController.BeginMove()</code> 会启动招式流程：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">OnBossMoveTelegraphStarted</span><br><span class="line">  -&gt; wait telegraphDuration</span><br><span class="line">  -&gt; OnBossMoveActivated</span><br><span class="line">  -&gt; expose configured weakpoint</span><br><span class="line">  -&gt; wait activeDuration + recoveryDuration</span><br></pre></td></tr></table></figure>
+<p>这意味着 Boss 攻击不是瞬时扣血，而是有可测试的预警、激活、恢复和弱点窗口。PlayMode 可以断言 telegraph 事件、activation 事件和弱点暴露，而不是只看 Boss 有没有动。</p>
+<p>弱点系统负责把“打 Boss”变成更具体的战斗目标。<code>BossWeakpoint.RegisterHit()</code> 在弱点暴露时扣破坏槽，发布 <code>OnBossWeakpointHit</code>，破坏后发布 <code>OnBossWeakpointDestroyed</code>，并可调用 <code>BossController.ForcePhase()</code> 推进阶段。</p>
+<h2 id="镜像-Boss">镜像 Boss</h2>
+<p>镜像 Boss 实现位于：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Combat/Scripts/MirrorBossConfigSO.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Combat/Scripts/MirrorBossController.cs</code></p>
+</li>
+</ul>
+<p>M4 的镜像 Boss 不直接复制玩家数值。它只读取纯度、build 强度和关卡序号，输出一组参数化结果：</p>
+<table>
+<thead>
+<tr>
+<th>输出</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>shouldSpawn</code></td>
+<td>是否触发镜像 Boss</td>
+</tr>
+<tr>
+<td><code>mirrorForm</code></td>
+<td><code>pure</code> / <code>corrupted</code> / <code>none</code></td>
+</tr>
+<tr>
+<td><code>hpMultiplier</code></td>
+<td>镜像 Boss HP 倍率</td>
+</tr>
+<tr>
+<td><code>attackMultiplier</code></td>
+<td>攻击倍率</td>
+</tr>
+<tr>
+<td><code>skillCount</code></td>
+<td>镜像技能数量</td>
+</tr>
+<tr>
+<td><code>passiveUpgradeRate</code></td>
+<td>被动升级比例</td>
+</tr>
+<tr>
+<td><code>cooldownMultiplier</code></td>
+<td>冷却倍率</td>
+</tr>
+<tr>
+<td><code>telegraphMultiplier</code></td>
+<td>telegraph 倍率</td>
+</tr>
+</tbody>
+</table>
+<p>触发规则：</p>
+<table>
+<thead>
+<tr>
+<th>纯度</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt; 30%</code></td>
+<td>触发 <code>pure</code> 镜像形态</td>
+</tr>
+<tr>
+<td><code>30%-70%</code></td>
+<td>不触发</td>
+</tr>
+<tr>
+<td><code>&gt; 70%</code></td>
+<td>触发 <code>corrupted</code> 镜像形态</td>
+</tr>
+</tbody>
+</table>
+<p>这个设计避免了一个常见错误：把镜像 Boss 做成“玩家 build 的数值复制体”。复制玩家数值很容易制造无解情况，尤其是 cooldown、无敌帧和技能堆叠。M4 的做法是抽取 build 强度，再通过配置上下界约束。</p>
+<h2 id="T-DEV30-接地稳定性修复">T-DEV30 接地稳定性修复</h2>
+<p>M4 开始前处理了一个影响关卡体验的 P1 问题：角色在平台边缘、墙边或实体边界悬空时，可能因为接地检测误判而不自然下落。</p>
+<p>修复涉及：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>变化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/GroundCheckHelper.cs</code></td>
+<td>新增多点 raycast 接地检测</td>
+</tr>
+<tr>
+<td><code>unity-project/Assets/_Project/Player/Scripts/PlayerController.cs</code></td>
+<td>接入新检测、跳跃后接地 lockout、碰撞退出后重查接地</td>
+</tr>
+</tbody>
+</table>
+<p><code>GroundCheckHelper.IsGrounded()</code> 的关键规则：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>上升速度大于 <code>0.01</code> 时直接判定未接地。</p>
+</li>
+<li class="lvl-2">
+<p>从 collider 左脚、中脚、右脚三个点向下 raycast。</p>
+</li>
+<li class="lvl-2">
+<p>命中的 surface normal 必须 <code>normal.y &gt;= 0.55</code>，避免墙面/侧边误判为地面。</p>
+</li>
+<li class="lvl-2">
+<p>raycast 起点略微抬高，减少 collider 边缘浮动误差。</p>
+</li>
+</ul>
+<p><code>PlayerController</code> 还增加了 <code>GroundingLockoutAfterJump = 0.08s</code>，跳起后短时间内强制不接地。这能防止刚起跳的物理接触残留把角色立刻拉回 grounded 状态。</p>
+<p>这个修复对 M4 很实际。关卡里开始有更多平台、边缘、墙体和 Boss arena，M1/M2 测试场景里不显眼的接地误判会在 M4 被放大。</p>
+<h2 id="Runtime-Probe-增强">Runtime Probe 增强</h2>
+<p>M3 已经有 60s probe，但只有平均 FPS、min/max 和系统就绪字段。M4 的 probe 解决了 M3 留下的一个问题：单个 min FPS outlier 不能说明整体帧稳定性。</p>
+<p>实现位于 <code>unity-project/Assets/_Project/Levels/Scripts/M4RuntimeProbe.cs</code>。</p>
+<p>M4 probe 的运行逻辑：</p>
 <ol>
 <li class="lvl-3">
-<p><code>PlayerInputHandler</code> 负责消费轻攻击、重攻击输入。</p>
+<p>识别 <code>-m4Probe</code> 参数。</p>
 </li>
 <li class="lvl-3">
-<p><code>AttackConfigSO</code> 定义攻击类型、伤害、持续时间、命中窗口、命中框、目标 Layer、hitstop 和击退。</p>
+<p>设置 <code>Application.targetFrameRate = 60</code>，关闭 vSync。</p>
 </li>
 <li class="lvl-3">
-<p><code>PlayerAttack</code> 用计时器进入命中窗口，并把命中结果转换成 <code>DamageInfo</code>。</p>
+<p>记录 GC collection 起始计数和 Mono memory。</p>
+</li>
+<li class="lvl-3">
+<p>自动 <code>BeginLevel()</code>。</p>
+</li>
+<li class="lvl-3">
+<p>warmup 后触发脚本动作：闪避、U 技能、Boss 招式、清理前三个房间、镜像 Boss 评估。</p>
+</li>
+<li class="lvl-3">
+<p>收集每帧 FPS 样本。</p>
+</li>
+<li class="lvl-3">
+<p>输出 average/min/max、P50/P95/P99、GC、memory delta 和系统就绪字段。</p>
 </li>
 </ol>
-<p>轻重攻击参数如下：</p>
-<table>
-<thead>
-<tr>
-<th>攻击</th>
-<th>输入</th>
-<th style="text-align:right">伤害</th>
-<th style="text-align:right">总时长</th>
-<th style="text-align:right">命中开始</th>
-<th style="text-align:right">命中持续</th>
-<th style="text-align:right">hitstop</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Light</td>
-<td><code>J</code></td>
-<td style="text-align:right"><code>12</code></td>
-<td style="text-align:right"><code>0.40s</code></td>
-<td style="text-align:right"><code>0.25s</code></td>
-<td style="text-align:right"><code>0.10s</code></td>
-<td style="text-align:right"><code>6</code> frames</td>
-</tr>
-<tr>
-<td>Heavy</td>
-<td><code>L</code></td>
-<td style="text-align:right"><code>30</code></td>
-<td style="text-align:right"><code>0.80s</code></td>
-<td style="text-align:right"><code>0.50s</code></td>
-<td style="text-align:right"><code>0.15s</code></td>
-<td style="text-align:right"><code>12</code> frames</td>
-</tr>
-</tbody>
-</table>
-<p>输入资产还配置了鼠标和手柄：</p>
-<table>
-<thead>
-<tr>
-<th>行为</th>
-<th>键盘</th>
-<th>鼠标</th>
-<th>手柄</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>轻攻击</td>
-<td><code>J</code></td>
-<td>左键</td>
-<td>buttonWest</td>
-</tr>
-<tr>
-<td>重攻击</td>
-<td><code>L</code></td>
-<td>右键</td>
-<td>buttonNorth</td>
-</tr>
-</tbody>
-</table>
-<p>需要注意的是，M2 报告只确认这些绑定存在；鼠标和手柄路径没有做真实外设人工测试。</p>
-<h2 id="命中框和重复命中保护">命中框和重复命中保护</h2>
-<p>命中检测由 <code>unity-project/Assets/_Project/Combat/Scripts/Hitbox2D.cs</code> 封装，底层使用 <code>Physics2D.OverlapBoxNonAlloc()</code>。这符合 M2 的白盒目标：先用简单、可控、无 GC 压力的盒形命中框跑通战斗。</p>
-<p><code>PlayerAttack</code> 中有一个关键结构：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">HashSet&lt;HealthComponent&gt; hitTargets</span><br></pre></td></tr></table></figure>
-<p>每次攻击开始时清空它；攻击命中窗口内，如果目标已经被当前攻击实例命中过，就跳过。这样可以保证“同一次攻击同一个目标只受伤一次”，但同一次攻击仍可以打到多个不同敌人。</p>
-<p>命中成功后，链路是：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">AttackConfigSO</span><br><span class="line">  -&gt; PlayerAttack.ApplyHitbox()</span><br><span class="line">  -&gt; Hitbox2D.Overlap()</span><br><span class="line">  -&gt; HealthComponent.TakeDamage()</span><br><span class="line">  -&gt; OnAttackHit / OnDamageTaken / OnHealthChanged</span><br><span class="line">  -&gt; HitFeedback / Knockback / Hitstop</span><br></pre></td></tr></table></figure>
-<p>这条链路的重点不是表现效果，而是战斗事实：谁打了谁、造成多少伤害、是否死亡、事件是否只触发一次。</p>
-<h2 id="生命、死亡和复活">生命、死亡和复活</h2>
-<p>生命系统集中在 <code>unity-project/Assets/_Project/Combat/Scripts/HealthComponent.cs</code>。</p>
-<p><code>HealthComponent</code> 不只服务玩家，也服务敌人；实体类型通过 <code>HealthEntityKind</code> 区分：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>Player</code></p>
-</li>
-<li class="lvl-2">
-<p><code>Enemy</code></p>
-</li>
-<li class="lvl-2">
-<p><code>Generic</code></p>
-</li>
-</ul>
-<p><code>TakeDamage()</code> 的守卫逻辑很明确：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>已死亡则不再受伤。</p>
-</li>
-<li class="lvl-2">
-<p>伤害小于等于 0 则不处理。</p>
-</li>
-<li class="lvl-2">
-<p>仍在受击无敌时间内则不处理。</p>
-</li>
-</ul>
-<p>有效伤害会触发：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>OnDamageTaken</code></p>
-</li>
-<li class="lvl-2">
-<p><code>OnHealthChanged</code></p>
-</li>
-<li class="lvl-2">
-<p>死亡时触发 <code>OnPlayerDeath</code> 或 <code>OnEnemyDeath</code></p>
-</li>
-</ul>
-<p>敌人死亡后会禁用子物体中的 Collider，避免死亡敌人继续参与命中或碰撞。测试也覆盖了“死亡事件只触发一次”和“死亡后不能重复受击”。</p>
-<p>玩家复活由 <code>unity-project/Assets/_Project/Player/Scripts/PlayerDeathController.cs</code> 接入。当前测试确认玩家死亡后不能攻击，复活后 HP 回到 <code>50</code>，并恢复攻击能力。复活输入在白盒实现中支持 <code>R</code> 或 <code>Enter</code>。</p>
-<h2 id="敌人配置和基础-AI">敌人配置和基础 AI</h2>
-<p>M2 新增 <code>Enemies</code> 模块，核心配置文件是 <code>unity-project/Assets/_Project/Enemies/Scripts/EnemyConfigSO.cs</code>，核心控制器是 <code>unity-project/Assets/_Project/Enemies/Scripts/EnemyController.cs</code>。</p>
-<p>三类普通敌人对应三个世界观：</p>
-<table>
-<thead>
-<tr>
-<th>敌人</th>
-<th>世界</th>
-<th style="text-align:right">基础 HP</th>
-<th style="text-align:right">基础伤害</th>
-<th>特点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Wasteland Raider</td>
-<td>Wasteland</td>
-<td style="text-align:right"><code>30</code></td>
-<td style="text-align:right"><code>8</code></td>
-<td>近战基础敌人</td>
-</tr>
-<tr>
-<td>Cyber Infantry</td>
-<td>Cyberpunk</td>
-<td style="text-align:right"><code>25</code></td>
-<td style="text-align:right"><code>10</code></td>
-<td>M2 用范围攻击近似远程</td>
-</tr>
-<tr>
-<td>Bio Parasite</td>
-<td>Biohazard</td>
-<td style="text-align:right"><code>40</code></td>
-<td style="text-align:right"><code>12</code></td>
-<td>更厚、更贴近</td>
-</tr>
-</tbody>
-</table>
-<p>敌人状态机是白盒版：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Patrol</span><br><span class="line">  -&gt; Approach</span><br><span class="line">  -&gt; Telegraph</span><br><span class="line">  -&gt; Attack</span><br><span class="line">  -&gt; Recover</span><br><span class="line">  -&gt; Patrol / Approach</span><br><span class="line">  -&gt; Dead</span><br></pre></td></tr></table></figure>
-<p>AI 逻辑先按距离找玩家：看见玩家进入 <code>Approach</code>，进入攻击距离后先 <code>Telegraph</code>，至少等待 <code>0.3s</code>，再进入 <code>Attack</code>。这一步是公平性底线：敌人不能一进范围就瞬间扣血。</p>
-<p>赛博敌人目前不是正式远程 projectile，而是用更大的 attack range 做白盒范围攻击。这个限制已经在 QA 报告中接受为 M2 范围内的残余项。</p>
-<h2 id="难度缩放">难度缩放</h2>
-<p>M2 的难度公式在 <code>unity-project/Assets/_Project/Combat/Scripts/DifficultyBalancing.cs</code>：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">enemyHp     = baseHp     * (1 + 0.10 * upgradeCount)</span><br><span class="line">enemyDamage = baseDamage * (1 + 0.05 * upgradeCount)</span><br><span class="line">enemyCount  = baseCount  + floor(upgradeCount / 3)</span><br></pre></td></tr></table></figure>
-<p>实际实现会对 HP 和伤害做 <code>Mathf.Round()</code>，并保证 HP 至少为 1、敌人数至少为 1。<code>DifficultyBalancing.Calculate()</code> 还会发布 <code>OnDifficultyScaled</code>，方便后续 QA 或 UI 记录缩放结果。</p>
-<p>EditMode 测试覆盖了 <code>upgradeCount = 0 / 3 / 6 / 10</code>，证明公式在关键台阶上没有偏离。</p>
-<h2 id="M2-测试场景">M2 测试场景</h2>
-<p>M2 场景是 <code>unity-project/Assets/Scenes/TestScenes/M2_BasicCombat.unity</code>。</p>
-<p>场景结构很直接：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>一个玩家。</p>
-</li>
-<li class="lvl-2">
-<p>三个敌人，分别对应废土、赛博、生化。</p>
-</li>
-<li class="lvl-2">
-<p>主战斗平台、赛博远程测试平台和安全地板。</p>
-</li>
-<li class="lvl-2">
-<p>一个 <code>M2_RuntimeProbe</code>。</p>
-</li>
-</ul>
-<p>M2 没有做完整关卡，而是做一个可控的白盒战斗试验场。这个选择是对的：基础战斗还没稳定时，复杂关卡只会放大变量，让问题更难定位。</p>
+<p>60s 结果：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;warmupSeconds&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;totalElapsedSeconds&quot;</span><span class="punctuation">:</span> <span class="number">63.006</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;measuredSeconds&quot;</span><span class="punctuation">:</span> <span class="number">60.006</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;frameCount&quot;</span><span class="punctuation">:</span> <span class="number">3600</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;averageFps&quot;</span><span class="punctuation">:</span> <span class="number">59.994</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;minFps&quot;</span><span class="punctuation">:</span> <span class="number">56.584</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;maxFps&quot;</span><span class="punctuation">:</span> <span class="number">75.133</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p50Fps&quot;</span><span class="punctuation">:</span> <span class="number">60</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p95Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.996</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p99Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.793</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;gcCollections&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;monoMemoryDeltaBytes&quot;</span><span class="punctuation">:</span> <span class="number">8192</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;m4SystemsReady&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roomsTotal&quot;</span><span class="punctuation">:</span> <span class="number">9</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roomsCleared&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;dodgeStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;skillUActivated&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;bossMoveStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;mirrorSpawned&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这组结果比 M3 的 probe 更有解释力。平均 FPS <code>59.994</code> 只是表层结果，真正重要的是 P95/P99 仍贴近 60、<code>gcCollections</code> 为 0，并且 probe 实际触发了房间推进、闪避、技能、Boss move 和镜像 Boss。</p>
 <h2 id="验证结果">验证结果</h2>
-<p>M2 当前验证结果如下：</p>
+<p>M4 当前验证结果如下：</p>
 <table>
 <thead>
 <tr>
@@ -1942,120 +2829,141 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td>M2ProjectBuilder.VerifyM2Setup</td>
-<td><code>unity-project/Logs/M2_Verify.log</code></td>
+<td>M4 setup generation</td>
+<td><code>ProjectV.EditorTools.M4ProjectBuilder.SetupM4</code></td>
 <td>Passed</td>
 </tr>
 <tr>
+<td>M4 setup verification</td>
+<td><code>ProjectV.EditorTools.M4ProjectBuilder.VerifyM4Setup</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>T-DEV30 grounding precheck</td>
+<td><code>qa/results/M4_Pre_TDEV30_PlayMode.xml</code></td>
+<td>14 / 14 passed</td>
+</tr>
+<tr>
 <td>EditMode</td>
-<td><code>qa/results/M2_EditMode_TestResults.xml</code></td>
-<td>13 passed / 0 failed</td>
+<td><code>qa/results/M4_EditMode_TestResults.xml</code></td>
+<td>25 / 25 passed</td>
 </tr>
 <tr>
 <td>PlayMode</td>
-<td><code>qa/results/M2_PlayMode_TestResults.xml</code></td>
-<td>4 passed / 0 failed</td>
+<td><code>qa/results/M4_PlayMode_TestResults.xml</code></td>
+<td>19 / 19 passed</td>
 </tr>
 <tr>
 <td>Windows Development Build</td>
-<td><code>unity-project/Logs/M2_Build.log</code></td>
-<td>Success</td>
+<td><code>unity-project/Builds/Windows/PROJECT-V.exe</code></td>
+<td>exit 0</td>
 </tr>
 <tr>
-<td>Runtime Probe</td>
-<td><code>qa/results/M2_RuntimeProbe.json</code></td>
-<td>Avg 60.165 FPS, Min 59.817 FPS</td>
+<td>Runtime Probe 60s</td>
+<td><code>qa/results/M4_RuntimeProbe_60s.json</code></td>
+<td>Avg <code>59.994</code> FPS，P95 <code>59.996</code> FPS，GC <code>0</code></td>
 </tr>
 </tbody>
 </table>
-<p>EditMode 的 13 个用例包含 M1 回归 5 个和 M2 战斗 8 个，覆盖配置、HP/死亡/复活、死亡幂等、难度公式、Prefab、场景和输入绑定。</p>
-<p>PlayMode 的 4 个用例覆盖：</p>
+<p>EditMode 的 25 个测试包含：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p>轻攻击造成 <code>12</code> 点伤害。</p>
+<p>M1 setup 回归：5 个。</p>
 </li>
 <li class="lvl-2">
-<p>重攻击造成 <code>30</code> 点伤害且同目标只命中一次。</p>
+<p>M2 combat 回归：8 个。</p>
 </li>
 <li class="lvl-2">
-<p>玩家死亡后不能攻击，复活到半血。</p>
+<p>M3 full combat 回归：7 个。</p>
 </li>
 <li class="lvl-2">
-<p>敌人 telegraph 后再对玩家造成伤害。</p>
+<p>M4 full level：5 个。</p>
 </li>
 </ul>
-<p>Runtime Probe 结果如下：</p>
-<table>
-<thead>
-<tr>
-<th>指标</th>
-<th style="text-align:right">数值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Warmup</td>
-<td style="text-align:right"><code>1s</code></td>
-</tr>
-<tr>
-<td>测量窗口</td>
-<td style="text-align:right"><code>5.003s</code></td>
-</tr>
-<tr>
-<td>帧数</td>
-<td style="text-align:right"><code>301</code></td>
-</tr>
-<tr>
-<td>平均 FPS</td>
-<td style="text-align:right"><code>60.165</code></td>
-</tr>
-<tr>
-<td>最低 FPS</td>
-<td style="text-align:right"><code>59.817</code></td>
-</tr>
-<tr>
-<td>最高 FPS</td>
-<td style="text-align:right"><code>367.245</code></td>
-</tr>
-<tr>
-<td>敌人数</td>
-<td style="text-align:right"><code>3</code></td>
-</tr>
-<tr>
-<td>玩家 HP</td>
-<td style="text-align:right"><code>38</code></td>
-</tr>
-<tr>
-<td>玩家死亡</td>
-<td style="text-align:right"><code>false</code></td>
-</tr>
-</tbody>
-</table>
-<p>这说明 M2 短程 smoke 达到当前 QA floor，但它仍然不能替代长时 release-grade 性能验证。</p>
-<h2 id="已知限制">已知限制</h2>
-<p>M2 已通过当前范围验收，但仍有明确限制：</p>
+<p>PlayMode 的 19 个测试包含：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p>未执行 30 分钟 1080p soak；这仍是后续 release-grade QA gate。</p>
+<p>M2 combat 回归：4 个。</p>
 </li>
 <li class="lvl-2">
-<p>Cyber Infantry 使用白盒范围攻击近似远程行为，还不是正式 projectile 系统。</p>
+<p>M3 full combat 回归：6 个。</p>
 </li>
 <li class="lvl-2">
-<p>伤害数字、正式死亡 UI、正式音频不在 M2 P0 范围内。</p>
+<p>M4 full level / Boss：5 个。</p>
 </li>
 <li class="lvl-2">
-<p>鼠标和手柄攻击路径已配置，但本轮未做真实外设人工测试。</p>
-</li>
-<li class="lvl-2">
-<p>当前测试场景是白盒战斗试验场，不代表正式关卡体验。</p>
+<p>M4 grounding：4 个。</p>
 </li>
 </ul>
-<h2 id="M2-留下的工程主线">M2 留下的工程主线</h2>
-<p>M2 之后，PROJECT-V 的局内主链路变成：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">PlayerInputHandler</span><br><span class="line">  -&gt; PlayerAttack</span><br><span class="line">  -&gt; AttackConfigSO</span><br><span class="line">  -&gt; Hitbox2D</span><br><span class="line">  -&gt; HealthComponent</span><br><span class="line">  -&gt; EventBus</span><br><span class="line">  -&gt; EnemyController / PlayerDeathController</span><br><span class="line">  -&gt; M2CombatTests / M2CombatPlayModeTests / M2RuntimeProbe</span><br></pre></td></tr></table></figure>
-<p>这条链路把 M1 的“能走能跳”升级成了“能打、能受伤、能死、能复活、敌人能反击”。它仍然是白盒实现，但已经足够支撑 M3 继续做攻击链、闪避、技能、反馈调参和更复杂敌人行为。</p>
-<p>M3 不应该另起一套战斗框架，而应该沿着 M2 的 <code>AttackConfigSO</code>、<code>HealthComponent</code>、<code>EnemyController</code> 和事件钩子继续扩展。</p>
+<p>M4 full level 测试覆盖：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>三个世界观 LevelConfig。</p>
+</li>
+<li class="lvl-2">
+<p>6-12 房间范围、首房和 Boss 终房。</p>
+</li>
+<li class="lvl-2">
+<p><code>LevelManager</code> 开局、房间清理和推进。</p>
+</li>
+<li class="lvl-2">
+<p>早期低 build 与后期高 build 的难度缩放差异。</p>
+</li>
+<li class="lvl-2">
+<p>Boss telegraph 和 activation 事件。</p>
+</li>
+<li class="lvl-2">
+<p>暴露弱点被玩家攻击命中。</p>
+</li>
+<li class="lvl-2">
+<p>弱点破坏推动 Boss phase。</p>
+</li>
+<li class="lvl-2">
+<p>纯度极端时触发镜像 Boss。</p>
+</li>
+</ul>
+<p>这说明 M4 不是只生成场景资产，而是把关卡、Boss、镜像 Boss、难度、玩家修复和性能探针都纳入自动化验证。</p>
+<h2 id="已知风险和限制">已知风险和限制</h2>
+<p>M4 已完成玩法/系统闭环，但仍有明确限制：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>视觉资源仍是占位质量。Boss、房间、弱点提示和章节结束 UI 还不是最终美术。</p>
+</li>
+<li class="lvl-2">
+<p>音频仍为占位或沿用 M3 placeholder，正式 BGM、Boss SFX、弱点破坏音效和混音留到后续阶段。</p>
+</li>
+<li class="lvl-2">
+<p>M4 是手工关卡原型，不验证程序生成质量；M5 才需要种子复现、非法路线防回归和房间原型库抽象。</p>
+</li>
+<li class="lvl-2">
+<p>Addressables-style 异步房间加载目前主要通过配置 key 和 scene-level room managers 表达，生产级 streaming 可以在 M5/M7 扩展。</p>
+</li>
+<li class="lvl-2">
+<p>当前 probe 是 60s 工程验证，不等于完整发布前 soak。后续仍需要更长时段、更多场景和真实硬件覆盖。</p>
+</li>
+</ul>
+<p>这些限制不阻止 M4 验收，因为 M4 的目标是工程原型闭环，不是内容生产收口。</p>
+<h2 id="M5-方向">M5 方向</h2>
+<p>docs 仓库的 <code>project/PROJECT_STATE.md</code> 已将状态推进到 M4 完成、准备 M5。M5 的重点应该建立在 M4 的 LevelConfig / RoomConfig / DifficultyScaler 之上，而不是重做关卡框架。</p>
+<p>M5 的合理方向：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>从 M4 的 27 个 <code>RoomConfigSO</code> 抽象房间原型库。</p>
+</li>
+<li class="lvl-2">
+<p>引入 seed 生成，保证路线可复现。</p>
+</li>
+<li class="lvl-2">
+<p>做强约束生成：Boss 终房、休息房位置、精英房间隔、商店/奖励频率、不可达路线防护。</p>
+</li>
+<li class="lvl-2">
+<p>建立生成覆盖率和非法路线回归矩阵。</p>
+</li>
+<li class="lvl-2">
+<p>将 M4 的 runtime probe 扩展到多 seed、多世界观和更长窗口。</p>
+</li>
+</ul>
+<p>M4 的阶段价值在这里：PROJECT-V 已经有一条从手工房间、难度缩放、Boss telegraph、弱点、镜像 Boss 到 runtime probe 的可验证关卡链路。M5 可以专注于“如何生成好路线”，而不是补 M4 应该完成的关卡基础设施。</p>
 ]]></content>
       <tags>
         <tag>ProjectV</tag>
@@ -2064,13 +2972,13 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
       </tags>
   </entry>
   <entry>
-    <title>PROJECT-v M1：角色能动闭环实现拆解</title>
-    <url>/2026/06/29/ProjectV-M1-Implementation/</url>
-    <content><![CDATA[<p>M1 不是一个“项目进度汇报”节点，而是 PROJECT-V 的第一条可运行实现链路：玩家输入进入 Unity，新 Input System 被消费，<code>Rigidbody2D</code> 接收移动与跳跃，状态机更新视觉状态，相机跟随，测试场景验证角色可以从起点平台移动到目标平台。</p>
-<p>本文所有文件路径均以 <code>PROJECT-V</code> 项目根目录为基准。</p>
+    <title>PROJECT-v M5：种子驱动的程序生成关卡</title>
+    <url>/2026/06/30/ProjectV-M5-Implementation/</url>
+    <content><![CDATA[<p>M5 的目标是把 M4 的手工 <code>LevelConfigSO.orderedRooms</code> 升级为可复现、可约束、可验证的程序生成链路。它不是简单随机抽房间，而是把 36 个房间原型、三世界顺序、房间类型强约束、平台可达性、Addressable 加载、难度曲线和 30-run QA gate 接成一条可测试的生成系统。</p>
+<p>除注明 docs 仓库的文档外，本文所有工程路径均以 <code>PROJECT-V</code> 项目根目录为基准；docs 路径均以 <code>PROJECT-V-game-docs</code> 根目录为基准。</p>
 <span id="more"></span>
 <h2 id="关联提交和依据">关联提交和依据</h2>
-<p>这篇 M1 记录对应两类提交：</p>
+<p>M5 功能主体提交：</p>
 <table>
 <thead>
 <tr>
@@ -2080,100 +2988,134 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td><code>576d81e</code></td>
-<td><code>feat(m1): implement player movement milestone</code>，M1 功能主体实现</td>
-</tr>
-<tr>
-<td><code>94a125c</code></td>
-<td><code>docs: add phase completion blog hook</code>，阶段完成后的博客钩子说明</td>
+<td><code>c3840c7848cc4cab8b5ee17b3ea189e2364e6b52</code></td>
+<td><code>feat(levels): deliver M5 procedural generation</code>，程序生成里程碑实现</td>
 </tr>
 </tbody>
 </table>
-<p>主要参考产物是：</p>
+<p>分支状态：</p>
+<table>
+<thead>
+<tr>
+<th>分支</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>develop</code></td>
+<td>M5 实施分支</td>
+</tr>
+<tr>
+<td><code>origin/develop</code></td>
+<td>已推送</td>
+</tr>
+</tbody>
+</table>
+<p>主要参考产物：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M5 交付报告，docs 仓库</td>
+<td><code>reports/M5_delivery_report.html</code></td>
+</tr>
+<tr>
+<td>M5 QA 报告，docs 仓库</td>
+<td><code>qa/reports/M5_test_report.md</code></td>
+</tr>
+<tr>
+<td>30-run QA 报告，docs 仓库</td>
+<td><code>qa/reports/M5_30runs_test_report.md</code></td>
+</tr>
+<tr>
+<td>M5 程序生成 spec，docs 仓库</td>
+<td><code>design/feature_specs/M5_procedural.md</code></td>
+</tr>
+<tr>
+<td>M5 难度曲线，docs 仓库</td>
+<td><code>design/difficulty_curves/M5_difficulty_curve.md</code></td>
+</tr>
+<tr>
+<td>M5 房间分类，docs 仓库</td>
+<td><code>design/room_prototypes/M5_room_taxonomy.md</code></td>
+</tr>
+<tr>
+<td>EditMode 结果</td>
+<td><code>qa/results/M5_EditMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>PlayMode 结果</td>
+<td><code>qa/results/M5_PlayMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>60s Runtime Probe</td>
+<td><code>qa/results/M5_RuntimeProbe_60s.json</code></td>
+</tr>
+<tr>
+<td>30-run 生成日志</td>
+<td><code>qa/results/M5_30Runs_GenerationLog.json</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="M5-的目标和边界">M5 的目标和边界</h2>
+<p>M5 承接 M4 的 Level / Room / Boss / Difficulty 结构，但把“手工排好的 9 房间路线”替换为“seed 驱动的三世界生成 run”。</p>
+<p>M5 纳入实现的内容：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p><code>reports/M1_delivery_report.html</code></p>
+<p>36 个 <code>RoomPrototype</code>：3 个异世界 × 12 个原型。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/reports/M1_test_report.md</code></p>
+<p>每个原型对应 <code>RoomConfigSO</code> 和房间 prefab。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/reports/T-DEV01_compile_verified.md</code></p>
+<p><code>RoomPrototypeRegistry</code>：按世界观、房间类型、房间序号和可达性筛选候选房间。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/test_cases/M1_smoke_checklist.md</code></p>
+<p><code>SeedSystem</code>：确定性 RNG、seed 派生、三世界顺序洗牌、run hash。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/test_cases/M1_player_movement.md</code></p>
+<p><code>LevelGenerator</code>：生成三世界 run，强制 Start / Boss / Shop / Rest 结构。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/test_cases/M1_visual_validation.md</code></p>
+<p><code>AddressableRoomLoader</code>：按 room prefab key 异步加载 / 卸载生成房间 prefab。</p>
 </li>
 <li class="lvl-2">
-<p><code>qa/test_cases/M1_performance_baseline.md</code></p>
+<p><code>M5RuntimeProbe</code>：60s 性能采样和 30 个派生 seed 的生成验证。</p>
+</li>
+<li class="lvl-2">
+<p><code>M5_ProceduralGeneration.unity</code> 测试场景。</p>
+</li>
+<li class="lvl-2">
+<p>BuildScript 集成 <code>M5ProjectBuilder.VerifyM5Setup()</code>。</p>
 </li>
 </ul>
-<h2 id="M1-的实现边界">M1 的实现边界</h2>
-<p>M1 只做 character agency，也就是“角色能动性”。这个边界很窄，但它是后续战斗、敌人、关卡、Build 和表现层的共同底座。</p>
-<p>M1 纳入实现的内容：</p>
+<p>M5 明确不做：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p>Unity 工程初始化与 Core 模板接入。</p>
+<p>不做最终房间美术。房间 tile 已接入三世界占位 sprite，但不是终局视觉。</p>
 </li>
 <li class="lvl-2">
-<p>玩家输入、移动、跳跃、短跳、土狼时间和跳跃缓冲。</p>
+<p>不做正式 OGG 房间切换音频资产。当前完成 SFX hook，并绑定现有 WAV，这项债务留到 M6/M7 补齐。</p>
 </li>
 <li class="lvl-2">
-<p>Player Prefab 及其物理组件配置。</p>
+<p>不做玩家体感调参收口。当前难度曲线是工程可通关版本，不等于最终节奏。</p>
 </li>
 <li class="lvl-2">
-<p>横向 2D 相机跟随。</p>
-</li>
-<li class="lvl-2">
-<p>M1 测试场景和自动化验证。</p>
+<p>不做 Roguelite 元进度、存档、纯度 UI，这些是 M6 范围。</p>
 </li>
 </ul>
-<p>M1 明确不做的内容：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>战斗、受击、死亡、敌人、Boss。</p>
-</li>
-<li class="lvl-2">
-<p>程序化房间、关卡选择、Roguelite Build。</p>
-</li>
-<li class="lvl-2">
-<p>Steam 集成、正式 UI、正式角色动画和正式美术资产。</p>
-</li>
-</ul>
-<p>这个边界直接决定了实现方式：M1 没有急着堆玩法系统，而是先把“输入到物理反馈”的主链路做成可复现、可测试、可继续扩展的工程结构。</p>
+<p>这个边界合理。M5 真正要证明的是生成系统不会造出结构性坏关卡：无 Boss、无补给、入口/出口悬空、死路、不可复现路线、Addressable key 缺失和性能劣化。</p>
 <h2 id="工程生成入口">工程生成入口</h2>
-<p>M1 的工程落地入口不是手动在 Unity 里拖一堆对象，而是 <code>unity-project/Assets/_Project/Editor/M1ProjectBuilder.cs</code>。</p>
-<p>这个 Editor 脚本负责一次性生成和校验 M1 需要的基础内容：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>创建 <code>Ground</code>、<code>Player</code> 物理 Layer。</p>
-</li>
-<li class="lvl-2">
-<p>创建玩家与地块占位 Sprite。</p>
-</li>
-<li class="lvl-2">
-<p>写入 <code>PlayerStatsConfig.asset</code>。</p>
-</li>
-<li class="lvl-2">
-<p>生成 <code>Player.prefab</code>。</p>
-</li>
-<li class="lvl-2">
-<p>生成 <code>_Init.unity</code> 和 <code>M1_PlayerMovement.unity</code> 两个测试场景。</p>
-</li>
-<li class="lvl-2">
-<p>把 M1 场景加入 Build Settings。</p>
-</li>
-<li class="lvl-2">
-<p>验证 Prefab、场景、配置资产和核心组件是否存在。</p>
-</li>
-</ul>
-<p>这一步的关键价值不是“省事”，而是避免 M1 依赖某一次本地 Unity 场景手工操作。Player Prefab、测试场景和基础配置可以由脚本稳定重建，后续如果场景被误删或配置漂移，也能通过同一个入口恢复。</p>
-<p>M1 生成和验证涉及的关键产物路径如下：</p>
+<p>M5 的入口是 <code>unity-project/Assets/_Project/Editor/M5ProjectBuilder.cs</code>。</p>
+<p><code>SetupM5()</code> 的流程：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">EnsureFolders()</span><br><span class="line">  -&gt; CreateOrUpdatePrototypeRegistry()</span><br><span class="line">  -&gt; LoadM4LevelConfigs()</span><br><span class="line">  -&gt; LevelGenerator.GenerateRun(TestSeed, ...)</span><br><span class="line">  -&gt; CreateOrUpdateGeneratedLevel()</span><br><span class="line">  -&gt; CreateM5Scene()</span><br><span class="line">  -&gt; ConfigureAddressables()</span><br><span class="line">  -&gt; ConfigureBuildScenes()</span><br></pre></td></tr></table></figure>
+<p>核心产物：</p>
 <table>
 <thead>
 <tr>
@@ -2183,288 +3125,549 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td>Unity 工程</td>
-<td><code>unity-project/</code></td>
+<td>原型注册表</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Prototypes/RoomPrototypeRegistry_M5.asset</code></td>
 </tr>
 <tr>
-<td>Core 脚本</td>
-<td><code>unity-project/Assets/_Project/Scripts/Core/</code></td>
+<td>M5 房间配置</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/M5Rooms/</code></td>
 </tr>
 <tr>
-<td>Player 脚本</td>
-<td><code>unity-project/Assets/_Project/Player/Scripts/</code></td>
+<td>M5 房间 prefab</td>
+<td><code>unity-project/Assets/_Project/Levels/Prefabs/M5Rooms/</code></td>
 </tr>
 <tr>
-<td>输入资产</td>
-<td><code>unity-project/Assets/_Project/Player/InputActions/DefaultInputActions.inputactions</code></td>
+<td>测试关卡</td>
+<td><code>unity-project/Assets/_Project/Levels/SO/Levels/Level_M5_Procedural_Test.asset</code></td>
 </tr>
 <tr>
-<td>Stats 资产</td>
-<td><code>unity-project/Assets/_Project/Player/SO/PlayerStatsConfig.asset</code></td>
+<td>测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M5_ProceduralGeneration.unity</code></td>
 </tr>
 <tr>
-<td>Player Prefab</td>
-<td><code>unity-project/Assets/_Project/Player/Prefabs/Player.prefab</code></td>
+<td>生成器</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/LevelGenerator.cs</code></td>
 </tr>
 <tr>
-<td>M1 测试场景</td>
-<td><code>unity-project/Assets/Scenes/TestScenes/M1_PlayerMovement.unity</code></td>
+<td>原型模型</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/RoomPrototype.cs</code></td>
 </tr>
 <tr>
-<td>Windows Development Build</td>
-<td><code>unity-project/Builds/Windows/PROJECT-V.exe</code></td>
+<td>原型注册表</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/RoomPrototypeRegistry.cs</code></td>
+</tr>
+<tr>
+<td>Seed 系统</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/SeedSystem.cs</code></td>
+</tr>
+<tr>
+<td>Addressable loader</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/AddressableRoomLoader.cs</code></td>
+</tr>
+<tr>
+<td>Runtime Probe</td>
+<td><code>unity-project/Assets/_Project/Levels/Scripts/M5RuntimeProbe.cs</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="Player-Prefab-的组成">Player Prefab 的组成</h2>
-<p>玩家对象落在 <code>unity-project/Assets/_Project/Player/Prefabs/Player.prefab</code>，它把 M1 需要的几类职责拆成明确组件：</p>
+<p><code>VerifyM5Setup()</code> 会先调用 <code>M4ProjectBuilder.VerifyM4Setup()</code>，再检查 M5 自身：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>registry 数量在 30-45 内，当前为 36。</p>
+</li>
+<li class="lvl-2">
+<p>三个世界观各至少 10 个原型，当前各 12。</p>
+</li>
+<li class="lvl-2">
+<p>每个世界观覆盖 Start / Combat / Elite / Reward / Shop / Rest / Boss。</p>
+</li>
+<li class="lvl-2">
+<p>所有原型可达。</p>
+</li>
+<li class="lvl-2">
+<p>Addressable entries 存在。</p>
+</li>
+<li class="lvl-2">
+<p>生成器能通过强约束验证。</p>
+</li>
+<li class="lvl-2">
+<p><code>M5_ProceduralGeneration.unity</code> 场景包含生成关卡 harness。</p>
+</li>
+</ul>
+<p>这延续了前几阶段的原则：阶段产物必须能被工具重建和校验，而不是靠一次手工编辑器状态维持。</p>
+<h2 id="RoomPrototype：生成前先定义可达性">RoomPrototype：生成前先定义可达性</h2>
+<p>M5 的最关键对象不是 <code>LevelGenerator</code>，而是 <code>RoomPrototype</code>。生成器只能在原型质量足够高时工作，否则随机抽取只会放大坏数据。</p>
+<p><code>RoomPrototype</code> 位于 <code>unity-project/Assets/_Project/Levels/Scripts/RoomPrototype.cs</code>，核心字段包括：</p>
 <table>
 <thead>
 <tr>
-<th>组件</th>
-<th>职责</th>
+<th>字段</th>
+<th>含义</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>SpriteRenderer</code></td>
-<td>显示当前运动状态的占位 Sprite</td>
+<td><code>worldview</code></td>
+<td>Wasteland / Cyberpunk / Biohazard</td>
 </tr>
 <tr>
-<td><code>Rigidbody2D</code></td>
-<td>承接水平速度、跳跃速度和下落速度</td>
+<td><code>roomType</code></td>
+<td>Start / Combat / Elite / Reward / Shop / Rest / Boss</td>
 </tr>
 <tr>
-<td><code>BoxCollider2D</code></td>
-<td>提供玩家碰撞体和地面检测尺寸来源</td>
+<td><code>shapeType</code></td>
+<td>Horizontal / Platform / LShape / TShape / Vertical</td>
 </tr>
 <tr>
-<td><code>PlayerInputHandler</code></td>
-<td>读取移动与跳跃输入</td>
+<td><code>minRoomIndex</code> / <code>maxRoomIndex</code></td>
+<td>允许出现的房间序号范围</td>
 </tr>
 <tr>
-<td><code>PlayerStatsComponent</code></td>
-<td>暴露移动参数配置</td>
+<td><code>selectionWeight</code></td>
+<td>生成权重</td>
 </tr>
 <tr>
-<td><code>PlayerController</code></td>
-<td>组织输入、物理、状态、事件和视觉切换</td>
+<td><code>entryLocalPosition</code> / <code>exitLocalPosition</code></td>
+<td>入口和出口点</td>
+</tr>
+<tr>
+<td><code>platforms</code></td>
+<td>平台段集合</td>
+</tr>
+<tr>
+<td><code>requiresJump</code> / <code>requiresVerticalTraversal</code></td>
+<td>生成与 QA 标签</td>
+</tr>
+<tr>
+<td><code>addressableKey</code> / <code>label</code></td>
+<td>prefab 加载地址</td>
+</tr>
+<tr>
+<td><code>roomTemplate</code></td>
+<td>对应 <code>RoomConfigSO</code></td>
 </tr>
 </tbody>
 </table>
-<p>Prefab 的物理设置偏保守：<code>Rigidbody2D</code> 使用动态刚体，冻结旋转，并开启更稳定的碰撞与插值设置。M1 只做横板基础移动，所以不让角色因为物理碰撞产生旋转，是一个必要的约束。</p>
-<h2 id="输入层：缓存意图，不直接改物理">输入层：缓存意图，不直接改物理</h2>
-<p>输入实现位于 <code>unity-project/Assets/_Project/Player/Scripts/PlayerInputHandler.cs</code>。</p>
-<p>M1 没有把输入读取塞进 <code>FixedUpdate</code>，而是在输入层缓存“玩家意图”：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>Move</code> 读取水平轴。</p>
-</li>
-<li class="lvl-2">
-<p><code>Jump</code> 记录按下与松开。</p>
-</li>
-<li class="lvl-2">
-<p><code>ConsumeJumpPressed()</code> 和 <code>ConsumeJumpReleased()</code> 用一次性消费的方式交给控制器。</p>
-</li>
-</ul>
-<p>这样做的好处是，跳跃这种瞬时输入不会因为物理帧和渲染帧不同步而丢失。玩家在两次 <code>FixedUpdate</code> 之间按下跳跃键，<code>Update</code> 仍能记录下来，随后由控制器在物理帧里处理。</p>
-<p>M1 支持的输入来源：</p>
-<table>
-<thead>
-<tr>
-<th>行为</th>
-<th>键鼠</th>
-<th>手柄</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>水平移动</td>
-<td><code>A/D</code>、方向键</td>
-<td>左摇杆、D-pad</td>
-</tr>
-<tr>
-<td>跳跃</td>
-<td><code>Space</code>、<code>W</code>、上方向键</td>
-<td>south button</td>
-</tr>
-</tbody>
-</table>
-<p>工程里同时保留 <code>unity-project/Assets/_Project/Player/InputActions/DefaultInputActions.inputactions</code>，自动化测试会检查 Player/UI map 和关键绑定是否存在。这给后续把输入资产完全纳入编辑器流程留下空间。</p>
-<h2 id="控制器：Update-处理状态，FixedUpdate-处理物理">控制器：Update 处理状态，FixedUpdate 处理物理</h2>
-<p>核心控制逻辑位于 <code>unity-project/Assets/_Project/Player/Scripts/PlayerController.cs</code>。</p>
-<p>M1 的控制器分两条节奏运行：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>Update</code>：消费跳跃按下/松开，记录跳跃缓冲，处理短跳请求，更新运动状态。</p>
-</li>
-<li class="lvl-2">
-<p><code>FixedUpdate</code>：刷新接地状态，更新土狼时间和跳跃缓冲计时，执行跳跃，应用水平速度，应用短跳，限制最大下落速度。</p>
-</li>
-</ul>
-<p>这个拆分比较重要。输入和状态是“玩家感知层”，应该跟随渲染帧及时响应；速度、重力、接地检测是“物理层”，应该放在固定时间步里更新，避免不同机器帧率下行为漂移。</p>
-<h2 id="移动参数来自-ScriptableObject">移动参数来自 ScriptableObject</h2>
-<p>玩家移动数值由 <code>unity-project/Assets/_Project/Player/Scripts/PlayerStatsConfigSO.cs</code> 定义，并由 <code>unity-project/Assets/_Project/Player/SO/PlayerStatsConfig.asset</code> 承载。</p>
-<p>M1 当前核心参数如下：</p>
+<p>M5 的可达性模型使用 M1 玩家能力作为保守边界：</p>
 <table>
 <thead>
 <tr>
 <th>参数</th>
-<th style="text-align:right">当前值</th>
-<th>实现含义</th>
+<th style="text-align:right">值</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>moveSpeed</code></td>
-<td style="text-align:right"><code>5</code></td>
-<td>地面水平移动速度</td>
+<td>最大水平间距</td>
+<td style="text-align:right"><code>2.75</code></td>
 </tr>
 <tr>
-<td><code>airControlMultiplier</code></td>
-<td style="text-align:right"><code>0.8</code></td>
-<td>空中横向控制倍率</td>
+<td>最大向上台阶</td>
+<td style="text-align:right"><code>2.10</code></td>
 </tr>
 <tr>
-<td><code>jumpForce</code></td>
-<td style="text-align:right"><code>12</code></td>
-<td>起跳时的纵向速度</td>
+<td>最大安全下落</td>
+<td style="text-align:right"><code>3.20</code></td>
 </tr>
 <tr>
-<td><code>jumpCutMultiplier</code></td>
-<td style="text-align:right"><code>0.5</code></td>
-<td>松开跳跃后的短跳削减倍率</td>
-</tr>
-<tr>
-<td><code>maxJumps</code></td>
-<td style="text-align:right"><code>1</code></td>
-<td>M1 禁止二段跳</td>
-</tr>
-<tr>
-<td><code>coyoteTime</code></td>
-<td style="text-align:right"><code>0.1s</code></td>
-<td>离地后仍允许跳跃的宽限窗口</td>
-</tr>
-<tr>
-<td><code>jumpBufferTime</code></td>
-<td style="text-align:right"><code>0.1s</code></td>
-<td>落地前提前按跳的缓存窗口</td>
-</tr>
-<tr>
-<td><code>gravity</code></td>
-<td style="text-align:right"><code>-25</code></td>
-<td>M1 控制器施加的重力</td>
-</tr>
-<tr>
-<td><code>maxFallSpeed</code></td>
-<td style="text-align:right"><code>20</code></td>
-<td>最大下落速度限制</td>
+<td>入口 / 出口支撑容差</td>
+<td style="text-align:right"><code>0.35</code></td>
 </tr>
 </tbody>
 </table>
-<p>这些值没有写死在控制器里，是为了让后续手感调参不需要改代码。M1 的代码负责解释参数，参数本身留给配置资产。</p>
-<h2 id="跳跃手感的四个细节">跳跃手感的四个细节</h2>
-<p>M1 的跳跃不是简单的“按键就给一个 Y 速度”，而是补了横板动作游戏最基本的容错。</p>
-<p>第一，接地检测使用基于 Collider 尺寸的 <code>BoxCast</code>，检测目标是 <code>Ground</code> Layer。这样平台宽度、角色碰撞体变化时，检测区域仍能跟着 Collider 走。</p>
-<p>第二，土狼时间通过离地后的计时器实现。角色刚离开平台边缘时，<code>coyoteTime</code> 还没有归零，玩家仍能跳。这解决的是“玩家肉眼觉得还在边缘，但物理上已经离地”的手感落差。</p>
-<p>第三，跳跃缓冲通过 <code>jumpBufferTime</code> 实现。玩家落地前提前按跳，控制器会短暂保留这个输入；只要缓存窗口内重新接地，跳跃就会被消费。</p>
-<p>第四，短跳通过松开跳跃键后的速度削减实现。当玩家提前松开跳跃，<code>PlayerController</code> 会把上升速度乘以 <code>jumpCutMultiplier</code>，从而让长按和轻点产生不同高度。</p>
-<p>在测试中，理论跳高按 <code>jumpForce^2 / (2 * abs(gravity))</code> 估算：<code>12^2 / (2 * 25) = 2.88m</code>。这个结果落在 M1 预期的 2.8m 到 3.0m 区间内。</p>
-<h2 id="状态机目前只做视觉切换">状态机目前只做视觉切换</h2>
-<p>M1 已接入 Core 状态机模板，但没有提前把移动逻辑拆散到多个复杂状态里。现在的状态集合很小：</p>
+<p><code>RoomPrototype.ValidateReachability()</code> 的判断方式：</p>
+<ol>
+<li class="lvl-3">
+<p>检查 room size 和平台段尺寸。</p>
+</li>
+<li class="lvl-3">
+<p>找到支撑入口点的平台集合。</p>
+</li>
+<li class="lvl-3">
+<p>找到支撑出口点的平台集合。</p>
+</li>
+<li class="lvl-3">
+<p>把平台段看成图节点。</p>
+</li>
+<li class="lvl-3">
+<p>用 <code>CanTraverse()</code> 判断平台间是否可走、可跳或可下落。</p>
+</li>
+<li class="lvl-3">
+<p>从入口支撑平台做 BFS，只要能到达任一出口支撑平台就通过。</p>
+</li>
+</ol>
+<p>这个模型比“所有平台都必须互通”更合适。它允许奖励旁支、Boss 安全台、T 形分叉存在，但主路径不能断。</p>
+<p>M5 实施中修正过三类平台问题：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
-<p><code>Idle</code></p>
+<p>Platform 房出口高度与出口平台不一致。</p>
 </li>
 <li class="lvl-2">
-<p><code>Move</code></p>
+<p>Platform / LShape / TShape 主路径水平间距超过默认可跳距离。</p>
 </li>
 <li class="lvl-2">
-<p><code>Jump</code></p>
+<p>Vertical 房最后一段到出口间距过大。</p>
 </li>
 </ul>
-<p>对应文件包括：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerMotionState.cs</code></p>
-</li>
-<li class="lvl-2">
-<p><code>unity-project/Assets/_Project/Player/Scripts/PlayerStateMachine.cs</code></p>
-</li>
-<li class="lvl-2">
-<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerIdleState.cs</code></p>
-</li>
-<li class="lvl-2">
-<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerMoveState.cs</code></p>
-</li>
-<li class="lvl-2">
-<p><code>unity-project/Assets/_Project/Player/Scripts/States/PlayerJumpState.cs</code></p>
-</li>
-</ul>
-<p>这些状态在 M1 阶段主要调用 <code>SetVisualState()</code>，切换占位 Sprite、颜色和朝向。真正的移动和跳跃仍集中在 <code>PlayerController</code>，这是有意保守的实现：M1 的状态机先验证接入方式，不急着把物理行为拆到状态类里，避免在玩法尚未展开时制造过度抽象。</p>
-<h2 id="事件只暴露起跳与落地">事件只暴露起跳与落地</h2>
-<p>M1 里已经把起跳和落地作为事件抛出：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>OnPlayerJump</code></p>
-</li>
-<li class="lvl-2">
-<p><code>OnPlayerLand</code></p>
-</li>
-</ul>
-<p>这两个事件不是为了 M1 立刻做完整音效和特效，而是给后续反馈层留接口。到 M2/M3 引入音频、粒子、受击或战斗反馈时，不需要再回头侵入跳跃主逻辑，只要订阅事件即可。</p>
-<h2 id="相机跟随保持简单">相机跟随保持简单</h2>
-<p>相机逻辑位于 <code>unity-project/Assets/_Project/Player/Scripts/CameraFollow.cs</code>。</p>
-<p>M1 没有引入 Cinemachine 虚拟相机配置，而是用一个轻量脚本做目标跟随：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>在 <code>LateUpdate</code> 中读取玩家位置。</p>
-</li>
-<li class="lvl-2">
-<p>添加固定 offset。</p>
-</li>
-<li class="lvl-2">
-<p>用 <code>Vector3.SmoothDamp</code> 平滑移动。</p>
-</li>
-</ul>
-<p>这个实现足够验证横板移动和跳跃场景。更复杂的镜头边界、房间锁定、Boss 战震屏和镜头权重，都应该留到关卡和战斗系统出现之后再做。</p>
-<h2 id="M1-测试场景怎么验证移动">M1 测试场景怎么验证移动</h2>
-<p>测试场景是 <code>unity-project/Assets/Scenes/TestScenes/M1_PlayerMovement.unity</code>。</p>
-<p>场景里不是随便摆几个方块，而是按移动验证拆了平台：</p>
+<p>最终 36 个原型都通过了 EditMode 和 VerifyM5Setup 双重验证。</p>
+<h2 id="36-个房间原型">36 个房间原型</h2>
+<p>M5 每个异世界有 12 个原型：</p>
 <table>
 <thead>
 <tr>
-<th>平台</th>
+<th>类型</th>
+<th style="text-align:right">每异世界数量</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Start</td>
+<td style="text-align:right"><code>1</code></td>
+<td>开局安全房</td>
+</tr>
+<tr>
+<td>Combat</td>
+<td style="text-align:right"><code>5</code></td>
+<td>普通战斗</td>
+</tr>
+<tr>
+<td>Elite</td>
+<td style="text-align:right"><code>2</code></td>
+<td>中后段高压战斗</td>
+</tr>
+<tr>
+<td>Reward</td>
+<td style="text-align:right"><code>1</code></td>
+<td>构筑奖励</td>
+</tr>
+<tr>
+<td>Shop</td>
+<td style="text-align:right"><code>1</code></td>
+<td>中段补给</td>
+</tr>
+<tr>
+<td>Rest</td>
+<td style="text-align:right"><code>1</code></td>
+<td>Boss 前缓冲</td>
+</tr>
+<tr>
+<td>Boss</td>
+<td style="text-align:right"><code>1</code></td>
+<td>关卡终点</td>
+</tr>
+</tbody>
+</table>
+<p>形状覆盖：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Horizontal</p>
+</li>
+<li class="lvl-2">
+<p>Platform</p>
+</li>
+<li class="lvl-2">
+<p>LShape</p>
+</li>
+<li class="lvl-2">
+<p>TShape</p>
+</li>
+<li class="lvl-2">
+<p>Vertical</p>
+</li>
+</ul>
+<p>代表性原型：</p>
+<table>
+<thead>
+<tr>
+<th>世界观</th>
+<th>示例 ID</th>
+<th>类型</th>
+<th>形状</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wasteland</td>
+<td><code>waste_arrival_ruins</code></td>
+<td>Start</td>
+<td>Horizontal</td>
+</tr>
+<tr>
+<td>Wasteland</td>
+<td><code>waste_scrap_bridge</code></td>
+<td>Combat</td>
+<td>Platform</td>
+</tr>
+<tr>
+<td>Wasteland</td>
+<td><code>waste_radio_tower</code></td>
+<td>Elite</td>
+<td>Vertical</td>
+</tr>
+<tr>
+<td>Cyberpunk</td>
+<td><code>cyber_switchboard_t</code></td>
+<td>Combat</td>
+<td>TShape</td>
+</tr>
+<tr>
+<td>Cyberpunk</td>
+<td><code>cyber_clockwork_spiral</code></td>
+<td>Elite</td>
+<td>Vertical</td>
+</tr>
+<tr>
+<td>Cyberpunk</td>
+<td><code>cyber_mechanism_core</code></td>
+<td>Boss</td>
+<td>Horizontal</td>
+</tr>
+<tr>
+<td>Biohazard</td>
+<td><code>bio_clinic_l_shape</code></td>
+<td>Combat</td>
+<td>LShape</td>
+</tr>
+<tr>
+<td>Biohazard</td>
+<td><code>bio_spine_climb</code></td>
+<td>Elite</td>
+<td>Vertical</td>
+</tr>
+<tr>
+<td>Biohazard</td>
+<td><code>bio_maternal_core</code></td>
+<td>Boss</td>
+<td>Horizontal</td>
+</tr>
+</tbody>
+</table>
+<p><code>RoomPrototypeRegistry.Find()</code> 会按四个条件筛选：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">worldview</span><br><span class="line">roomType</span><br><span class="line">oneBasedRoomIndex</span><br><span class="line">requireReachable</span><br></pre></td></tr></table></figure>
+<p>这意味着生成器不会在第 2 房抽到只适合后段的 Elite，也不会抽到可达性失败的 prefab。</p>
+<h2 id="SeedSystem：复现不是附加功能">SeedSystem：复现不是附加功能</h2>
+<p>M5 的 seed 系统位于 <code>unity-project/Assets/_Project/Levels/Scripts/SeedSystem.cs</code>。</p>
+<p>它提供三类能力：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
 <th>作用</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>A_Start_Wasteland</code></td>
-<td>起点平台，验证站立、起步和基础移动</td>
+<td><code>NormalizeSeed()</code></td>
+<td>处理输入 seed</td>
 </tr>
 <tr>
-<td><code>B_Cyberpunk_Rise</code></td>
-<td>上升平台，验证跳跃高度和空中控制</td>
+<td><code>Derive()</code></td>
+<td>用 base seed + salt 派生子 seed</td>
 </tr>
 <tr>
-<td><code>C_Biohazard_Rise</code></td>
-<td>第二段上升平台，验证连续平台移动</td>
+<td><code>GenerateWorldviewOrder()</code></td>
+<td>对三世界顺序做确定性洗牌</td>
 </tr>
 <tr>
-<td><code>D_Landing_Return</code></td>
-<td>落点平台，验证落地状态回切</td>
-</tr>
-<tr>
-<td><code>Safety_Floor</code></td>
-<td>兜底地面，避免角色永久掉出场景</td>
+<td><code>HashGeneratedRun()</code></td>
+<td>把生成结果压成可复验 run hash</td>
 </tr>
 </tbody>
 </table>
-<p><code>unity-project/Assets/_Project/Tests/EditMode/M1SetupTests.cs</code> 会检查配置默认值、Prefab 组件、输入资产、场景存在性和平台间距。这里的测试重点不是“玩家主观手感已经完美”，而是证明 M1 的工程结构没有断：Prefab 没丢组件、场景能被找到、关键平台在可达范围内、核心参数没有被误改。</p>
-<h2 id="运行探针用于短时工程验证">运行探针用于短时工程验证</h2>
-<p>M1 还提供了 <code>unity-project/Assets/_Project/Player/Scripts/M1RuntimeProbe.cs</code>。它会在运行时按目标帧率采样，并把结果写入日志文件。</p>
-<p>完整的本地验证结果如下：</p>
+<p>随机数本身用 <code>SeededRandom</code>，内部是轻量 xorshift。M5 不需要加密随机数，需要的是低成本、可复现、跨测试稳定。</p>
+<p>同一 seed 必须稳定产生：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>三世界顺序。</p>
+</li>
+<li class="lvl-2">
+<p>每个世界的房间数。</p>
+</li>
+<li class="lvl-2">
+<p>每个房间的类型计划。</p>
+</li>
+<li class="lvl-2">
+<p>每个房间抽到的 prototype。</p>
+</li>
+<li class="lvl-2">
+<p>最终 run hash。</p>
+</li>
+</ul>
+<p>EditMode 的 <code>SeedSystemProducesStableRunHashAndVariedRoutes</code> 覆盖了两件事：同 seed 重复生成 hash 一致；30 个派生 seed 中至少有足够多不同 route hash，避免“看似随机，实际总是同一条路线”。</p>
+<h2 id="LevelGenerator：强约束下的随机">LevelGenerator：强约束下的随机</h2>
+<p>生成器位于 <code>unity-project/Assets/_Project/Levels/Scripts/LevelGenerator.cs</code>。</p>
+<p><code>GenerateRun()</code> 负责生成一个完整 run：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">GenerateWorldviewOrder(seed)</span><br><span class="line">  -&gt; for each worldview:</span><br><span class="line">       GenerateLevel(Derive(seed, level-order-worldview), ...)</span><br><span class="line">  -&gt; HashGeneratedRun()</span><br></pre></td></tr></table></figure>
+<p>每个 <code>GeneratedLevel</code> 是 6-12 个房间。<code>BuildRoomPlan()</code> 先写死硬约束，再用 seed 填充可变节点：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">room[0] = Start</span><br><span class="line">room[last] = Boss</span><br><span class="line">room[last - 1] = Rest</span><br><span class="line">middle = Shop</span><br><span class="line">remaining = Combat</span><br><span class="line">then insert Elite / Reward by seed</span><br></pre></td></tr></table></figure>
+<p>关键规则：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>Boss 固定最后一房。</p>
+</li>
+<li class="lvl-2">
+<p>Rest 固定倒数第二房。</p>
+</li>
+<li class="lvl-2">
+<p>Shop 固定中段。</p>
+</li>
+<li class="lvl-2">
+<p>Elite 最早第 4 房，且不相邻。</p>
+</li>
+<li class="lvl-2">
+<p>Reward 按剩余 Combat 位置插入。</p>
+</li>
+<li class="lvl-2">
+<p>每个候选房间都必须从 <code>RoomPrototypeRegistry.Find(..., requireReachable: true)</code> 获取。</p>
+</li>
+</ul>
+<p><code>ValidateRun()</code> 和 <code>ValidateLevel()</code> 是 M5 的防线：</p>
+<table>
+<thead>
+<tr>
+<th>验证</th>
+<th>失败条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>run level 数</td>
+<td>不是 3 个世界观 level</td>
+</tr>
+<tr>
+<td>level 房间数</td>
+<td>少于 6 或多于 12</td>
+</tr>
+<tr>
+<td>首房</td>
+<td>不是 Start</td>
+</tr>
+<tr>
+<td>末房</td>
+<td>不是 Boss</td>
+</tr>
+<tr>
+<td>房间数据</td>
+<td>prototype 或 room config 缺失</td>
+</tr>
+<tr>
+<td>可达性</td>
+<td>任一 room prototype 不可达</td>
+</tr>
+<tr>
+<td>Boss</td>
+<td>Boss 房不是正好 1 个</td>
+</tr>
+<tr>
+<td>Shop</td>
+<td>少于 1 个</td>
+</tr>
+<tr>
+<td>Rest</td>
+<td>少于 1 个</td>
+</tr>
+</tbody>
+</table>
+<p>这就是 M5 的核心工程决策：随机只在强约束内部发生。生成器可以改变路线，但不能改变关卡的最低可玩结构。</p>
+<h2 id="难度曲线如何接入生成">难度曲线如何接入生成</h2>
+<p>M5 没有重写 M4 的难度系统，而是复用 <code>DifficultyScaler.Evaluate()</code>。差异在于 M5 为每个生成房间构造 <code>RoomDifficultyContext</code>。</p>
+<p>关键输入：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>M5 输入</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>roomIndex</code></td>
+<td>当前房间序号</td>
+</tr>
+<tr>
+<td><code>totalRooms</code></td>
+<td>当前关房间总数</td>
+</tr>
+<tr>
+<td><code>levelOrderIndex</code></td>
+<td>本 run 中第几个异世界</td>
+</tr>
+<tr>
+<td><code>roomType</code></td>
+<td>Start / Combat / Elite / Reward / Shop / Rest / Boss</td>
+</tr>
+<tr>
+<td><code>worldview</code></td>
+<td>当前世界观</td>
+</tr>
+<tr>
+<td><code>upgradeScoreRaw</code></td>
+<td><code>(levelOrderIndex - 1) * 3 + roomIndex * 0.75</code>，上限 <code>18</code></td>
+</tr>
+<tr>
+<td><code>weaponWorldModCount</code></td>
+<td>当前关序号</td>
+</tr>
+<tr>
+<td><code>uniqueWorldviewCount</code></td>
+<td>当前关序号</td>
+</tr>
+<tr>
+<td><code>crossWorldSynergyCount</code></td>
+<td><code>levelOrderIndex - 1</code></td>
+</tr>
+<tr>
+<td><code>purity</code></td>
+<td>当前原型固定 <code>0.5</code></td>
+</tr>
+</tbody>
+</table>
+<p>这使得难度在两个方向上递增：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>关卡内：越靠后压力越高。</p>
+</li>
+<li class="lvl-2">
+<p>关卡间：第 1 / 2 / 3 个异世界逐步加压。</p>
+</li>
+</ul>
+<p>Elite、Boss 高于普通 Combat；Reward、Shop、Rest 不制造战斗压力。M5 当前曲线是工程可通关版本，后续仍需 playtest 调整 Elite 密度、Reward 数量、Rest 位置和 Boss 前压力上限。</p>
+<h2 id="AddressableRoomLoader">AddressableRoomLoader</h2>
+<p>M5 引入 <code>unity-project/Assets/_Project/Levels/Scripts/AddressableRoomLoader.cs</code>。</p>
+<p>它的职责很窄：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">LoadRoomAsync(RoomConfigSO, parent)</span><br><span class="line">  -&gt; Addressables.LoadAssetAsync&lt;GameObject&gt;(roomPrefabKey)</span><br><span class="line">  -&gt; Instantiate</span><br><span class="line">  -&gt; Configure RoomManager</span><br><span class="line">  -&gt; record handle</span><br><span class="line"></span><br><span class="line">UnloadRoom(key)</span><br><span class="line">  -&gt; Destroy instance</span><br><span class="line">  -&gt; Addressables.Release(handle)</span><br></pre></td></tr></table></figure>
+<p>测试覆盖 <code>AddressableRoomLoaderCanLoadAndUnloadGeneratedRoomPrefab</code>，确认生成关卡里的 room prefab key 能被加载，加载后 <code>LoadedCount = 1</code>，<code>UnloadAll()</code> 后回到 0。</p>
+<p>这一步不是为了炫技，而是为 M5/M6 后续关卡 streaming 做工程接口。即使当前仍是测试场景，也不能让生成系统只停留在 SO 数据层。</p>
+<h2 id="M5-Runtime-Probe">M5 Runtime Probe</h2>
+<p>M5 runtime probe 位于 <code>unity-project/Assets/_Project/Levels/Scripts/M5RuntimeProbe.cs</code>。</p>
+<p>它在 <code>Start()</code> 中先跑 30-run 生成批次，再开始性能采样：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">RunGenerationBatch()</span><br><span class="line">  -&gt; for 30 derived seeds:</span><br><span class="line">       LevelGenerator.GenerateRun()</span><br><span class="line">       LevelGenerator.ValidateRun()</span><br><span class="line">       write generation log</span><br><span class="line"></span><br><span class="line">then:</span><br><span class="line">  -&gt; BeginLevel()</span><br><span class="line">  -&gt; trigger dodge / U skill / Boss move / room advance</span><br><span class="line">  -&gt; collect FPS samples</span><br><span class="line">  -&gt; write runtime JSON</span><br></pre></td></tr></table></figure>
+<p>60s probe 结果：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;seed&quot;</span><span class="punctuation">:</span> <span class="string">&quot;00003539&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;warmupSeconds&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;totalElapsedSeconds&quot;</span><span class="punctuation">:</span> <span class="number">63.013</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;measuredSeconds&quot;</span><span class="punctuation">:</span> <span class="number">60.013</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;frameCount&quot;</span><span class="punctuation">:</span> <span class="number">3600</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;averageFps&quot;</span><span class="punctuation">:</span> <span class="number">59.987</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;minFps&quot;</span><span class="punctuation">:</span> <span class="number">49.857</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;maxFps&quot;</span><span class="punctuation">:</span> <span class="number">125.604</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p50Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.999</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p95Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.954</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;p99Fps&quot;</span><span class="punctuation">:</span> <span class="number">59.415</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;gcCollections&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;monoMemoryDeltaBytes&quot;</span><span class="punctuation">:</span> <span class="number">4096</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;m5SystemsReady&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;generatedRuns&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;thirtyRunGenerationPassed&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;reachableRoomsChecked&quot;</span><span class="punctuation">:</span> <span class="number">788</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;firstRunHash&quot;</span><span class="punctuation">:</span> <span class="string">&quot;F09EE655&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roomsTotal&quot;</span><span class="punctuation">:</span> <span class="number">6</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;roomsCleared&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;dodgeStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;skillUActivated&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;bossMoveStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;addressableLoaderReady&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这里最重要的不是平均 FPS，而是 probe 同时证明了：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>30 个派生 seed 全部生成并验证通过。</p>
+</li>
+<li class="lvl-2">
+<p>788 个房间原型检查点通过。</p>
+</li>
+<li class="lvl-2">
+<p>P95 / P99 仍接近 60 FPS。</p>
+</li>
+<li class="lvl-2">
+<p>GC collections 为 0。</p>
+</li>
+<li class="lvl-2">
+<p>生成场景内仍能触发闪避、U 技能、Boss move 和房间推进。</p>
+</li>
+<li class="lvl-2">
+<p>Addressable loader 已挂入 runtime harness。</p>
+</li>
+</ul>
+<h2 id="QA-Gate">QA Gate</h2>
+<p>M5 验证结果如下：</p>
 <table>
 <thead>
 <tr>
@@ -2475,500 +3678,130 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td>Unity 资源生成</td>
-<td><code>logs/unity_setup_m1_final.log</code></td>
-<td>Pass</td>
+<td>SetupM5</td>
+<td><code>ProjectV.EditorTools.M5ProjectBuilder.SetupM5</code></td>
+<td>Passed</td>
 </tr>
 <tr>
-<td>M1 setup verification</td>
-<td><code>logs/unity_verify_m1_final.log</code></td>
-<td>Pass</td>
+<td>VerifyM5Setup</td>
+<td><code>ProjectV.EditorTools.M5ProjectBuilder.VerifyM5Setup</code></td>
+<td>Passed</td>
 </tr>
 <tr>
-<td>EditMode tests</td>
-<td><code>logs/editmode-results-final.xml</code></td>
-<td>5 passed / 0 failed</td>
+<td>尾随空格清理后 VerifyM5Setup</td>
+<td><code>ProjectV.EditorTools.M5ProjectBuilder.VerifyM5Setup</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>EditMode</td>
+<td><code>qa/results/M5_EditMode_TestResults.xml</code></td>
+<td>31 / 31 passed</td>
+</tr>
+<tr>
+<td>PlayMode</td>
+<td><code>qa/results/M5_PlayMode_TestResults.xml</code></td>
+<td>24 / 24 passed</td>
 </tr>
 <tr>
 <td>Windows Development Build</td>
-<td><code>logs/unity_build_windows_final.log</code></td>
+<td><code>unity-project/Builds/Windows/PROJECT-V.exe</code></td>
 <td>Success</td>
 </tr>
 <tr>
-<td>Runtime probe</td>
-<td><code>logs/m1-runtime-probe-final.json</code></td>
-<td>平均 59.943 FPS</td>
+<td>Runtime Probe 60s</td>
+<td><code>qa/results/M5_RuntimeProbe_60s.json</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>30-run 生成日志</td>
+<td><code>qa/results/M5_30Runs_GenerationLog.json</code></td>
+<td>30 / 30 passed</td>
 </tr>
 </tbody>
 </table>
-<p>短时探针结果显示：</p>
-<table>
-<thead>
-<tr>
-<th>指标</th>
-<th style="text-align:right">数值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>测量帧数</td>
-<td style="text-align:right"><code>480</code></td>
-</tr>
-<tr>
-<td>平均 FPS</td>
-<td style="text-align:right"><code>59.943</code></td>
-</tr>
-<tr>
-<td>最低 FPS</td>
-<td style="text-align:right"><code>49.590</code></td>
-</tr>
-<tr>
-<td>最高 FPS</td>
-<td style="text-align:right"><code>62.887</code></td>
-</tr>
-<tr>
-<td>目标 FPS</td>
-<td style="text-align:right"><code>60</code></td>
-</tr>
-</tbody>
-</table>
-<p>这只能说明 M1 简单场景的短时运行没有明显性能问题，不能替代 30 分钟 soak，也不能代表后续战斗场景性能。<code>qa/reports/M1_test_report.md</code> 已明确记录：30 分钟 1080p 长时性能 soak 没有执行，它仍然是后续 release-grade QA gate。</p>
-<h2 id="M1-之后真正留下了什么">M1 之后真正留下了什么</h2>
-<p>M1 最重要的产物不是一段能移动的角色代码，而是一条清楚的实现主线：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Input System</span><br><span class="line">  -&gt; PlayerInputHandler</span><br><span class="line">  -&gt; PlayerController</span><br><span class="line">  -&gt; Rigidbody2D / Collider2D</span><br><span class="line">  -&gt; PlayerMotionState</span><br><span class="line">  -&gt; CameraFollow</span><br><span class="line">  -&gt; M1SetupTests / M1RuntimeProbe</span><br></pre></td></tr></table></figure>
-<p>这条链路让 PROJECT-V 从“文档和设定”进入“可运行工程”。它仍然很小，但已经有了后续扩展需要的关键接口：参数资产、状态机、事件、Prefab、场景生成脚本、自动化测试和短时运行探针。</p>
-<p>下一步如果进入 M2，应该沿着这条链路增加生命值、受击、伤害入口和最小敌人，而不是另起一套控制框架。</p>
+<p>EditMode 的新增 M5 用例覆盖：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>PrototypeRegistryContainsThirtySixReachableRoomsAcrossThreeWorldviews</code></p>
+</li>
+<li class="lvl-2">
+<p><code>EveryPrototypeHasReachableEntryExitAndAddressableRoomTemplate</code></p>
+</li>
+<li class="lvl-2">
+<p><code>SeedSystemProducesStableRunHashAndVariedRoutes</code></p>
+</li>
+<li class="lvl-2">
+<p><code>ThirtyGeneratedRunsSatisfyM5RouteConstraints</code></p>
+</li>
+<li class="lvl-2">
+<p><code>M5SceneContainsGeneratedLevelHarness</code></p>
+</li>
+<li class="lvl-2">
+<p><code>GeneratedLevelHasM5VisualAndAudioHooks</code></p>
+</li>
+</ul>
+<p>PlayMode 的新增 M5 用例覆盖：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>PlayerSpawnsOnReachableGeneratedPlatform</code></p>
+</li>
+<li class="lvl-2">
+<p><code>GeneratedSceneEntryAndExitPointsHaveGroundSupport</code></p>
+</li>
+<li class="lvl-2">
+<p><code>LevelManagerCanAdvanceThroughAllGeneratedRooms</code></p>
+</li>
+<li class="lvl-2">
+<p><code>AddressableRoomLoaderCanLoadAndUnloadGeneratedRoomPrefab</code></p>
+</li>
+<li class="lvl-2">
+<p><code>ThirtyGeneratedRunsValidateInPlayMode</code></p>
+</li>
+</ul>
+<p>这组测试把 M5 最容易出事故的地方都压住了：玩家出生悬空、entry/exit 没地面支撑、生成房间不可推进、Addressable key 假存在、30 个 seed 中出现坏路线。</p>
+<h2 id="已知风险和限制">已知风险和限制</h2>
+<p>M5 已通过核心工程与 QA gate，但仍有明确债务：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>正式 OGG 房间切换音频资产未生成。当前完成 SFX hook 并绑定现有 WAV，应作为 M6/M7 前音频资产补齐项。</p>
+</li>
+<li class="lvl-2">
+<p>当前难度曲线是工程可通关版本，尚未经过真实玩家体感 playtest。</p>
+</li>
+<li class="lvl-2">
+<p>程序生成已经能保底结构正确，但“路线是否有趣”仍需要后续内容调参和更多原型。</p>
+</li>
+<li class="lvl-2">
+<p>60s probe 是阶段工程验证，不等同于发布前长时段 soak。</p>
+</li>
+</ul>
+<p>这些限制不影响 M5 验收。M5 的完成标准是生成系统可靠、可复现、可加载、可达、可验证，而不是最终内容手感收口。</p>
+<h2 id="M6-方向">M6 方向</h2>
+<p>M5 之后，PROJECT-V 已经具备从房间原型库生成三世界 run 的基础。M6 不应该再重写生成器，而应在这条链路上接 Roguelite 元进度。</p>
+<p>合理方向：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>把生成 seed 暴露到后续 UI，支持复盘和分享。</p>
+</li>
+<li class="lvl-2">
+<p>将纯度、升级树、存档与 <code>LevelGenerator</code> 的 build context 对接。</p>
+</li>
+<li class="lvl-2">
+<p>补齐 OGG 房间切换和关卡完成音频资产。</p>
+</li>
+<li class="lvl-2">
+<p>基于真实 playtest 调整 Elite 密度、Reward 数量、Rest 位置和 Boss 前压力上限。</p>
+</li>
+<li class="lvl-2">
+<p>将 30-run gate 扩展到更多 seed 分布和更长 runtime window。</p>
+</li>
+</ul>
+<p>M5 的阶段价值在这里：PROJECT-V 现在不只是有手工关卡和 Boss，而是有一套可复现、带可达性约束、可被自动化验证的关卡生成基础。后续的重点可以转向“生成出来的 run 如何变得更有构筑价值和长期可玩性”。</p>
 ]]></content>
       <tags>
         <tag>ProjectV</tag>
         <tag>Unity</tag>
         <tag>Devlog</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PROJECT-v M0：项目介绍与方向锁定</title>
-    <url>/2026/06/29/ProjectV-M0-Introduction/</url>
-    <content><![CDATA[<p>PROJECT-V 是一个国风浪子剑客穿越末日异世界的 2D 横板 Roguelite 动作游戏。M0 的任务不是做可玩 Demo，而是把项目“为什么成立、做成什么样、哪些东西不做、后续怎么落地”先锁住。</p>
-<p>本文所有文档路径均以 <code>PROJECT-V-game-docs</code> 项目根目录为基准。</p>
-<span id="more"></span>
-<h2 id="一句话定位">一句话定位</h2>
-<p>PROJECT-V 的核心表达可以压缩成一句话：</p>
-<blockquote>
-<p>天赋绝顶、放荡不羁的国风浪子剑客，被传送到三个末日异世界，在污染与力量之间做取舍，为回到原本世界而战。</p>
-</blockquote>
-<p>这个定位里有三个关键词：国风主角、末日异世界、Roguelite 取舍。</p>
-<p>项目不是单纯做“像素横板动作”，也不是单纯做“末日题材缝合”。它的第一锚点是一个稳定、有记忆点的主角：白袍、青绿色调、酒葫芦、浪子气质、天赋很高但不端着。三个世界不断改变外部规则和视觉氛围，但主角身份保持不变。</p>
-<h2 id="M0-锁定的游戏形态">M0 锁定的游戏形态</h2>
-<p>M0 在 <code>design/GDD.md</code> 中锁定了基础形态：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>类型：2D 横板 Roguelite 动作游戏。</p>
-</li>
-<li class="lvl-2">
-<p>平台：PC，优先 Steam。</p>
-</li>
-<li class="lvl-2">
-<p>引擎：Unity <code>2022.3.34f1c1</code>。</p>
-</li>
-<li class="lvl-2">
-<p>运行结构：每局由三个世界关卡组成，世界顺序可以变化。</p>
-</li>
-<li class="lvl-2">
-<p>每个世界有独立风格、敌人、Boss 和 Build 倾向。</p>
-</li>
-<li class="lvl-2">
-<p>单人体验，不在早期做多人、移动端、云同步或 Mod。</p>
-</li>
-</ul>
-<p>这类边界很重要。没有边界，项目会很快被“开放世界、联机、复杂剧情、多角色、全平台发布”之类愿望拖垮。M0 的价值就是先把诱惑砍掉，只保留能支撑核心体验的东西。</p>
-<h2 id="三个末日世界">三个末日世界</h2>
-<p>PROJECT-V 的世界观不是一个单一末日，而是三个不同异世界叠加到 Roguelite 结构里：</p>
-<table>
-<thead>
-<tr>
-<th>世界</th>
-<th>视觉关键词</th>
-<th>玩法倾向</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>辐射废土</td>
-<td>铁锈、沙尘、灰烬、毒性绿色</td>
-<td>改装、辐射、硬派生存</td>
-</tr>
-<tr>
-<td>赛博朋克</td>
-<td>霓虹洋红、电光青、紫色、雨夜暗巷</td>
-<td>义体、黑客、护盾、控制</td>
-</tr>
-<tr>
-<td>生化危机</td>
-<td>血红、病态绿色、粉色肉质、真菌感</td>
-<td>变异、寄生、低血量爆发</td>
-</tr>
-</tbody>
-</table>
-<p>这三个世界的作用不是换皮。它们分别承载不同的 Build 方向和风险收益：废土偏改装与 DOT，赛博偏义体和控制，生化偏自伤与爆发。</p>
-<h2 id="Roguelite-结构的核心">Roguelite 结构的核心</h2>
-<p>M0 阶段确定的基础结构是：每局跑三章，但三章顺序可以变化。三世界排列本身就能产生不同体验，再叠加玩家在不同世界中拿到的升级线，构成 Roguelite 的主要变化来源。</p>
-<p>项目文档里还保留了一个更强的方向：不同世界组合会影响后续内容和 Build 走向。也就是说，PROJECT-V 不是只靠随机房间制造差异，而是让“世界顺序”和“世界污染”也参与构建玩家这一局的身份。</p>
-<h2 id="纯度系统不是道德值">纯度系统不是道德值</h2>
-<p>M0 对纯度系统做了一个关键修正：它不是传统善恶值，也不是简单剧情分支，而是更接近 Monster Train 式的平衡压力。</p>
-<p>玩家拿到异世界力量，会变强；同时怪物或世界也会获得强化。纯度影响主角视觉形态，也影响后续挑战结构。</p>
-<p>在 <code>design/data/purity_system.csv</code> 中，纯度被拆成几个区间：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>70-99</code>：轻度污染。</p>
-</li>
-<li class="lvl-2">
-<p><code>30-69</code>：中度污染。</p>
-</li>
-<li class="lvl-2">
-<p><code>0-29</code>：重度污染，并可能触发镜像纯净 Boss。</p>
-</li>
-<li class="lvl-2">
-<p>高纯度路线也可能触发镜像堕落 Boss。</p>
-</li>
-</ul>
-<p>这个设计的重点是“力量不是免费午餐”。玩家越依赖异世界改造，越可能被异世界反噬；玩家越追求极端纯净，也会面对另一个极端自己的挑战。</p>
-<h2 id="Boss-不是血条木桩">Boss 不是血条木桩</h2>
-<p>M0 还锁定了 Boss 弱点部位设计。<code>design/data/boss_weakpoints.csv</code> 里定义了废土军阀、赛博 AI、生化母体等 Boss 的弱点：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>废土 Boss 有背部反应堆、头部弱点。</p>
-</li>
-<li class="lvl-2">
-<p>赛博 Boss 有核心处理器、主眼。</p>
-</li>
-<li class="lvl-2">
-<p>生化 Boss 有心脏核心、背部肿瘤。</p>
-</li>
-</ul>
-<p>弱点不是纯装饰，而是会带来易伤、眩晕、召唤暂停、强制阶段切换等效果。这个方向能让横板 Boss 战从“贴脸输出”变成“识别窗口、攻击部位、打断机制”的结构化战斗。</p>
-<h2 id="永久升级线">永久升级线</h2>
-<p><code>design/data/upgrade_lines.csv</code> 把永久升级分成通用线和世界线。</p>
-<p>通用线负责所有角色基础成长：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>最大 HP。</p>
-</li>
-<li class="lvl-2">
-<p>攻击力。</p>
-</li>
-<li class="lvl-2">
-<p>闪避距离。</p>
-</li>
-<li class="lvl-2">
-<p>闪避无敌时间。</p>
-</li>
-<li class="lvl-2">
-<p>死亡后资源保留。</p>
-</li>
-</ul>
-<p>世界线则服务项目特色：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>废土线：锈毒 DOT、辐射抗性、蒸汽冲击。</p>
-</li>
-<li class="lvl-2">
-<p>赛博线：闪避残影、黑客控制、能量护盾。</p>
-</li>
-<li class="lvl-2">
-<p>生化线：低血量增伤、寄生召唤、狂暴模式。</p>
-</li>
-</ul>
-<p>这样设计的好处是，玩家既有稳定成长，也有世界身份。通用线保证长期推进，世界线保证每局和每个世界都不只是换敌人。</p>
-<h2 id="视觉身份">视觉身份</h2>
-<p>M0 在 <code>design/STYLE_GUIDE.md</code> 中锁定了 v8 视觉方向。</p>
-<p>主角固定为国风浪子剑客：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>年轻、瘦长、脸部轮廓清晰。</p>
-</li>
-<li class="lvl-2">
-<p>白袍带青绿色调。</p>
-</li>
-<li class="lvl-2">
-<p>腰带松散，带酒葫芦。</p>
-</li>
-<li class="lvl-2">
-<p>有狡黠笑意，不是苦大仇深的传统大侠。</p>
-</li>
-</ul>
-<p>三世界视觉不直接吞掉主角，而是逐渐附着在主角身上。废土给铁锈和毒性痕迹，赛博给霓虹和义体痕迹，生化给血肉和真菌痕迹。这个策略能保住 IP 识别度：世界可以变，主角不能丢。</p>
-<h2 id="工程方向">工程方向</h2>
-<p>M0 的工程文档没有停留在“以后再说”，而是提前定了技术骨架。</p>
-<p><code>project/DECISIONS.md</code> 锁定的核心技术决策包括：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p>Unity <code>2022.3.34f1c1</code>。</p>
-</li>
-<li class="lvl-2">
-<p>URP 2D Renderer。</p>
-</li>
-<li class="lvl-2">
-<p>新 Input System。</p>
-</li>
-<li class="lvl-2">
-<p>Addressables。</p>
-</li>
-<li class="lvl-2">
-<p>Unity Animation 先行，Spine 后续可接入。</p>
-</li>
-<li class="lvl-2">
-<p>ScriptableObject 数据驱动。</p>
-</li>
-<li class="lvl-2">
-<p>JSON 加二进制存档。</p>
-</li>
-<li class="lvl-2">
-<p>不使用 ECS/DOTS 作为早期主架构。</p>
-</li>
-</ul>
-<p><code>docs/ARCHITECTURE.md</code> 给出模块边界：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>Core</code>：状态机、事件总线、对象池、数据基类。</p>
-</li>
-<li class="lvl-2">
-<p><code>Player</code>：玩家控制、状态、参数。</p>
-</li>
-<li class="lvl-2">
-<p><code>Enemies</code>：敌人与 Boss。</p>
-</li>
-<li class="lvl-2">
-<p><code>Combat</code>：伤害、命中、战斗反馈。</p>
-</li>
-<li class="lvl-2">
-<p><code>LevelGeneration</code>：房间、关卡生成。</p>
-</li>
-<li class="lvl-2">
-<p><code>Roguelite</code>：Build、永久升级、局外成长。</p>
-</li>
-<li class="lvl-2">
-<p><code>UI</code>、<code>Audio</code>、<code>Utils</code>：表现和基础工具。</p>
-</li>
-</ul>
-<p>这个架构对早期项目来说已经足够，不需要更复杂的框架。最重要的是依赖方向清楚：Core 在底层，玩法模块依赖 Core，而不是互相缠在一起。</p>
-<h2 id="生产协作方式">生产协作方式</h2>
-<p>M0 也建立了 agent 分工和交付模板：</p>
-<ul class="lvl-0">
-<li class="lvl-2">
-<p><code>game-producer</code> 控范围、节奏、风险。</p>
-</li>
-<li class="lvl-2">
-<p><code>game-designer</code> 产出 GDD、feature spec、数值表。</p>
-</li>
-<li class="lvl-2">
-<p><code>unity-developer</code> 落地 Unity 代码和工程。</p>
-</li>
-<li class="lvl-2">
-<p><code>game-artist</code> 负责视觉资产。</p>
-</li>
-<li class="lvl-2">
-<p><code>technical-artist</code> 负责导入、Shader、特效和性能。</p>
-</li>
-<li class="lvl-2">
-<p><code>audio-designer</code> 负责 SFX、BGM、触发点和混音。</p>
-</li>
-<li class="lvl-2">
-<p><code>game-qa</code> 负责测试用例、回归和缺陷记录。</p>
-</li>
-</ul>
-<p>这不是为了形式化，而是为了让每个里程碑都能从“设计意图”走到“实现、验收、反馈”。M1 的角色控制就是沿着这个方式被拆成任务、实现和测试的。</p>
-<h2 id="M0-到-M7-的路线">M0 到 M7 的路线</h2>
-<p><code>project/PROJECT_PLAN.md</code> 把项目拆成七个后续里程碑：</p>
-<table>
-<thead>
-<tr>
-<th>里程碑</th>
-<th>目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>M1</td>
-<td>角色能动性：移动、跳跃、相机、测试场景</td>
-</tr>
-<tr>
-<td>M2</td>
-<td>基础战斗：生命值、伤害、敌人雏形</td>
-</tr>
-<tr>
-<td>M3</td>
-<td>完整战斗：攻击链、技能、反馈和调参</td>
-</tr>
-<tr>
-<td>M4</td>
-<td>手工关卡与 Boss</td>
-</tr>
-<tr>
-<td>M5</td>
-<td>程序化关卡生成</td>
-</tr>
-<tr>
-<td>M6</td>
-<td>Roguelite Build 和永久升级</td>
-</tr>
-<tr>
-<td>M7</td>
-<td>完整可玩体验与打磨</td>
-</tr>
-</tbody>
-</table>
-<p>这个路线是合理的：先证明角色能动，再做战斗；先做手工关卡验证体验，再做程序生成；先把局内 Build 跑通，再考虑完整 Roguelite 循环。</p>
-<h2 id="M0-真正完成了什么">M0 真正完成了什么</h2>
-<p>M0 没有产出一个可玩的版本，但完成了四件更基础的事：</p>
-<ol>
-<li class="lvl-3">
-<p>项目定位明确：国风浪子剑客穿越三个末日异世界。</p>
-</li>
-<li class="lvl-3">
-<p>玩法骨架明确：横板动作、Roguelite、世界顺序、纯度系统、Boss 弱点。</p>
-</li>
-<li class="lvl-3">
-<p>视觉身份明确：v8 主角方向和三世界调色板。</p>
-</li>
-<li class="lvl-3">
-<p>工程落点明确：Unity 版本、模块结构、数据驱动、任务模板和验收方式。</p>
-</li>
-</ol>
-<p>这让 M1 不需要再争论“项目到底是什么”。M1 只需要回答一个更具体的问题：这个主角能不能在 Unity 里被稳定控制起来。</p>
-]]></content>
-      <tags>
-        <tag>ProjectV</tag>
-        <tag>Unity</tag>
-        <tag>Devlog</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LeetcodeHard-871最低加油次数</title>
-    <url>/2024/10/23/LeetcodeHard-871/</url>
-    <content><![CDATA[<p>写在前面：该题转载至leetcode力扣 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy9taW5pbXVtLW51bWJlci1vZi1yZWZ1ZWxpbmctc3RvcHM=">No.871–最低加油次数<i class="fa fa-external-link-alt"></i></span></em> 😃</p>
-<h2 id="题目描述：">题目描述：</h2>
-<h3 id="No-871最低加油次数">No.871最低加油次数</h3>
-<p>汽车从起点出发驶向目的地，该目的地位于出发位置东面 <em>target</em>英里处。</p>
-<p>沿途有加油站，用数组 <em>stations</em>表示。其中 <em>stations[i] = [position<sub>i</sub>, fuel<sub>i</sub>]</em> 表示第 <em>i</em> 个加油站位于出发位置东面 <em>position<sub>i</sub></em> 英里处，并且有 <em>fuel<sub>i</sub></em> 升汽油。</p>
-<p>假设汽车油箱的容量是无限的，其中最初有 <em>startFuel</em> 升燃料。它每行驶 <em>1</em> 英里就会用掉 <em>1</em> 升汽油。当汽车到达加油站时，它可能停下来加油，将所有汽油从加油站转移到汽车中。</p>
-<p>为了到达目的地，汽车所必要的最低加油次数是多少？如果无法到达目的地，则返回 <em>-1</em> 。</p>
-<p>注意：如果汽车到达加油站时剩余燃料为 <em>0</em>，它仍然可以在那里加油。如果汽车到达目的地时剩余燃料为 <em>0</em>，仍然认为它已经到达目的地。</p>
-<h4 id="示例1：">示例1：</h4>
-<blockquote>
-<p>输入：target = <code>1</code>, startFuel = <code>1</code>, stations = <code>[]</code><br>
-输出：<code>0</code>解释：可以在不加油的情况下到达目的地。</p>
-</blockquote>
-<span id="more"></span>
-<h4 id="示例2：">示例2：</h4>
-<blockquote>
-<p>输入：target = <code>100</code>, startFuel = <code>1</code>, stations = <code>[[10,100]]</code><br>
-输出：<code>-1</code>解释：无法抵达目的地，甚至无法到达第一个加油站。</p>
-</blockquote>
-<h4 id="示例3：">示例3：</h4>
-<blockquote>
-<p>输入：target = <code>100</code>, startFuel = <code>10</code>, stations = <code>[[10,60],[20,30],[30,30],[60,40]]</code><br>
-输出：<code>2</code>解释：出发时有 <code>10</code> 升燃料。开车来到距起点 <code>10</code> 英里处的加油站，消耗 <code>10</code>升燃料。将汽油从 <code>0</code> 升加到 <code>60</code> 升。然后，从 <code>10</code> 英里处的加油站开到 <code>60</code> 英里处的加油站（消耗 <code>50</code> 升燃料），并将汽油从 <code>10</code> 升加到 <code>50</code> 升。然后开车抵达目的地。沿途在两个加油站停靠，所以返回 <code>2</code> 。</p>
-</blockquote>
-<h4 id="数据范围：">数据范围：</h4>
-<blockquote>
-<p>1 &lt;= target, startFuel &lt;= 10<sup>9</sup><br>
-0 &lt;= stations.length &lt;= 500<br>
-1 &lt;= position<sub>i</sub> &lt; position<sub>i+1</sub> &lt; target<br>
-1 &lt;= fuel<sub>i</sub> &lt; 10<sup>9</sup></p>
-</blockquote>
-<h4 id="默认代码模板：">默认代码模板：</h4>
-<p>C:</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">minRefuelStops</span><span class="params">(<span class="type">int</span> target, <span class="type">int</span> startFuel, <span class="type">int</span>** stations, <span class="type">int</span> stationsSize, <span class="type">int</span>* stationsColSize)</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Python3:</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">minRefuelStops</span>(<span class="params">self, target: <span class="built_in">int</span>, startFuel: <span class="built_in">int</span>, stations: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]</span>) -&gt; <span class="built_in">int</span>:</span><br></pre></td></tr></table></figure>
-<h3 id="题目解析：">题目解析：</h3>
-<p>dp可以，贪心也可以，这里先说dp</p>
-<h4 id="动态规划：">动态规划：</h4>
-<p>转移方程：</p>
-<p><code>dp[j + 1] = max(dp[j + 1],dp[j] + stations[i][1])</code></p>
-<p><em>dp[j]<em>表示加了</em>j</em>次油的情况下最远行驶距离，如果在最新遍历到的一个加油站加油能够使行驶距离到新高的话就更新<em>dp[]</em>，</p>
-<p>每次途径一个加油站都往回遍历一遍已经走过的加油站更新<em>dp[i]</em>，</p>
-<p>如果目的地<code>target&lt;dp[i]</code>,就说明在i次加油的情况下能到目的地，在符合条件的<em>dp[i]<em>中选择最小的</em>i</em>值即为所求答案。</p>
-<!-- #### 效果示意： -->
-<h5 id="复杂度：">复杂度：</h5>
-<p>每次遍历到新的加油站都要回头看一遍遍历过的，所以时间复杂度<em>O(n<sup>2</sup>)</em>.</p>
-<p>要在程序中维护数组<em>dp[]</em>,其大小是<em>n</em>,空间复杂度<em>O(n)</em>.</p>
-<h5 id="完整代码：">完整代码：</h5>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">minRefuelStops</span><span class="params">(<span class="type">int</span> target, <span class="type">int</span> startFuel, <span class="type">int</span>** stations, <span class="type">int</span> stationsSize, <span class="type">int</span>* stationsColSize)</span>&#123;</span><br><span class="line">    <span class="type">long</span> dp[stationsSize+<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">1</span>;i&lt;=stationsSize;i++)</span><br><span class="line">        dp[i]=<span class="number">0</span>;</span><br><span class="line">    dp[<span class="number">0</span>] = startFuel;<span class="comment">//dp[i]为加i次油能到的最远距离</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; stationsSize; i++) <span class="comment">//途径的加油站</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i; j &gt;= <span class="number">0</span>; j--) <span class="comment">//每次遍历到一个新的加油站的时候回头看能否更新dp[]</span></span><br><span class="line">            <span class="keyword">if</span> (dp[j] &gt;= stations[i][<span class="number">0</span>]) </span><br><span class="line">                dp[j + <span class="number">1</span>] = dp[j + <span class="number">1</span>]&gt;dp[j] + stations[i][<span class="number">1</span>]?dp[j + <span class="number">1</span>]:dp[j] + stations[i][<span class="number">1</span>];<span class="comment">//如果在当前遍历到的加油站加油，会不会跑得更远？(dp[]变得更大)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= stationsSize; i++) </span><br><span class="line">        <span class="keyword">if</span> (dp[i] &gt;= target) <span class="comment">//i次是能到目的地的最小的加油次数</span></span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="反悔贪心：">反悔贪心：</h4>
-<p>用一个最大堆维护当前遍历到的加油站的加油量,如果当前行驶距离小于目的地的距离，就从最大堆中取出最大值，加到行驶范围中，加油次数自增，再做距离的判断。</p>
-<p>如果在某次判断中第一次行驶距离大于等于了目的地的距离，就返回当前的加油次数，如果堆已经空了都没到目的地就返回-1。</p>
-<h5 id="完整代码">完整代码</h5>
-<p>这里引用了 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy9taW5pbXVtLW51bWJlci1vZi1yZWZ1ZWxpbmctc3RvcHMvc29sdXRpb25zLzI5MjEwNjQvenVpLWRhLWR1aS10YW4teGluLXB5dGhvbmphdmFjZ29qc3J1c3QtYi15bGRwLw==">灵茶山艾府大佬的python题解<i class="fa fa-external-link-alt"></i></span></em></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">minRefuelStops</span>(<span class="params">self, target: <span class="built_in">int</span>, startFuel: <span class="built_in">int</span>, stations: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        stations.append((target, <span class="number">0</span>))</span><br><span class="line">        ans, miles = <span class="number">0</span>, startFuel</span><br><span class="line">        fuel_heap = []  <span class="comment"># 下面把堆中元素取反，当作最大堆用</span></span><br><span class="line">        <span class="keyword">for</span> position, fuel <span class="keyword">in</span> stations:</span><br><span class="line">            <span class="keyword">while</span> fuel_heap <span class="keyword">and</span> miles &lt; position:  <span class="comment"># 没有足够的油到达 position</span></span><br><span class="line">                miles -= heappop(fuel_heap)  <span class="comment"># 选油量最多的油桶</span></span><br><span class="line">                ans += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> miles &lt; position:  <span class="comment"># 无法到达</span></span><br><span class="line">                <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">            heappush(fuel_heap, -fuel)  <span class="comment"># 留着后面加油</span></span><br><span class="line">        <span class="keyword">return</span> ans</span><br><span class="line"></span><br><span class="line">作者：灵茶山艾府</span><br><span class="line">来源：力扣（LeetCode）</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br></pre></td></tr></table></figure>
-<hr>
-<p align="center"><img src="https://raw.githubusercontent.com/khoa083/khoa/main/Khoa_ne/img/Rainbow.gif" width="100%"></p>
-<h1 align="center"><i> Connect With Me <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/handShake.gif' width="50px" height=50px> </i></h1>
-<p align="center">
-<a href="mailto:hrlong_@outlook.com"><img title="Email" src="https://logospng.org/download/microsoft-outlook/logo-microsoft-outlook-1024.png"width="50px" height=50px></a><a href="https://github.com/HenRiser"><img title="Github" src="https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/github.gif"width="50px" height=50px,target="_blank"></a>
-</p>
-<h1 align="center"><i> TTTTTThank You! <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/winkFace.gif' width="50px" height=50px> </i></h1>]]></content>
-      <tags>
-        <tag>Leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>LeetcodeHard-42接雨水</title>
-    <url>/2024/10/22/LeetcodeHard-42/</url>
-    <content><![CDATA[<p>写在前面：该题转载至leetcode力扣 <em><span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS5jbi9wcm9ibGVtcy90cmFwcGluZy1yYWluLXdhdGVy">No.42–接雨水<i class="fa fa-external-link-alt"></i></span></em> 😃</p>
-<h2 id="题目描述：">题目描述：</h2>
-<h3 id="No-42接雨水">No.42接雨水</h3>
-<p>给定 <em>n</em> 个<em>非负整数</em>表示每个宽度为 <em>1</em> 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。</p>
-<h4 id="示例1：">示例1：</h4>
- <img src="/2024/10/22/LeetcodeHard-42/example.png" class="" title="example_pic">
-<blockquote>
-<p>输入：<code>height = [0,1,0,2,1,0,1,3,2,1,2,1]</code><BR>输出：<code>6</code><BR>解释：上面是由数组 <code>[0,1,0,2,1,0,1,3,2,1,2,1]</code> 表示的高度图，在这种情况下，可以接 <code>6</code> 个单位的雨水（蓝色部分表示雨水）。</p>
-</blockquote>
-<span id="more"></span>
-<h4 id="示例2：">示例2：</h4>
-<blockquote>
-<p>输入：<code>height = [4,2,0,3,2,5]</code><BR>输出：<code>9</code></p>
-</blockquote>
-<h4 id="数据范围：">数据范围：</h4>
-<blockquote>
-<p>n == height.length<br>
-1 &lt;= n &lt;= 2 * 10<sup>4</sup><br>
-0 &lt;= height[i] &lt;= 10<sup>5</sup></p>
-</blockquote>
-<h4 id="默认代码模板：">默认代码模板：</h4>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">trap</span><span class="params">(<span class="type">int</span>* height, <span class="type">int</span> heightSize)</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="题目解析：">题目解析：</h4>
-<p>该题最容易想到的，也是性能最好的代码，是左右相向双指针。</p>
-<p>我们以<strong>样例1</strong>为例：</p>
-<p>下雨前：</p>
-<img src="/2024/10/22/LeetcodeHard-42/exampleEmpty.png" class="" title="example_pic">
-<p>想象<em>l</em>，<em>r</em>两个指针从左右两端向中间行进，我们需要维护左右两个指针，左右两个指针所经过的最大高度以及最后的返回值：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> l=<span class="number">0</span>,r= heightSize<span class="number">-1</span>,sum=<span class="number">0</span>,lMax=<span class="number">0</span>,rMax=<span class="number">0</span>;</span><br></pre></td></tr></table></figure>
-<p>在左右指针相遇的时候就已经遍历了全体数组，而一个指针只有在遇到不比他矮的柱子后，他身后经过的空位才能接到雨水，所以只需要对全体数组进行一次遍历，结合遍历过程中指针每一步行进时的反馈，就可以得出全部的接到雨水数，也就是空缺数。</p>
-<p>所以我们用一个在左右指针相遇时停止的<em>while</em>循环进行数组遍历：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在每一次遍历中都更新左右指针所经过的最高柱子的高度：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">lMax = lMax&gt;height[l]?lMax:height[l];</span><br><span class="line">rMax = rMax&gt;height[r]?rMax:height[r];</span><br></pre></td></tr></table></figure>
-<details open>
-<summary><span class="pre-summary">&nbsp;</span><strong>为什么要维护最高柱子高度？</strong></summary><p>如果指针在记录到经过路径的最高柱子 <em>a</em> 的高度 <em>h</em> 后又遇到了新的不比 <em>a</em> 矮的柱子 <em>b</em> ，那么 <em>a</em> 和 <em>b</em> 之间的所有高度不高于 <em>h</em> 的柱子上方都可以被视为空缺，而 <em>h</em> 与中间的柱子 <em>a<sub>i</sub></em> 的高度 <em>h<sub>i</sub></em> 的高度之差 <em>h-h<sub>i</sub></em> 就是柱子 <em>a<sub>i</sub></em> 上方的空缺所能接的雨水量。</p>
-</details>
-<p>只有在遇到至少不比经过的柱子矮的柱子才能接到雨水，那岂不是在遇到符合条件的柱子前都不知道要不要将遍历到的柱子对应的空缺加入到 <em>sum</em> 里面？所以我们可以选择一个指针行进的条件----前方有不比自己经过的最高柱子矮的柱子时，才会向前行进，即：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(lMax&gt;rMax)&#123;</span><br><span class="line">            sum+=rMax-height[r];</span><br><span class="line">            r--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            sum+=lMax-height[l];</span><br><span class="line">            l++;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
-<h4 id="效果示意：">效果示意：</h4>
-<img src="/2024/10/22/LeetcodeHard-42/step.gif" class="" title="example_pic">
-<p>这样，每次循环只移动一个指针行进一步，而这个指针定然会在两个指针顺利会师前遍历到符合条件的新柱子，而在路上遇到的所有矮柱子都会为<em>sum</em>的增长做贡献。</p>
-<h4 id="复杂度：">复杂度：</h4>
-<p>使用双指针求解只需要遍历一次，而且只需要维护常数个变量，所以空间复杂度是<em>O(1)</em>,时间复杂度是<em>O(n)</em>。</p>
-<h4 id="完整代码：">完整代码：</h4>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">trap</span><span class="params">(<span class="type">int</span>* height, <span class="type">int</span> heightSize)</span> &#123;</span><br><span class="line">    <span class="type">int</span> l=<span class="number">0</span>,r=heightSize<span class="number">-1</span>,sum=<span class="number">0</span>,lMax=<span class="number">0</span>,rMax=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        lMax = lMax&gt;height[l]?lMax:height[l];</span><br><span class="line">        rMax = rMax&gt;height[r]?rMax:height[r];</span><br><span class="line">        <span class="keyword">if</span>(lMax&gt;rMax)&#123;</span><br><span class="line">            sum+=rMax-height[r];</span><br><span class="line">            r--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            sum+=lMax-height[l];</span><br><span class="line">            l++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p align="center"><img src="https://raw.githubusercontent.com/khoa083/khoa/main/Khoa_ne/img/Rainbow.gif" width="100%"></p>
-<h1 align="center"><i> Connect With Me <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/handShake.gif' width="50px" height=50px> </i></h1>
-<p align="center">
-<a href="mailto:hrlong_@outlook.com"><img title="Email" src="https://logospng.org/download/microsoft-outlook/logo-microsoft-outlook-1024.png"width="50px" height=50px></a><a href="https://github.com/HenRiser"><img title="Github" src="https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/github.gif"width="50px" height=50px,target="_blank"></a>
-</p>
-<h1 align="center"><i> TTTTTThank You! <img src='https://raw.githubusercontent.com/rahulbanerjee26/githubProfileReadmeGenerator/main/gifs/winkFace.gif' width="50px" height=50px> </i></h1>]]></content>
-      <tags>
-        <tag>Leetcode</tag>
       </tags>
   </entry>
 </search>
