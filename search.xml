@@ -2978,7 +2978,7 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 <p>除注明 docs 仓库的文档外，本文所有工程路径均以 <code>PROJECT-V</code> 项目根目录为基准；docs 路径均以 <code>PROJECT-V-game-docs</code> 根目录为基准。</p>
 <span id="more"></span>
 <h2 id="关联提交和依据">关联提交和依据</h2>
-<p>M5 功能主体提交：</p>
+<p>M5 相关提交：</p>
 <table>
 <thead>
 <tr>
@@ -2990,6 +2990,10 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 <tr>
 <td><code>c3840c7848cc4cab8b5ee17b3ea189e2364e6b52</code></td>
 <td><code>feat(levels): deliver M5 procedural generation</code>，程序生成里程碑实现</td>
+</tr>
+<tr>
+<td><code>c6bc730</code></td>
+<td><code>docs(reports): add M5 delivery report</code>，阶段交付报告提交</td>
 </tr>
 </tbody>
 </table>
@@ -3022,7 +3026,7 @@ Hi I'm Long Hanrui, HenRiser,a coder,also a player<br><br>
 </thead>
 <tbody>
 <tr>
-<td>M5 交付报告，docs 仓库</td>
+<td>M5 交付报告</td>
 <td><code>reports/M5_delivery_report.html</code></td>
 </tr>
 <tr>
