@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
+  <link rel="mask-icon" href="/images/logo.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"henriser.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="正文生成完，是否就能成为下一章的依据？这次 Braipen 迭代把正文、用户确认、后台摘要与长期知识分开管理，并补上版本校验、前章锁定、结构化输出验证和可观测性。本文记录这些设计的取舍、失败边界与测试依据。">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Braipen 迭代复盘：从文本生成到可控创作工作流">
+<meta property="og:url" content="https://henriser.github.io/2026/09/22/Braipen-Workflow-Engineering/index.html">
+<meta property="og:site_name" content="Codeverse">
+<meta property="og:description" content="正文生成完，是否就能成为下一章的依据？这次 Braipen 迭代把正文、用户确认、后台摘要与长期知识分开管理，并补上版本校验、前章锁定、结构化输出验证和可观测性。本文记录这些设计的取舍、失败边界与测试依据。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-09-21T17:06:00.000Z">
+<meta property="article:modified_time" content="2026-09-21T17:06:00.000Z">
+<meta property="article:author" content="HenRiser">
+<meta property="article:tag" content="Braipen">
+<meta property="article:tag" content="Devlog">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://henriser.github.io/2026/09/22/Braipen-Workflow-Engineering/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://henriser.github.io/2026/09/22/Braipen-Workflow-Engineering/","path":"2026/09/22/Braipen-Workflow-Engineering/","title":"Braipen 迭代复盘：从文本生成到可控创作工作流"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Braipen 迭代复盘：从文本生成到可控创作工作流 | Codeverse</title>
+
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Codeverse</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">HenRiser'blog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/2024/10/19/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#section-1"><span class="nav-text">1. 先把正文交给用户，再更新摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-2"><span class="nav-text">2. 连续生成需要定义依赖、停止和失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-3"><span class="nav-text">3. 长期知识要有写入权限和来源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-4"><span class="nav-text">4. JSON 格式、字段合法与事实可信是三层问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-5"><span class="nav-text">5. 优化之前，先记录用户究竟等在哪里</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-6"><span class="nav-text">6. 阅读体验也有状态一致性问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-7"><span class="nav-text">7. 回归测试教会我的两个小问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-8"><span class="nav-text">这次迭代留下的三个判断</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HenRiser"
+      src="/images/authorAvatar.jpg">
+  <p class="site-author-name" itemprop="name">HenRiser</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;HenRiser"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmhybG9uZ19Ab3V0bG9vay5jb20=" title="E-Mail → mailto:hrlong_@outlook.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9zdGVhbWNvbW11bml0eS5jb20vcHJvZmlsZXMvNzY1NjExOTg5NzY4OTM4MTYv" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198976893816&#x2F;"><i class="fab fa-steam fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="Back to top">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+
+
+
+<div class="post-block">
+
+
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://henriser.github.io/2026/09/22/Braipen-Workflow-Engineering/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/authorAvatar.jpg">
+      <meta itemprop="name" content="HenRiser">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Braipen 迭代复盘：从文本生成到可控创作工作流 | Codeverse">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Braipen 迭代复盘：从文本生成到可控创作工作流
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+
+      <time title="Created: 2026-09-22 01:06:00" itemprop="dateCreated datePublished" datetime="2026-09-22T01:06:00+08:00">2026-09-22</time>
+    </span>
+
+
+</div>
+
+        </div>
+      </header>
+
+
+
+
+    <div class="post-body" itemprop="articleBody"><p>正文生成完，是否就能成为下一章的依据？这次 Braipen 迭代把正文、用户确认、后台摘要与长期知识分开管理，并补上版本校验、前章锁定、结构化输出验证和可观测性。本文记录这些设计的取舍、失败边界与测试依据。</p>
+<p>Braipen 是一个基于 React、FastAPI 和模型 API 的小说创作项目。本文对应源码版本 <a href="https://github.com/HenRiser/novel-generator/commit/fb9d55a49b50cdab07fc76566d91672f6322c452"><code>fb9d55a</code></a>，重点是应用如何管理生成结果。模型负责写出内容，应用负责决定哪一版可以保存、确认、复用，以及出错后怎样继续。</p>
+<span id="more"></span>
+
+<h2 id="section-1">1. 先把正文交给用户，再更新摘要</h2>
+<p>最初的链路把“完成一章”理解为一组连续动作：生成正文、生成摘要、保存结果。实际使用时，用户最想先看到的是正文；而刚生成的正文，又未必是准备保留的版本。先对初稿生成摘要，不仅增加等待，还可能在用户改稿后留下过期的上下文。</p>
+<p>因此，单章模式现在分成两个阶段：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre>生成正文 → 保存草稿 → 用户阅读、修改、确认
+                              ↓
+                    后台摘要与一致性检查
+                              ↓
+                    摘要就绪，允许推进后章
+</pre></td></tr></table></figure>
+<p>确认接口返回 HTTP 202，后续工作交给 FastAPI 的 <code>BackgroundTasks</code>。用户修改过正文时，先保存新版本，再基于新正文生成摘要并检查疑似冲突。没有修改时，则采用普通摘要和规则检查。</p>
+<p>这个改动缩短了用户获得正文之前的等待链路，也避免对尚未定稿的内容提前做摘要。它<strong>没有提高模型输出正文的速度</strong>，后台工作仍然需要时间。</p>
+<p>拆开链路之后，真正需要解决的问题是：旧任务晚返回时怎么办？</p>
+<p>我为章节建立了 <code>revision</code>，由文件名和正文内容共同计算 SHA-256，并给每次后台工作分配 <code>job_id</code>。模型调用在项目锁之外运行；提交结果时重新进入锁，同时检查版本、任务 ID 和确认状态。下面是这一原则的简化示意：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre>result = call_model(confirmed_text)  # 不持有项目锁等待模型
+with project_lock:
+    if current_revision != revision or current_job_id != job_id:
+        return                     # 旧结果不能写入新状态
+    if chapter_status != &quot;confirmed&quot;:
+        return
+    save_summary_and_update_index(result)
+</pre></td></tr></table></figure>
+<p>实际实现把检查放在写摘要文件和章节索引之前。即使正文被外部编辑，或者文本相同却保存成了另一个文件版本，旧摘要也不能继续冒充当前版本的记忆。</p>
+<p>对应实现：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/services/chapter_workflow_service.py#L282">章节确认与后台工作</a>。对应测试：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/tests/test_chapter_workflow_service.py#L145">过期版本与任务不得回写</a>。</p>
+<h2 id="section-2">2. 连续生成需要定义依赖、停止和失败</h2>
+<p>连续生成可以写成一个循环，但循环本身不解决章节之间的依赖：后一章需要前一章的有效摘要，前文被引用后又不能随意改写。</p>
+<p>当前批量模式一次最多生成 10 章，按“正文 → 自动确认 → 摘要 → 下一章”的顺序推进。开始下一章之前，后端检查前章状态，并持久化锁定标记。锁定检查覆盖编辑、续写保存和重新生成等写入入口，前端按钮禁用只是其中的界面反馈。</p>
+<table>
+<thead>
+<tr>
+<th>情况</th>
+<th>当前处理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>前章尚未确认，或摘要未就绪</td>
+<td>阻止后章启动；历史未跟踪章节有兼容处理</td>
+</tr>
+<tr>
+<td>用户点击停止</td>
+<td>完成当前章及摘要后停止，不再开始下一章</td>
+</tr>
+<tr>
+<td>摘要失败</td>
+<td>停止后续生成，保留已保存正文并显示失败</td>
+</tr>
+<tr>
+<td>后章正文生成失败</td>
+<td>已经被本次生成引用的前章继续锁定</td>
+</tr>
+<tr>
+<td>批量结束</td>
+<td>最后一章仍可修改，后续再次引用后才锁定</td>
+</tr>
+<tr>
+<td>服务重启</td>
+<td>未完成任务显示中断，保留正文，由用户检查后重试</td>
+</tr>
+</tbody></table>
+<p>持续锁定是一个保守选择。如果允许修改已经被后文引用的章节，就需要追踪哪些摘要、知识和后文受影响，并定义失效及重算流程。当前项目尚未实现这套依赖重算，所以先明确修改边界。</p>
+<p>这里使用的是<strong>单进程锁与后台任务</strong>。元数据会落盘，但没有引入持久化任务队列；服务重启不会自动接续中断的模型调用。这是当前规模下的实现边界，扩展多进程时必须重新处理共享锁和任务调度。</p>
+<p>对应实现：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/services/batch_generation_service.py">连续生成服务</a>。对应测试：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/tests/test_batch_generation_service.py">停止、失败与重启行为</a>。</p>
+<h2 id="section-3">3. 长期知识要有写入权限和来源</h2>
+<p>与直接在聊天窗口生成小说相比，项目里另一条值得保留的链路是：正文中出现的内容，先成为候选事实，再由作者决定是否进入正式叙事知识。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre>用户发起章节分析 → Story Delta → 待审核知识候选
+                                      ↓ 作者接受或修改后接受
+                               写入叙事图谱
+                                      ↓
+                         为后续章节组装上下文
+</pre></td></tr></table></figure>
+<p>这条分析链路由用户在资料库发起，并非每章生成后自动运行。接受候选之前创建安全快照，写入时保留来源章节、草稿和候选 ID。目前审核合并支持创建节点和关系，不是任意图谱修改。</p>
+<p>文件存储下，图谱与审核记录也不是一个数据库事务。如果图谱已写入，而审核状态保存失败，重试需要根据来源标识识别已经插入的实体，避免重复创建。来源字段因此既服务于解释，也参与失败恢复。</p>
+<p>图谱如何进入模型上下文，同样需要说清楚。当前采用可解释的规则打分，综合章节目标匹配、重要度、未解伏笔及一跳邻居挑选记录，保留入选理由，并设置节点、关系数量上限。已确认且重要度高的事实与一般背景分别放入不同提示词层级。</p>
+<p>这不是新型检索算法，也不能保证所有事实始终进入提示词。单章流程可以预览并选择使用组装结果；批量流程自动构建，但当前没有传入章节目标，主要依赖重要度、伏笔等信号。图谱可视化便于查看和编辑，生成质量仍取决于知识本身、选择规则及模型对约束的遵守程度。</p>
+<p>章节任务与场景计划也采用类似的生效边界：草稿不参与正式约束，批准后才可被解析使用；场景计划绑定具体任务版本。它们是作者维护的生成输入，目前不属于模型自主规划。</p>
+<p>对应实现：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/services/knowledge_draft_service.py#L624">知识候选审核</a>、<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/services/context_pack_service.py#L306">上下文组装</a>、<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/services/chapter_task_service.py#L584">批准任务解析</a>。</p>
+<h2 id="section-4">4. JSON 格式、字段合法与事实可信是三层问题</h2>
+<p>Story Delta 等结果需要继续交给程序处理，因此对应调用显式启用 <code>response_format={&quot;type&quot;:&quot;json_object&quot;}</code>。但请求 JSON 对象，并不能替代应用的结构校验，更不能证明内容真实。</p>
+<p>当前处理分成三层：</p>
+<ol>
+<li><strong>格式约束</strong>：只在需要结构化结果的调用中启用 JSON 模式；小说正文和普通摘要保持文本输出。空响应和被截断的响应仍然拒绝。</li>
+<li><strong>结构校验</strong>：Story Delta 在兼容性归一化之前检查必需字段、字段类型、操作枚举与数值范围。失败时反馈具体错误，最多修复一次；再次失败就显式结束，不保存伪造的成功结果。</li>
+<li><strong>内容审核</strong>：结构合法的知识仍是候选，等待作者审核；正文检查产生的警告仍是疑似问题，等待用户核对。</li>
+</ol>
+<p>“解析 → 校验 → 反馈错误 → 一次修复”可以称为一个有上限的反馈闭环。它的价值在于可终止、可追踪，不需要因此把整个应用描述成自主 Agent。</p>
+<p>修改正文后的逻辑提示还增加了证据门槛：模型必须给出 <code>evidence</code>，服务端验证它是当前正文里的连续原文，阅读器再把用户带到对应位置。没有有效原文证据或字段类型错误，检查会显示未完成，不能把空列表包装成“没有发现问题”。</p>
+<p>逐字证据只能证明模型引用了存在的文字，不能证明它对矛盾的判断正确。因此界面保留“疑似”“可能”的表述，合理改写也不会仅因不同于初稿就被判错。这里尚未测量误报率或召回率。</p>
+<p>对应实现：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/deepseek_client.py">模型客户端</a>、<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/services/story_delta_service.py#L797">一次有限修复</a>、<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/services/chapter_workflow_service.py#L372">警告证据校验</a>。</p>
+<h2 id="section-5">5. 优化之前，先记录用户究竟等在哪里</h2>
+<p>“生成慢”可以指首次看见正文慢，也可以指整章完成慢，或正文结束后仍在等待摘要。将这些时间混成一个总耗时，很难判断下一步该改什么。</p>
+<p>这次先调整提示词排列：共享规则、项目设定与参考材料在前，章节号、任务和场景约束等变化内容靠后，让相邻章节具有可复用的输入前缀。同时保留原有上下文裁剪预算，每次读取最新材料，不为提高命中机会而复用旧事实。材料出现的位置也不等同于指令优先级，硬连续性约束和批准任务的地位仍需明确表达。</p>
+<p>正文生成日志则拆开记录：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>first_content_ms</code></td>
+<td>流式调用中首个非空白正文片段的等待时间，排除 reasoning 事件</td>
+</tr>
+<tr>
+<td><code>body_complete_ms</code></td>
+<td>正文接收完成时间</td>
+</tr>
+<tr>
+<td><code>total_ms</code></td>
+<td>当前生成任务最终耗时，包含保存阶段；不包含之后独立确认摘要的调用</td>
+</tr>
+<tr>
+<td>cache hit / miss tokens</td>
+<td>模型服务返回的缓存统计，缺失时保持未知</td>
+</tr>
+<tr>
+<td>模板版本</td>
+<td>区分提示词排列规则，避免把不同版本的结果混在一起</td>
+</tr>
+</tbody></table>
+<p>完整请求的哈希另存于 AI Run 的提示词档案，用于追踪输入变化，不属于这份正文耗时日志的字段。同步调用无法观察首个正文片段到达的时刻，因此该项为 <code>null</code>；服务商没有返回缓存数据时，也不能记成 0。流式结束时不带 <code>choices</code> 的 usage 数据仍需读取。指标日志写入失败，不应把已经保存成功的正文变成生成失败。</p>
+<p>目前只能说明“已经准备好衡量优化”，还不能声称缓存命中率、成本或延迟改善了多少。下一步应使用固定样本与一致参数对比真实调用，再决定瓶颈位于输入处理、输出生成还是应用流程。</p>
+<p>对应实现：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/prompt_templates.py#L330">章节提示词</a>、<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/services/generation_service.py#L95">正文指标</a>。对应测试：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/tests/test_chapter_prompt_prefix.py">公共前缀与材料更新</a>、<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/tests/test_generation_metrics.py">指标边界</a>。</p>
+<h2 id="section-6">6. 阅读体验也有状态一致性问题</h2>
+<p>阅读器支持字体、字号和底色，但调大字号会重新换行，沿用旧的像素滚动位置就可能跳离正在读的句子。当前实现尽量记录视口内的字符锚点，排版变化后将同一字符恢复到原来的可见位置；不支持相关浏览器能力时回退到相对进度。</p>
+<p>跨页面的阅读进度则按项目、章节和内容版本保存。正文已经更改时，不把旧进度直接套到新内容上。默认 18px 宋体、暖纸或随系统底色只是起点，更关键的是调整排版时仍能接着读，点击逻辑提示后能找到原文，也能返回提示。</p>
+<p>界面偏好保存在浏览器本地存储，正文和凭据不进入这份偏好记录。存储损坏或不可用时回到默认值，不阻断阅读。</p>
+<p>对应实现：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/frontend/src/components/chapter/ChapterReader.tsx">阅读器的字符锚点与证据定位</a>、<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/frontend/src/hooks/useReaderPreferences.ts">阅读位置恢复</a>。</p>
+<h2 id="section-7">7. 回归测试教会我的两个小问题</h2>
+<p>第一次是摘要任务认领：如果先把 job 加入内存中的运行集合，再写入磁盘上的 running 状态，写盘失败后就可能留下一个无法正常重试的“正在运行”任务。修复方式是先成功持久化，再更新内存占用；同时用故障注入测试验证失败后的清理与重试。</p>
+<p>第二次是生产环境默认 API 地址。开发时前后端都在本机，<code>127.0.0.1</code> 看起来没有问题；到了线上，它却指向访问者自己的电脑。生产构建默认使用同源请求，再通过实际构建产物和线上浏览器验证，才能确认界面访问的是服务器后端。</p>
+<p>2026 年 9 月 21 日发布时，同一源码提交在本地和服务器均通过 233 项后端测试、8 项前端测试及生产构建；隔离环境中还验证了确认、后台提示、连续生成、前章锁定和章边界停止。线上检查覆盖静态资源、健康接口及已有章节阅读。</p>
+<p>这些结果证明的是已覆盖的工程行为。测试使用替身或隔离数据，没有据此得出真实模型生成质量、缓存收益或逻辑检查准确率的结论。候选审核的完整故障恢复与上下文检索也仍有补充专项测试的空间。</p>
+<p>对应测试：<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/tests/test_chapter_workflow_service.py#L242">写盘失败后释放任务</a>、<a href="https://github.com/HenRiser/novel-generator/blob/fb9d55a49b50cdab07fc76566d91672f6322c452/frontend/scripts/test-api-base-url.mjs">生产 API 地址</a>。</p>
+<h2 id="section-8">这次迭代留下的三个判断</h2>
+<ol>
+<li><strong>记忆更新首先是版本与权限问题。</strong> 哪段内容由谁确认、对应哪个版本、何时失效，决定后续上下文是否可信。</li>
+<li><strong>异步流程首先需要明确失败语义。</strong> 旧任务回写、重复提交、写盘失败和服务重启，比给生成按钮增加一个 loading 更值得提前设计。</li>
+<li><strong>优化需要可比较的证据。</strong> 把首段等待、正文完成和后台工作拆开，把未知统计保留为未知，才能据此安排后续投入。</li>
+</ol>
+<p>当前 Braipen 仍是一套有明确边界的个人创作工具。后续最值得继续验证的，是这些边界在真实长篇创作中是否减少了重复确认、过期上下文和人工排错，而不只是生成了更多文字。</p>
+
+    </div>
+
+        <footer class="post-footer">
+      <div class="post-tags">
+        <a href="/tags/Braipen/" rel="tag"><i class="fa fa-tag"></i> Braipen</a>
+        <a href="/tags/Devlog/" rel="tag"><i class="fa fa-tag"></i> Devlog</a>
+      </div>
+      <div class="post-nav">
+        <div class="post-nav-item"><a href="/2026/06/30/ProjectV-M5-Implementation/" rel="prev" title="PROJECT-v M5：种子驱动的程序生成关卡"><i class="fa fa-angle-left"></i> PROJECT-v M5：种子驱动的程序生成关卡</a></div>
+        <div class="post-nav-item"></div>
+      </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy;
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HenRiser</span>
+  </div>
+  <div class="powered-by">Powered by <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZw==">NexT.Gemini</span>
+  </div>
+
+    </div>
+  </footer>
+
+
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
+</html>
