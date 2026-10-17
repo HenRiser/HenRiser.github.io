@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"henriser.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="正文生成完，是否就能成为下一章的依据？这次 Braipen 迭代把正文、用户确认、后台摘要与长期知识分开管理，并补上版本校验、前章锁定、结构化输出验证和可观测性。本文记录这些设计的取舍、失败边界与测试依据。">
+    <meta name="description" content="2026-10-17 更新：Braipen 的创作资料改为本机工作区文件保存，文风提取采用单章、最多五轮的有限任务。本文补充保存失败、旧数据迁移、原文范例核验与发布验证边界；后半部分保留九月版本的工程复盘。">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Braipen 迭代复盘：从文本生成到可控创作工作流">
 <meta property="og:url" content="https://henriser.github.io/2026/09/22/Braipen-Workflow-Engineering/index.html">
 <meta property="og:site_name" content="Codeverse">
-<meta property="og:description" content="正文生成完，是否就能成为下一章的依据？这次 Braipen 迭代把正文、用户确认、后台摘要与长期知识分开管理，并补上版本校验、前章锁定、结构化输出验证和可观测性。本文记录这些设计的取舍、失败边界与测试依据。">
+<meta property="og:description" content="2026-10-17 更新：Braipen 的创作资料改为本机工作区文件保存，文风提取采用单章、最多五轮的有限任务。本文补充保存失败、旧数据迁移、原文范例核验与发布验证边界；后半部分保留九月版本的工程复盘。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-09-21T17:06:00.000Z">
-<meta property="article:modified_time" content="2026-09-21T17:06:00.000Z">
+<meta property="article:modified_time" content="2026-10-17T02:36:04.406Z">
 <meta property="article:author" content="HenRiser">
 <meta property="article:tag" content="Braipen">
 <meta property="article:tag" content="Devlog">
@@ -142,7 +142,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#section-1"><span class="nav-text">1. 先把正文交给用户，再更新摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-2"><span class="nav-text">2. 连续生成需要定义依赖、停止和失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-3"><span class="nav-text">3. 长期知识要有写入权限和来源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-4"><span class="nav-text">4. JSON 格式、字段合法与事实可信是三层问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-5"><span class="nav-text">5. 优化之前，先记录用户究竟等在哪里</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-6"><span class="nav-text">6. 阅读体验也有状态一致性问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-7"><span class="nav-text">7. 回归测试教会我的两个小问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-8"><span class="nav-text">这次迭代留下的三个判断</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item"><a class="nav-link" href="#workspace-update"><span class="nav-text">2026-10-17：本机工作区与五轮文风提取</span></a></li><li class="nav-item"><a class="nav-link" href="#workspace-save"><span class="nav-text">保存成功必须以文件写入为准</span></a></li><li class="nav-item"><a class="nav-link" href="#style-rounds"><span class="nav-text">五轮提取保留明确的调用上限</span></a></li><li class="nav-item"><a class="nav-link" href="#mvp-evidence"><span class="nav-text">验证证明工程行为，效果由作者判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-1"><span class="nav-text">1. 先把正文交给用户，再更新摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-2"><span class="nav-text">2. 连续生成需要定义依赖、停止和失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-3"><span class="nav-text">3. 长期知识要有写入权限和来源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-4"><span class="nav-text">4. JSON 格式、字段合法与事实可信是三层问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-5"><span class="nav-text">5. 优化之前，先记录用户究竟等在哪里</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-6"><span class="nav-text">6. 阅读体验也有状态一致性问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-7"><span class="nav-text">7. 回归测试教会我的两个小问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-8"><span class="nav-text">这次迭代留下的三个判断</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -240,6 +240,7 @@
 
       <time title="Created: 2026-09-22 01:06:00" itemprop="dateCreated datePublished" datetime="2026-09-22T01:06:00+08:00">2026-09-22</time>
     </span>
+    <span class="post-meta-item">Updated on <time itemprop="dateModified" datetime="2026-10-17T10:36:04+08:00">2026-10-17</time></span>
 
 
 </div>
@@ -250,9 +251,27 @@
 
 
 
-    <div class="post-body" itemprop="articleBody"><p>正文生成完，是否就能成为下一章的依据？这次 Braipen 迭代把正文、用户确认、后台摘要与长期知识分开管理，并补上版本校验、前章锁定、结构化输出验证和可观测性。本文记录这些设计的取舍、失败边界与测试依据。</p>
-<p>Braipen 是一个基于 React、FastAPI 和模型 API 的小说创作项目。本文对应源码版本 <a href="https://github.com/HenRiser/novel-generator/commit/fb9d55a49b50cdab07fc76566d91672f6322c452"><code>fb9d55a</code></a>，重点是应用如何管理生成结果。模型负责写出内容，应用负责决定哪一版可以保存、确认、复用，以及出错后怎样继续。</p>
+    <div class="post-body" itemprop="articleBody"><p>2026-10-17 更新：Braipen 的创作资料改为本机工作区文件保存，文风提取采用单章、最多五轮的有限任务。本文补充保存失败、旧数据迁移、原文范例核验与发布验证边界；后半部分保留九月版本的工程复盘。</p>
 <span id="more"></span>
+<h2 id="workspace-update">2026-10-17：本机工作区与五轮文风提取</h2>
+<p>这次 MVP 收紧了三个边界：单章原文最多 20,000 个 Unicode 字符；一次点击最多五次模型调用；创作资料只以用户选择的本机工作区文件持久保存。模型输出先成为可编辑草稿，用户保存后才正式使用，已有作品不会自动切换文风版本。</p>
+<p>当前实现对应源码 bab3b39，可以在 Braipen 在线体验。以下九月复盘记录的是旧版文件服务和后台任务；当前公开产品由页面编排工作流、FastAPI 处理当次计算，服务器不保存作品或后台任务。</p>
+<p>源码：<a href="https://github.com/HenRiser/novel-generator/commit/bab3b39a8190dc6f846f7417ca2f2e8cb8b1dc9e"><code>bab3b39</code></a>；<a href="https://braipen.world">在线体验</a>；<a href="https://github.com/HenRiser/novel-generator/blob/bab3b39a8190dc6f846f7417ca2f2e8cb8b1dc9e/README.md">使用说明与兼容边界</a>。</p>
+<h2 id="workspace-save">保存成功必须以文件写入为准</h2>
+<p>设定、正文、文风卡、封面、导入草稿和待确认编辑统一放进一个 v5 工作区文件。页面只用内存工作副本；浏览器继续保留模型连接、Key 和界面偏好。每次打开页面重新选择工作区，读取时保留原项目标识与修订。</p>
+<p>文件写入、关闭并回读一致后才显示已保存。权限失效、磁盘写入失败或文件被外部修改时保留待保存内容，提供重试与下载。不能直接写文件夹的浏览器使用手动打开与下载，发起下载不被当作已经落盘。</p>
+<p>旧浏览器创作记录只在用户点击迁移时读取。先写入并校验本机文件，再由用户单独确认清理；清理前在同一数据库事务里重新核对旧记录，防止误删其他页面刚改过的内容。Key 和偏好保留，Key 不进入工作区文件。</p>
+<h2 id="style-rounds">五轮提取保留明确的调用上限</h2>
+<p>五个阶段依次提取整体文风、整理语言与段落、补充对白与节奏、汇总完整卡、对照原文修正。复用现有计算服务，每轮只传同一章原文与上一轮有效草稿，没有新增 Agent 框架，也不持续追加全部历史。</p>
+<p>20,000 字符包含标点、空格与英文字母，补充平面汉字同样按一个 Unicode 字符计算。20,001 字符会在前后端拒绝，不截断或采样。每轮请求 20,000 个输出令牌，这不是要求生成同等数量的汉字；规则仍最多 6,000 字符。服务商不支持额度时明确失败，不自动降额或切换模型。</p>
+<p>网络、格式或模型错误会结束本次任务，保留最近有效草稿，没有隐藏重试。原文范例必须是输入中的连续逐字摘录，改写、补写和拼接片段不收录，允许没有范例。这只验证摘录来源，不评价文笔；本版不提供文风评分或自动修改建议。</p>
+<h2 id="mvp-evidence">验证证明工程行为，效果由作者判断</h2>
+<p>本地验收通过 203 项前端单元检查、483 项后端测试、25 项浏览器场景及生产构建。覆盖输入上限、五次调用与额度、失败草稿保留、v5 重新打开、写盘故障和旧数据迁移清理。</p>
+<p>模型响应和目录句柄在这些浏览器测试中采用模拟；Edge 渲染与 IndexedDB 为真实实现。本轮未调用付费模型，尚未据此验证真实文风收益、系统目录授权弹窗或物理手机体验。旧客户端不能完整读取 v5，回滚应用前需要保留工作区副本。</p>
+<h2 id="historical-20260922">以下为 2026-09-22 历史版本复盘</h2>
+<p>2026-10-17 更新：Braipen 的创作资料改为本机工作区文件保存，文风提取采用单章、最多五轮的有限任务。本文补充保存失败、旧数据迁移、原文范例核验与发布验证边界；后半部分保留九月版本的工程复盘。</p>
+<p>Braipen 是一个基于 React、FastAPI 和模型 API 的小说创作项目。本文对应源码版本 <a href="https://github.com/HenRiser/novel-generator/commit/fb9d55a49b50cdab07fc76566d91672f6322c452"><code>fb9d55a</code></a>，重点是应用如何管理生成结果。模型负责写出内容，应用负责决定哪一版可以保存、确认、复用，以及出错后怎样继续。</p>
+
 
 <h2 id="section-1">1. 先把正文交给用户，再更新摘要</h2>
 <p>最初的链路把“完成一章”理解为一组连续动作：生成正文、生成摘要、保存结果。实际使用时，用户最想先看到的是正文；而刚生成的正文，又未必是准备保留的版本。先对初稿生成摘要，不仅增加等待，还可能在用户改稿后留下过期的上下文。</p>
