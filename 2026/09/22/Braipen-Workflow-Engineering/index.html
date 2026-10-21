@@ -28,7 +28,7 @@
 <meta property="og:description" content="2026-10-17 更新：Braipen 的创作资料改为本机工作区文件保存，文风提取采用单章、最多五轮的有限任务。本文补充保存失败、旧数据迁移、原文范例核验与发布验证边界；后半部分保留九月版本的工程复盘。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-09-21T17:06:00.000Z">
-<meta property="article:modified_time" content="2026-10-17T02:36:04.406Z">
+<meta property="article:modified_time" content="2026-10-21T15:02:21.000Z">
 <meta property="article:author" content="HenRiser">
 <meta property="article:tag" content="Braipen">
 <meta property="article:tag" content="Devlog">
@@ -142,7 +142,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item"><a class="nav-link" href="#workspace-update"><span class="nav-text">2026-10-17：本机工作区与五轮文风提取</span></a></li><li class="nav-item"><a class="nav-link" href="#workspace-save"><span class="nav-text">保存成功必须以文件写入为准</span></a></li><li class="nav-item"><a class="nav-link" href="#style-rounds"><span class="nav-text">五轮提取保留明确的调用上限</span></a></li><li class="nav-item"><a class="nav-link" href="#mvp-evidence"><span class="nav-text">验证证明工程行为，效果由作者判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-1"><span class="nav-text">1. 先把正文交给用户，再更新摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-2"><span class="nav-text">2. 连续生成需要定义依赖、停止和失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-3"><span class="nav-text">3. 长期知识要有写入权限和来源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-4"><span class="nav-text">4. JSON 格式、字段合法与事实可信是三层问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-5"><span class="nav-text">5. 优化之前，先记录用户究竟等在哪里</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-6"><span class="nav-text">6. 阅读体验也有状态一致性问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-7"><span class="nav-text">7. 回归测试教会我的两个小问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-8"><span class="nav-text">这次迭代留下的三个判断</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#sent2video-update"><span class="nav-text">2026-10-21：接入 sent2video 桌面制作流程</span></a></li><li class="nav-item"><a class="nav-link" href="#workspace-update"><span class="nav-text">2026-10-17：本机工作区与五轮文风提取</span></a></li><li class="nav-item"><a class="nav-link" href="#workspace-save"><span class="nav-text">保存成功必须以文件写入为准</span></a></li><li class="nav-item"><a class="nav-link" href="#style-rounds"><span class="nav-text">五轮提取保留明确的调用上限</span></a></li><li class="nav-item"><a class="nav-link" href="#mvp-evidence"><span class="nav-text">验证证明工程行为，效果由作者判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-1"><span class="nav-text">1. 先把正文交给用户，再更新摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-2"><span class="nav-text">2. 连续生成需要定义依赖、停止和失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-3"><span class="nav-text">3. 长期知识要有写入权限和来源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-4"><span class="nav-text">4. JSON 格式、字段合法与事实可信是三层问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-5"><span class="nav-text">5. 优化之前，先记录用户究竟等在哪里</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-6"><span class="nav-text">6. 阅读体验也有状态一致性问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-7"><span class="nav-text">7. 回归测试教会我的两个小问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-8"><span class="nav-text">这次迭代留下的三个判断</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -157,13 +157,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -240,7 +240,7 @@
 
       <time title="Created: 2026-09-22 01:06:00" itemprop="dateCreated datePublished" datetime="2026-09-22T01:06:00+08:00">2026-09-22</time>
     </span>
-    <span class="post-meta-item">Updated on <time itemprop="dateModified" datetime="2026-10-17T10:36:04+08:00">2026-10-17</time></span>
+    <span class="post-meta-item">Updated on <time itemprop="dateModified" datetime="2026-10-21T23:02:21+08:00">2026-10-21</time></span>
 
 
 </div>
@@ -251,7 +251,9 @@
 
 
 
-    <div class="post-body" itemprop="articleBody"><p>2026-10-17 更新：Braipen 的创作资料改为本机工作区文件保存，文风提取采用单章、最多五轮的有限任务。本文补充保存失败、旧数据迁移、原文范例核验与发布验证边界；后半部分保留九月版本的工程复盘。</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="sent2video-update">2026-10-21：接入 sent2video 桌面制作流程</h2>
+<p>这次在独立的 sent2video 桌面集成分支中，我补充了小说与分场剧本的双向转换，将已确认剧本交给镜头规划、视频候选和本地交付流程。相关实现完成了真实文本与视频接口联调，记录见<a href="/2026/10/21/Sent2video-Local-Workflow/">《sent2video 开发记录：从小说到可交付的镜头》</a>。这条补记对应桌面集成分支，线上 Braipen 的版本信息仍以本文各次发布记录为准。</p>
+<p>2026-10-17 更新：Braipen 的创作资料改为本机工作区文件保存，文风提取采用单章、最多五轮的有限任务。本文补充保存失败、旧数据迁移、原文范例核验与发布验证边界；后半部分保留九月版本的工程复盘。</p>
 <span id="more"></span>
 <h2 id="workspace-update">2026-10-17：本机工作区与五轮文风提取</h2>
 <p>这次 MVP 收紧了三个边界：单章原文最多 20,000 个 Unicode 字符；一次点击最多五次模型调用；创作资料只以用户选择的本机工作区文件持久保存。模型输出先成为可编辑草稿，用户保存后才正式使用，已有作品不会自动切换文风版本。</p>
@@ -423,7 +425,7 @@ with project_lock:
       </div>
       <div class="post-nav">
         <div class="post-nav-item"><a href="/2026/06/30/ProjectV-M5-Implementation/" rel="prev" title="PROJECT-v M5：种子驱动的程序生成关卡"><i class="fa fa-angle-left"></i> PROJECT-v M5：种子驱动的程序生成关卡</a></div>
-        <div class="post-nav-item"></div>
+        <div class="post-nav-item"><a href="/2026/10/21/Sent2video-Local-Workflow/" rel="next" title="sent2video 开发记录：从小说到可交付的镜头">sent2video 开发记录：从小说到可交付的镜头 <i class="fa fa-angle-right"></i></a></div>
       </div>
     </footer>
   </article>
