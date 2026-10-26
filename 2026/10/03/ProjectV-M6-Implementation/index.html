@@ -1,0 +1,339 @@
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>PROJECT-V M6：从单局生成到 Roguelite 元进度 · Codeverse</title>
+  <meta name="description" content="在既有生成器上接入构筑上下文，贯通灵魂、永久升级和存档；用代表种子与资产级门禁验证元进度链路。">
+  <link rel="canonical" href="https://henriser.github.io/2026/10/03/ProjectV-M6-Implementation/">
+  <meta property="og:title" content="PROJECT-V M6：从单局生成到 Roguelite 元进度">
+  <meta property="og:description" content="在既有生成器上接入构筑上下文，贯通灵魂、永久升级和存档；用代表种子与资产级门禁验证元进度链路。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://henriser.github.io/2026/10/03/ProjectV-M6-Implementation/">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:site_name" content="Codeverse">
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="alternate" type="application/atom+xml" title="Codeverse" href="/atom.xml">
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script defer src="/js/site.js"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"PROJECT-V M6：从单局生成到 Roguelite 元进度","datePublished":"2026-10-03T00:00:00.000Z","dateModified":"2026-10-03T00:00:00.000Z","author":{"@type":"Person","name":"HenRiser"},"mainEntityOfPage":"https://henriser.github.io/2026/10/03/ProjectV-M6-Implementation/","description":"在既有生成器上接入构筑上下文，贯通灵魂、永久升级和存档；用代表种子与资产级门禁验证元进度链路。","inLanguage":"zh-CN"}</script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body class="reading-page">
+  <a class="skip-link" href="#main">跳至正文</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Codeverse 首页"><img class="brand-mark" src="/images/logo.png" alt="Codeverse 原版 logo" width="40" height="40"><span>Codeverse</span></a>
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        
+        <a href="/" aria-current="page">文章</a>
+        
+        <a href="/projects/" >项目</a>
+        
+        <a href="/archives/" >归档</a>
+        
+        <a href="/about/" >关于</a>
+        
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button header-search" data-search-open aria-label="搜索文章" title="搜索文章"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>搜索</span></button>
+        <button class="icon-button theme-toggle" aria-label="切换颜色主题" title="切换颜色主题"><span class="theme-moon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg></span><span class="theme-sun"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></button>
+        <button class="icon-button menu-toggle" aria-label="展开导航" aria-expanded="false" aria-controls="main-nav" title="导航"><span class="menu-open-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></span><span class="menu-close-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></button>
+      </div>
+    </div>
+    <div class="reading-progress" aria-hidden="true"><span></span></div>
+  </header>
+  <main id="main" class="site-main">
+<div class="article-shell container">
+  <div class="article-column">
+    <nav class="breadcrumbs" aria-label="当前位置"><a href="/">文章</a><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="/projects/">PROJECT-V</a><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><span>M6</span></nav>
+    <header class="article-header"><div class="eyebrow">PROJECT-V / DEVLOG 06</div><h1>PROJECT-V M6：从单局生成到 Roguelite 元进度</h1><div class="article-meta"><time datetime="2026-10-03T00:00:00.000Z">2026.10.03</time><span>·</span><span>约 11 分钟</span><span>·</span><span>HenRiser</span></div><div class="entry-tags"><a href="/tags/Devlog/">Devlog</a><a href="/tags/ProjectV/">ProjectV</a><a href="/tags/Unity/">Unity</a></div></header>
+    <details class="mobile-toc"><summary>文章目录</summary><nav aria-label="文章目录"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E6%9E%84%E7%AD%91%E4%B8%8A%E4%B8%8B%E6%96%87%E8%BF%9B%E5%85%A5%E7%94%9F%E6%88%90%E9%93%BE%E8%B7%AF"><span class="toc-text">从构筑上下文进入生成链路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%81%B5%E9%AD%82%EF%BC%9A%E5%88%86%E6%B8%85%E6%9C%AC%E5%B1%80%E6%94%B6%E7%9B%8A%E4%B8%8E%E6%B0%B8%E4%B9%85%E8%B4%A7%E5%B8%81"><span class="toc-text">灵魂：分清本局收益与永久货币</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B0%B8%E4%B9%85%E5%8D%87%E7%BA%A7%E4%B8%8E%E6%9E%84%E7%AD%91%E5%8D%8F%E5%90%8C"><span class="toc-text">永久升级与构筑协同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E6%A1%A3%EF%BC%9A%E5%85%83%E8%BF%9B%E5%BA%A6%E4%B8%8E%E5%8D%95%E5%B1%80%E7%8A%B6%E6%80%81%E5%88%86%E5%88%AB%E4%BF%9D%E5%AD%98"><span class="toc-text">存档：元进度与单局状态分别保存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Seed-UI-%E4%B8%8E%E5%8F%AF%E5%85%B3%E8%81%94%E7%9A%84%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86"><span class="toc-text">Seed UI 与可关联的数据采集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%86%E7%94%9F%E6%88%90%E9%AA%8C%E8%AF%81%E6%8B%86%E6%88%90%E4%B8%89%E7%A7%8D%E8%AF%81%E6%8D%AE"><span class="toc-text">将生成验证拆成三种证据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E4%B8%AA-OGG%EF%BC%9A%E4%BB%8E-hook-%E5%88%B0%E6%89%93%E5%8C%85%E8%B5%84%E4%BA%A7"><span class="toc-text">七个 OGG：从 hook 到打包资产</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C%E4%B8%8E%E8%A7%A3%E9%87%8A%E8%BE%B9%E7%95%8C"><span class="toc-text">验证结果与解释边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E4%B8%8E%E5%90%8E%E7%BB%AD%E6%96%B9%E5%90%91"><span class="toc-text">提交与后续方向</span></a></li></ol></nav></details>
+    <article class="prose" id="article-body"><p>M5 解决了“怎样生成一条可复现且可达的路线”。M6 接着处理“玩家带着什么构筑进入这条路线，以及这次冒险给下一局留下些什么”。阶段于 2026-06-30 完成，本文依据当时的工程提交、测试结果与交付报告补记。</p>
+<p>实现的中心是 <code>BuildContext</code>：把武器、技能、永久升级和纯度整理成明确的输入，再交给既有生成与难度链路。围绕这个输入，灵魂结算、升级树、存档、Seed UI 和数据采集形成了元进度闭环。</p>
+<span id="more"></span>
+<h2 id="从构筑上下文进入生成链路">从构筑上下文进入生成链路</h2>
+<p>M6 给 <code>LevelGenerator.GenerateRun</code> 和 <code>GenerateLevel</code> 增加了可选的 <code>BuildContext</code> 参数。旧调用可以继续传入 seed、原型注册表和难度配置；新的调用额外带上构筑信息。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> GeneratedRun <span class="hljs-title">GenerateRun</span>(<span class="hljs-params"></span></span><br><span class="hljs-params"><span class="hljs-function">    <span class="hljs-built_in">uint</span> seed,</span></span><br><span class="hljs-params"><span class="hljs-function">    RoomPrototypeRegistry registry,</span></span><br><span class="hljs-params"><span class="hljs-function">    LevelConfigSO[] levelConfigs,</span></span><br><span class="hljs-params"><span class="hljs-function">    DifficultyScalingConfigSO difficultyConfig,</span></span><br><span class="hljs-params"><span class="hljs-function">    BuildContext buildContext = <span class="hljs-literal">null</span></span>)</span><br></code></pre></td></tr></table></figure>
+<p><code>BuildContext</code> 包含当前武器、使用过的武器、U/I/O 技能效果、纯度、升级快照、协同结果，以及供难度评估使用的升级强度与世界覆盖数量。<code>BuildSystem.CreateContext</code> 统一计算这些派生值，避免 UI、生成器和升级系统分别推导一套规则。</p>
+<p>路线仍由 seed 决定。构筑主要进入难度输入，而原有房间拼接规则与路线 hash 的稳定性保留。于是，同一路线可以承载不同构筑，也可以在复盘时分别定位“地图变了”与“玩家状态变了”。</p>
+<p><code>StableBuildHash</code> 提供构筑标识，<code>runHash</code> 提供生成路线标识。它们服务于可复现测试和日志关联；hash 相同本身并不是完整状态等价的证明。</p>
+<p>工程入口均相对于 <code>PROJECT-V</code> 根目录：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Roguelite/Scripts/BuildContext.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Roguelite/Scripts/BuildSystem.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>unity-project/Assets/_Project/Levels/Scripts/LevelGenerator.cs</code></p>
+</li>
+</ul>
+<h2 id="灵魂：分清本局收益与永久货币">灵魂：分清本局收益与永久货币</h2>
+<p><code>SoulSystem</code> 把货币分为 <code>RunSouls</code> 和 <code>BankedSouls</code>。普通敌人、精英、清房与 Boss 的奖励进入本局收益；通关结算可以全部入库，死亡则按保留比例入库，并清零本局收益。</p>
+<p>默认死亡保留 50%，保留升级逐级增加比例，配置上限为 80%。奖励数值和比例来自 <code>SoulConfigSO</code>，可以调整数值而不改结算算法。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-keyword">var</span> retained = Mathf.RoundToInt(<br>    RunSouls * CalculateRetainPercent(soulRetainUpgradeLevel));<br>BankedSouls += retained;<br>RunSouls = <span class="hljs-number">0</span>;<br></code></pre></td></tr></table></figure>
+<p>这个区分让死亡、通关和购买升级的职责明确：升级只从入库货币消费，死亡只结算尚未入库的本局收益。运行探针记录的死亡保留灵魂为 <code>280</code>；这个值是该探针情境的结果，不是每次死亡的固定奖励。</p>
+<h2 id="永久升级与构筑协同">永久升级与构筑协同</h2>
+<p>永久升级以 <code>UpgradeNodeSO</code> 描述节点，<code>UpgradeCategorySO</code> 描述分类，注册表负责查找节点。当前有 Common、Wasteland、Cyberpunk、Biohazard 四条线，共 14 个节点，并保留 <code>IUpgradeCategory</code> 扩展接口。</p>
+<p><code>PermanentUpgradeSystem.TryUpgrade</code> 的顺序是查找节点、检查等级上限、扣除货币，最后增加等级。货币不足时返回失败，等级不会提前变化。导出的升级快照按升级 ID 排序，让稳定标识和持久化数据不依赖字典枚举顺序。</p>
+<p><code>BuildSystem.EvaluateSynergies</code> 检测八种武侠协同：武器组合、内外兼修、暗影刺客、真气护体、灵活身法、百兵之王、长兵组合、短兵组合。输入是武器集合、技能效果和升级信息，输出是独立的协同结果。</p>
+<p>构筑强度通过升级权重和协同权重汇总，参数可由 <code>BuildConfigSO</code> 提供。它目前是难度评估的工程输入，权重是否能准确代表真人操作下的强弱，还需要后续样本验证。</p>
+<p><code>PuritySystem</code> 将纯度限制在 0–100，并读取升级节点的纯度消耗；镜像 Boss 触发判断使用低于 30 或高于 70 的区间。纯度参与构筑上下文，具体数值平衡仍要结合实际游玩观察。</p>
+<h2 id="存档：元进度与单局状态分别保存">存档：元进度与单局状态分别保存</h2>
+<p><code>SaveSystem</code> 采用两种文件：</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>内容与格式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>projectv_meta_save.json</code></td>
+<td>JSON 元进度：入库灵魂、永久升级等长期信息</td>
+</tr>
+<tr>
+<td><code>projectv_run_save.bin</code></td>
+<td>二进制单局状态：seed、路线 hash、房间索引、本局灵魂、build hash</td>
+</tr>
+</tbody>
+</table>
+<p>两类存档都有版本字段。元进度保留可读性，方便调试；单局状态采用固定字段顺序读写，减少格式歧义。保存位置由 Unity 的 <code>Application.persistentDataPath</code> 决定，方法也允许传入目录，方便隔离测试数据。</p>
+<p>版本迁移入口已经存在，但它不代表完整的历史版本迁移方案。当前代码直接写入文件，也不能据此声称具备原子替换、损坏恢复或断电安全保证。这些是产品化存档需要继续核验的边界。</p>
+<h2 id="Seed-UI-与可关联的数据采集">Seed UI 与可关联的数据采集</h2>
+<p><code>SeedDisplayUI</code> 与 <code>SeedShareService</code> 将种子暴露给玩家：显示、复制、解析和加载八位十六进制 seed。分享使用剪贴板字符串，当前没有联网分享服务。</p>
+<p><code>PlaytestDataCollector</code> 将房间、死亡、Boss 结果写为 JSON 事件。事件同时携带 <code>runSeed</code>、<code>runHash</code>、<code>buildHash</code>，再附上房间 ID、类型、世界、时间与压力值。</p>
+<p>这三个标识支持有针对性的复盘：同一路线、不同构筑的死亡位置是否变化；同一构筑在不同路线中，Boss 前压力是否明显不同。M6 验证了事件采集与导出链路，尚未产生代表真实玩家表现的调参结论。</p>
+<h2 id="将生成验证拆成三种证据">将生成验证拆成三种证据</h2>
+<p>M6 继续沿用 M5 生成器，门禁改为互补的三层：</p>
+<ol>
+<li class="lvl-3">
+<p><strong>生成不变量</strong>：Start 首房、Boss 末房、Shop/Rest 保底，以及 Elite 的位置和相邻限制。</p>
+</li>
+<li class="lvl-3">
+<p><strong>资产级门禁</strong>：36 个原型的可达性、RoomConfig 引用和 prefab key 等完整性检查。</p>
+</li>
+<li class="lvl-3">
+<p><strong>代表 seed 门禁</strong>：24 个固定 seed 覆盖不同生成情境，在运行探针中检查了 647 个房间。</p>
+</li>
+</ol>
+<p>原型级检查覆盖整个资产集合；seed 检查覆盖实际组合。二者承担不同职责，24 个 seed 通过不能替代所有可能路线的穷举，也不能单独证明帧率长期稳定。</p>
+<p>构筑多样性门禁自动构造五个代表 build，得到五个不同的 stable hash。对应测试是 <code>FiveRepresentativeBuildsProduceDistinctHashes</code>。它验证构筑输入可区分，<strong>不等同于五次真人通关，也不证明五个构筑都已达到玩法平衡</strong>。</p>
+<h2 id="七个-OGG：从-hook-到打包资产">七个 OGG：从 hook 到打包资产</h2>
+<p>M6 补齐了七个原创程序化 OGG，接到房间与元进度反馈点，并由交付报告记录纳入 Windows build：</p>
+<table>
+<thead>
+<tr>
+<th>反馈</th>
+<th>资产，路径相对 <code>unity-project/Assets/_Project/Audio/</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>房间切换</td>
+<td><code>SFX/M6/sfx_room_transition_m6.ogg</code></td>
+</tr>
+<tr>
+<td>关卡完成</td>
+<td><code>BGM/M6/bgm_level_complete_m6.ogg</code></td>
+</tr>
+<tr>
+<td>升级确认</td>
+<td><code>SFX/M6/sfx_upgrade_confirm_m6.ogg</code></td>
+</tr>
+<tr>
+<td>升级树打开</td>
+<td><code>SFX/M6/sfx_upgrade_tree_open_m6.ogg</code></td>
+</tr>
+<tr>
+<td>升级成功</td>
+<td><code>SFX/M6/sfx_upgrade_success_m6.ogg</code></td>
+</tr>
+<tr>
+<td>灵魂获取</td>
+<td><code>SFX/M6/sfx_soul_gain_m6.ogg</code></td>
+</tr>
+<tr>
+<td>Seed 分享</td>
+<td><code>SFX/M6/sfx_seed_share_m6.ogg</code></td>
+</tr>
+</tbody>
+</table>
+<p>房间切换和关卡完成也清理了 M5 的音频资产债务。资产存在、触发点已连接、资产进入构建，是音频工程的三个检查点；风格化混音与最终听感是另一层工作，M7 仍可以继续优化。</p>
+<h2 id="验证结果与解释边界">验证结果与解释边界</h2>
+<p>以下数据来自阶段结果文件与交付报告，本文编写时未重新运行 Unity 门禁。</p>
+<table>
+<thead>
+<tr>
+<th>验证</th>
+<th>阶段记录</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>M6ProjectBuilder.VerifyM6Setup</code></td>
+<td>passed</td>
+</tr>
+<tr>
+<td>EditMode 回归套件</td>
+<td>38/38 passed</td>
+</tr>
+<tr>
+<td>PlayMode 回归套件</td>
+<td>28/28 passed</td>
+</tr>
+<tr>
+<td>Windows Development Build</td>
+<td>passed</td>
+</tr>
+<tr>
+<td>Runtime Probe</td>
+<td>60 秒，3601 帧，<code>m6SystemsReady: true</code></td>
+</tr>
+<tr>
+<td>Average FPS</td>
+<td>59.975</td>
+</tr>
+<tr>
+<td><code>p95Fps</code> / <code>p99Fps</code></td>
+<td>60.002 / 60.01</td>
+</tr>
+<tr>
+<td>代表 seed</td>
+<td>24，<code>generationGatePassed: true</code></td>
+</tr>
+<tr>
+<td>可达房间检查</td>
+<td>647</td>
+</tr>
+<tr>
+<td>性能门禁字段</td>
+<td><code>p95Passed: true</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>p95Fps</code>、<code>p99Fps</code> 按探针原字段记录。检查 <code>M6RuntimeProbe.Percentile</code> 可见，它将逐帧 FPS 升序排序后取第 95/99 百分位，因此这两个值反映的是 FPS 分布的较高一端；它们不表示“95% 的帧都至少达到这个帧率”，也不是 P95/P99 帧时间。现有 <code>p95Passed</code> 是该算法下的工程门禁结果。评估慢帧应补看低百分位 FPS 或高百分位帧时间，60 秒窗口也不能替代长时 soak、真人操作和发布前性能验证。</p>
+<p>关键工程产物，均相对 <code>PROJECT-V</code> 根目录：</p>
+<table>
+<thead>
+<tr>
+<th>产物</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交付报告</td>
+<td><code>reports/M6_delivery_report.html</code></td>
+</tr>
+<tr>
+<td>EditMode 结果</td>
+<td><code>qa/results/M6_EditMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>PlayMode 结果</td>
+<td><code>qa/results/M6_PlayMode_TestResults.xml</code></td>
+</tr>
+<tr>
+<td>运行探针</td>
+<td><code>qa/results/M6_RuntimeProbe_60s.json</code></td>
+</tr>
+<tr>
+<td>代表 seed 门禁</td>
+<td><code>qa/results/M6_24seeds_GenerationGate.json</code></td>
+</tr>
+<tr>
+<td>资产可达性门禁</td>
+<td><code>qa/results/M6_AssetReachabilityGate.json</code></td>
+</tr>
+<tr>
+<td>构筑多样性</td>
+<td><code>qa/results/M6_5Builds_Diversity.json</code></td>
+</tr>
+<tr>
+<td>测试场景</td>
+<td><code>unity-project/Assets/Scenes/TestScenes/M6_Metaprogression.unity</code></td>
+</tr>
+<tr>
+<td>自动生成与验证工具</td>
+<td><code>unity-project/Assets/_Project/Editor/M6ProjectBuilder.cs</code></td>
+</tr>
+</tbody>
+</table>
+<p>设计与 QA 依据，以下路径相对 <code>PROJECT-V-game-docs</code> 根目录：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>design/feature_specs/M6_metaprogression.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>design/data/M6_upgrade_values.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>design/data/M6_build_synergies.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>design/playtest/M6_Playtest_DataSchema.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reports/M6_test_report.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reports/M6_5runs_test_report.md</code></p>
+</li>
+<li class="lvl-2">
+<p><code>project/sprints/SPRINT_06.md</code></p>
+</li>
+</ul>
+<p>阶段交付报告归档于工程仓库的 <code>reports/</code>，docs 仓库保留设计、QA 与状态文档。</p>
+<h2 id="提交与后续方向">提交与后续方向</h2>
+<table>
+<thead>
+<tr>
+<th>提交</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>27322b8e6837703076a6ced7f6df33a93df15aa0</code></td>
+<td><code>feat(roguelite): deliver M6 engineering gate</code></td>
+</tr>
+<tr>
+<td><code>2f34abc0966f9cbb09c929b695d7b43000cf72d5</code></td>
+<td><code>audio(roguelite): complete M6 ogg assets</code></td>
+</tr>
+</tbody>
+</table>
+<p>两个提交属于阶段 <code>develop</code> 实施历史。M6 交付了元进度工程链路与自动化证据，后续方向是完整体验整合、存档稳健性、真实玩家数据和音频风格化。自动门禁提供继续迭代的基础，长期可玩性仍需由真实游玩回答。</p>
+</article>
+    <footer class="article-footer"><p>原创内容采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a> 许可；引用内容遵循原作者许可。</p><button class="text-link copy-link"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> 复制文章链接</button></footer>
+    <nav class="article-pagination" aria-label="系列阅读"><a href="/2026/06/30/ProjectV-M5-Implementation/"><span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> 上一篇 · M5</span><strong>程序生成</strong></a></nav>
+  </div>
+  <aside class="article-sidebar"><div class="article-sidebar-inner"><h2 class="eyebrow">本文目录</h2><nav class="desktop-toc" aria-label="文章目录"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E6%9E%84%E7%AD%91%E4%B8%8A%E4%B8%8B%E6%96%87%E8%BF%9B%E5%85%A5%E7%94%9F%E6%88%90%E9%93%BE%E8%B7%AF"><span class="toc-text">从构筑上下文进入生成链路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%81%B5%E9%AD%82%EF%BC%9A%E5%88%86%E6%B8%85%E6%9C%AC%E5%B1%80%E6%94%B6%E7%9B%8A%E4%B8%8E%E6%B0%B8%E4%B9%85%E8%B4%A7%E5%B8%81"><span class="toc-text">灵魂：分清本局收益与永久货币</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B0%B8%E4%B9%85%E5%8D%87%E7%BA%A7%E4%B8%8E%E6%9E%84%E7%AD%91%E5%8D%8F%E5%90%8C"><span class="toc-text">永久升级与构筑协同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E6%A1%A3%EF%BC%9A%E5%85%83%E8%BF%9B%E5%BA%A6%E4%B8%8E%E5%8D%95%E5%B1%80%E7%8A%B6%E6%80%81%E5%88%86%E5%88%AB%E4%BF%9D%E5%AD%98"><span class="toc-text">存档：元进度与单局状态分别保存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Seed-UI-%E4%B8%8E%E5%8F%AF%E5%85%B3%E8%81%94%E7%9A%84%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86"><span class="toc-text">Seed UI 与可关联的数据采集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%86%E7%94%9F%E6%88%90%E9%AA%8C%E8%AF%81%E6%8B%86%E6%88%90%E4%B8%89%E7%A7%8D%E8%AF%81%E6%8D%AE"><span class="toc-text">将生成验证拆成三种证据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E4%B8%AA-OGG%EF%BC%9A%E4%BB%8E-hook-%E5%88%B0%E6%89%93%E5%8C%85%E8%B5%84%E4%BA%A7"><span class="toc-text">七个 OGG：从 hook 到打包资产</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C%E4%B8%8E%E8%A7%A3%E9%87%8A%E8%BE%B9%E7%95%8C"><span class="toc-text">验证结果与解释边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E4%B8%8E%E5%90%8E%E7%BB%AD%E6%96%B9%E5%90%91"><span class="toc-text">提交与后续方向</span></a></li></ol></nav><div class="article-series"><a class="eyebrow" href="/projects/">PROJECT-V 系列</a><ol class="stage-list"><li><a href="/2026/06/29/ProjectV-M0-Introduction/" ><span class="stage-number">M0</span><span>项目介绍与方向锁定</span></a></li><li><a href="/2026/06/29/ProjectV-M1-Implementation/" ><span class="stage-number">M1</span><span>玩家移动</span></a></li><li><a href="/2026/06/29/ProjectV-M2-Implementation/" ><span class="stage-number">M2</span><span>基础战斗</span></a></li><li><a href="/2026/06/29/ProjectV-M3-Implementation/" ><span class="stage-number">M3</span><span>完整战斗</span></a></li><li><a href="/2026/06/30/ProjectV-M4-Implementation/" ><span class="stage-number">M4</span><span>关卡与 Boss</span></a></li><li><a href="/2026/06/30/ProjectV-M5-Implementation/" ><span class="stage-number">M5</span><span>程序生成</span></a></li><li><a href="/2026/10/03/ProjectV-M6-Implementation/" aria-current="page"><span class="stage-number">M6</span><span>Roguelite 元进度</span></a></li></ol></div></div></aside>
+</div>
+</main>
+  <footer class="site-footer">
+    <div class="footer-inner"><div><a class="footer-brand" href="/">Codeverse<span>.</span></a><p>HenRiser 的工程笔记</p></div>
+    <div class="footer-links"><a href="https://github.com/HenRiser" target="_blank" rel="noopener noreferrer">GitHub <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a><a href="/atom.xml">RSS <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg></a><a href="/about/">关于</a></div>
+    <small>© 2026 HenRiser · CC BY-NC-SA 4.0</small></div>
+  </footer>
+  <dialog class="search-dialog" aria-labelledby="search-title" data-index="/search.json">
+    <div class="search-top"><h2 id="search-title">搜索文章</h2><button class="icon-button" data-search-close aria-label="关闭搜索" title="关闭搜索"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    <form class="search-form" role="search"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><label class="sr-only" for="search-input">关键词</label><input id="search-input" type="search" placeholder="搜索标题、标签或正文…" autocomplete="off"><button class="icon-button search-clear" type="button" aria-label="清空搜索" title="清空搜索" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></form>
+    <p class="search-status" role="status" aria-live="polite"></p>
+    <div class="search-results"></div>
+    <button class="text-link search-retry" type="button" hidden>重新加载</button>
+  </dialog>
+  <button class="icon-button back-top" aria-label="回到顶部" title="回到顶部" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+  <div class="action-status" id="action-status" role="status" aria-live="polite"></div>
+  <template id="copy-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></template>
+  <template id="check-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></template>
+</body>
+</html>

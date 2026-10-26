@@ -1,257 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
+
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
-  <link rel="mask-icon" href="/images/logo.png" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"henriser.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.21.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-
-    <meta name="description" content="M3 的目标不是把战斗“做得热闹”，而是把 M2 的基础攻击、受伤、死亡链路扩展成可继续承载动作游戏手感的完整战斗骨架：玩家能闪避，攻击能按命中结果取消，命中反馈能从战斗事实触发，技能和武器能通过配置资产接入，测试场景和 runtime probe 能证明这条链路在 Unity 工程里真实可运行。 除注明 docs 仓库的文档外，本文所有工程路径均以 PROJECT-V 项目根目录为基准；docs">
-<meta property="og:type" content="blog">
-<meta property="og:title" content="PROJECT-v M3：完整战斗闭环实现拆解">
-<meta property="og:url" content="https://henriser.github.io/2026/06/29/ProjectV-M3-Implementation/index.html">
-<meta property="og:site_name" content="Codeverse">
-<meta property="og:description" content="M3 的目标不是把战斗“做得热闹”，而是把 M2 的基础攻击、受伤、死亡链路扩展成可继续承载动作游戏手感的完整战斗骨架：玩家能闪避，攻击能按命中结果取消，命中反馈能从战斗事实触发，技能和武器能通过配置资产接入，测试场景和 runtime probe 能证明这条链路在 Unity 工程里真实可运行。 除注明 docs 仓库的文档外，本文所有工程路径均以 PROJECT-V 项目根目录为基准；docs">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-06-29T07:30:00.000Z">
-<meta property="article:modified_time" content="2026-06-29T14:57:10.307Z">
-<meta property="article:author" content="HenRiser">
-<meta property="article:tag" content="ProjectV">
-<meta property="article:tag" content="Unity">
-<meta property="article:tag" content="Devlog">
-<meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="https://henriser.github.io/2026/06/29/ProjectV-M3-Implementation/">
-
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://henriser.github.io/2026/06/29/ProjectV-M3-Implementation/","path":"2026/06/29/ProjectV-M3-Implementation/","title":"PROJECT-v M3：完整战斗闭环实现拆解"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>PROJECT-v M3：完整战斗闭环实现拆解 | Codeverse</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>PROJECT-V M3：完整战斗闭环实现拆解 · Codeverse</title>
+  <meta name="description" content="将闪避、攻击取消、连招、技能和武器修饰串成完整战斗链，补齐命中反馈与自动化验证。">
+  <link rel="canonical" href="https://henriser.github.io/2026/06/29/ProjectV-M3-Implementation/">
+  <meta property="og:title" content="PROJECT-V M3：完整战斗闭环实现拆解">
+  <meta property="og:description" content="将闪避、攻击取消、连招、技能和武器修饰串成完整战斗链，补齐命中反馈与自动化验证。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://henriser.github.io/2026/06/29/ProjectV-M3-Implementation/">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:site_name" content="Codeverse">
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="alternate" type="application/atom+xml" title="Codeverse" href="/atom.xml">
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
   
-
-
-
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Codeverse</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">HenRiser'blog</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/2024/10/19/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-      <div class="search-header">
-        <span class="search-icon">
-          <i class="fa fa-search"></i>
-        </span>
-        <div class="search-input-container">
-          <input autocomplete="off" autocapitalize="off" maxlength="80"
-                placeholder="Searching..." spellcheck="false"
-                type="search" class="search-input">
-        </div>
-        <span class="popup-btn-close" role="button">
-          <i class="fa fa-times-circle"></i>
-        </span>
-      </div>
-      <div class="search-result-container">
-        <div class="search-result-icon">
-          <i class="fa fa-spinner fa-pulse fa-5x"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</header>
+  
+  <script defer src="/js/site.js"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"PROJECT-V M3：完整战斗闭环实现拆解","datePublished":"2026-06-29T07:30:00.000Z","dateModified":"2026-06-29T07:30:00.000Z","author":{"@type":"Person","name":"HenRiser"},"mainEntityOfPage":"https://henriser.github.io/2026/06/29/ProjectV-M3-Implementation/","description":"将闪避、攻击取消、连招、技能和武器修饰串成完整战斗链，补齐命中反馈与自动化验证。","inLanguage":"zh-CN"}</script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body class="reading-page">
+  <a class="skip-link" href="#main">跳至正文</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Codeverse 首页"><img class="brand-mark" src="/images/logo.png" alt="Codeverse 原版 logo" width="40" height="40"><span>Codeverse</span></a>
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
         
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E6%8F%90%E4%BA%A4%E5%92%8C%E4%BE%9D%E6%8D%AE"><span class="nav-text">关联提交和依据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M3-%E7%9A%84%E7%9B%AE%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C"><span class="nav-text">M3 的目标和边界</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E7%94%9F%E6%88%90%E5%85%A5%E5%8F%A3"><span class="nav-text">工程生成入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AA%E9%81%BF%E7%B3%BB%E7%BB%9F"><span class="nav-text">闪避系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E5%8F%96%E6%B6%88%E5%92%8C%E8%BF%9E%E6%8B%9B"><span class="nav-text">攻击取消和连招</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%B8%AD%E5%8F%8D%E9%A6%88%E9%93%BE"><span class="nav-text">命中反馈链</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E8%83%BD%E7%B3%BB%E7%BB%9F"><span class="nav-text">技能系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A6%E5%99%A8%E5%92%8C%E5%BC%82%E4%B8%96%E7%95%8C%E4%BF%AE%E9%A5%B0"><span class="nav-text">武器和异世界修饰</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9F%B3%E9%A2%91%E5%8D%A0%E4%BD%8D"><span class="nav-text">音频占位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M3-%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF"><span class="nav-text">M3 测试场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="nav-text">验证结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5%E9%A3%8E%E9%99%A9"><span class="nav-text">已知风险</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M4-%E6%96%B9%E5%90%91"><span class="nav-text">M4 方向</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="HenRiser"
-      src="/images/authorAvatar.jpg">
-  <p class="site-author-name" itemprop="name">HenRiser</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">11</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
+        <a href="/" aria-current="page">文章</a>
+        
+        <a href="/projects/" >项目</a>
+        
+        <a href="/archives/" >归档</a>
+        
+        <a href="/about/" >关于</a>
+        
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button header-search" data-search-open aria-label="搜索文章" title="搜索文章"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>搜索</span></button>
+        <button class="icon-button theme-toggle" aria-label="切换颜色主题" title="切换颜色主题"><span class="theme-moon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg></span><span class="theme-sun"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></button>
+        <button class="icon-button menu-toggle" aria-label="展开导航" aria-expanded="false" aria-controls="main-nav" title="导航"><span class="menu-open-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></span><span class="menu-close-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></button>
       </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">7</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author animated">
-      <span class="links-of-author-item">
-        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;HenRiser"><i class="fab fa-github fa-fw"></i></span>
-      </span>
-      <span class="links-of-author-item">
-        <span class="exturl" data-url="bWFpbHRvOmhybG9uZ19Ab3V0bG9vay5jb20=" title="E-Mail → mailto:hrlong_@outlook.com"><i class="fa fa-envelope fa-fw"></i></span>
-      </span>
-      <span class="links-of-author-item">
-        <span class="exturl" data-url="aHR0cHM6Ly9zdGVhbWNvbW11bml0eS5jb20vcHJvZmlsZXMvNzY1NjExOTg5NzY4OTM4MTYv" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198976893816&#x2F;"><i class="fab fa-steam fa-fw"></i></span>
-      </span>
-  </div>
-  <div class="cc-license animated" itemprop="license">
-    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></span>
-  </div>
-
-        </div>
-      </div>
-        <div class="back-to-top animated" role="button" aria-label="Back to top">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
     </div>
-
-    
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://henriser.github.io/2026/06/29/ProjectV-M3-Implementation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/authorAvatar.jpg">
-      <meta itemprop="name" content="HenRiser">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Codeverse">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="PROJECT-v M3：完整战斗闭环实现拆解 | Codeverse">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          PROJECT-v M3：完整战斗闭环实现拆解
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2026-06-29 15:30:00 / Modified: 22:57:10" itemprop="dateCreated datePublished" datetime="2026-06-29T15:30:00+08:00">2026-06-29</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><p>M3 的目标不是把战斗“做得热闹”，而是把 M2 的基础攻击、受伤、死亡链路扩展成可继续承载动作游戏手感的完整战斗骨架：玩家能闪避，攻击能按命中结果取消，命中反馈能从战斗事实触发，技能和武器能通过配置资产接入，测试场景和 runtime probe 能证明这条链路在 Unity 工程里真实可运行。</p>
+    <div class="reading-progress" aria-hidden="true"><span></span></div>
+  </header>
+  <main id="main" class="site-main">
+<div class="article-shell container">
+  <div class="article-column">
+    <nav class="breadcrumbs" aria-label="当前位置"><a href="/">文章</a><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="/projects/">PROJECT-V</a><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><span>M3</span></nav>
+    <header class="article-header"><div class="eyebrow">PROJECT-V / DEVLOG 03</div><h1>PROJECT-V M3：完整战斗闭环实现拆解</h1><div class="article-meta"><time datetime="2026-06-29T07:30:00.000Z">2026.06.29</time><span>·</span><span>约 19 分钟</span><span>·</span><span>HenRiser</span></div><div class="entry-tags"><a href="/tags/Devlog/">Devlog</a><a href="/tags/ProjectV/">ProjectV</a><a href="/tags/Unity/">Unity</a></div></header>
+    <details class="mobile-toc"><summary>文章目录</summary><nav aria-label="文章目录"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E6%8F%90%E4%BA%A4%E5%92%8C%E4%BE%9D%E6%8D%AE"><span class="toc-text">关联提交和依据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#M3-%E7%9A%84%E7%9B%AE%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C"><span class="toc-text">M3 的目标和边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E7%94%9F%E6%88%90%E5%85%A5%E5%8F%A3"><span class="toc-text">工程生成入口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AA%E9%81%BF%E7%B3%BB%E7%BB%9F"><span class="toc-text">闪避系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%8F%96%E6%B6%88%E5%92%8C%E8%BF%9E%E6%8B%9B"><span class="toc-text">攻击取消和连招</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%B8%AD%E5%8F%8D%E9%A6%88%E9%93%BE"><span class="toc-text">命中反馈链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%80%E8%83%BD%E7%B3%BB%E7%BB%9F"><span class="toc-text">技能系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A6%E5%99%A8%E5%92%8C%E5%BC%82%E4%B8%96%E7%95%8C%E4%BF%AE%E9%A5%B0"><span class="toc-text">武器和异世界修饰</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9F%B3%E9%A2%91%E5%8D%A0%E4%BD%8D"><span class="toc-text">音频占位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#M3-%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF"><span class="toc-text">M3 测试场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="toc-text">验证结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%B2%E7%9F%A5%E9%A3%8E%E9%99%A9"><span class="toc-text">已知风险</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#M4-%E6%96%B9%E5%90%91"><span class="toc-text">M4 方向</span></a></li></ol></nav></details>
+    <article class="prose" id="article-body"><p>M3 的目标不是把战斗“做得热闹”，而是把 M2 的基础攻击、受伤、死亡链路扩展成可继续承载动作游戏手感的完整战斗骨架：玩家能闪避，攻击能按命中结果取消，命中反馈能从战斗事实触发，技能和武器能通过配置资产接入，测试场景和 runtime probe 能证明这条链路在 Unity 工程里真实可运行。</p>
 <p>除注明 docs 仓库的文档外，本文所有工程路径均以 <code>PROJECT-V</code> 项目根目录为基准；docs 路径均以 <code>PROJECT-V-game-docs</code> 根目录为基准。</p>
 <span id="more"></span>
 <h2 id="关联提交和依据">关联提交和依据</h2>
@@ -567,7 +369,7 @@
 </tbody>
 </table>
 <p><code>PlayerAttack</code> 中的关键状态是：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">currentAttack</span><br><span class="line">attackTimer</span><br><span class="line">bufferedAttackType</span><br><span class="line">bufferedAttackTimer</span><br><span class="line">hasLandedHit</span><br><span class="line">currentDamageMultiplier</span><br><span class="line">nextAttackDamageMultiplier</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">currentAttack<br>attackTimer<br>bufferedAttackType<br>bufferedAttackTimer<br>hasLandedHit<br>currentDamageMultiplier<br>nextAttackDamageMultiplier<br></code></pre></td></tr></table></figure>
 <p>轻转重的判断依赖 <code>hasLandedHit</code>，这能把“命中奖励”与“空挥惩罚”区分开。空挥时输入不会立刻取消当前动作，只会进入输入缓冲；当前攻击结束后再消费。</p>
 <p>连招由 <code>PlayerCombo</code> 管：</p>
 <table>
@@ -601,7 +403,7 @@
 </tbody>
 </table>
 <p>最终伤害倍率在 <code>PlayerAttack.StartAttack()</code> 中合成：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">comboMultiplier * nextAttackDamageMultiplier * WeaponDamageMultiplier</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">comboMultiplier * nextAttackDamageMultiplier * WeaponDamageMultiplier<br></code></pre></td></tr></table></figure>
 <p>这个设计把三类来源分开了：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
@@ -618,7 +420,7 @@
 <h2 id="命中反馈链">命中反馈链</h2>
 <p>M3 的反馈链不是装饰层强行播放效果，而是从命中事实触发。</p>
 <p>实际链路：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PlayerAttack.ApplyHitbox()</span><br><span class="line">  -&gt; Hitbox2D.Overlap()</span><br><span class="line">  -&gt; HealthComponent.TakeDamage()</span><br><span class="line">  -&gt; HitFeedback.PlayHitFeedback()</span><br><span class="line">  -&gt; ApplyKnockback()</span><br><span class="line">  -&gt; PlayHitstop()</span><br><span class="line">  -&gt; CameraShake.Main.Shake()</span><br><span class="line">  -&gt; OnAttackHit</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">PlayerAttack.ApplyHitbox()<br>  -&gt; Hitbox2D.Overlap()<br>  -&gt; HealthComponent.TakeDamage()<br>  -&gt; HitFeedback.PlayHitFeedback()<br>  -&gt; ApplyKnockback()<br>  -&gt; PlayHitstop()<br>  -&gt; CameraShake.Main.Shake()<br>  -&gt; OnAttackHit<br></code></pre></td></tr></table></figure>
 <p>涉及文件：</p>
 <table>
 <thead>
@@ -948,7 +750,7 @@
 </tbody>
 </table>
 <p>60s probe 的关键结果：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;warmupSeconds&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;totalElapsedSeconds&quot;</span><span class="punctuation">:</span> <span class="number">63</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;measuredSeconds&quot;</span><span class="punctuation">:</span> <span class="number">60.001</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;frameCount&quot;</span><span class="punctuation">:</span> <span class="number">3600</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;averageFps&quot;</span><span class="punctuation">:</span> <span class="number">59.999</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;minFps&quot;</span><span class="punctuation">:</span> <span class="number">48.154</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;maxFps&quot;</span><span class="punctuation">:</span> <span class="number">146.23</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;targetFrameRate&quot;</span><span class="punctuation">:</span> <span class="number">60</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;m3SystemsReady&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;dodgeStarted&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;skillUActivated&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;skillIActivated&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;weaponDamageMultiplier&quot;</span><span class="punctuation">:</span> <span class="number">1.2</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;enemyCount&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;playerHp&quot;</span><span class="punctuation">:</span> <span class="number">64</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;playerIsDead&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;warmupSeconds&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;totalElapsedSeconds&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">63</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;measuredSeconds&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60.001</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;frameCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3600</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;averageFps&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">59.999</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;minFps&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">48.154</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;maxFps&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">146.23</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;targetFrameRate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;m3SystemsReady&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;dodgeStarted&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;skillUActivated&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;skillIActivated&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;weaponDamageMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.2</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;enemyCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;playerHp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">64</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;playerIsDead&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
 <p>这个结果说明 runtime probe 不只是空跑场景。它实际确认了：</p>
 <ul class="lvl-0">
 <li class="lvl-2">
@@ -1017,97 +819,28 @@
 </li>
 </ul>
 <p>M3 的阶段价值在这里：PROJECT-V 现在已经有一条从输入到攻击、伤害、反馈、技能、武器倍率和自动验证的完整战斗实现链。后续如果战斗不好玩，问题会更多来自调参、内容和表现，而不是“工程链路还没接起来”。</p>
-
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/ProjectV/" rel="tag"><i class="fa fa-tag"></i> ProjectV</a>
-              <a href="/tags/Unity/" rel="tag"><i class="fa fa-tag"></i> Unity</a>
-              <a href="/tags/Devlog/" rel="tag"><i class="fa fa-tag"></i> Devlog</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2026/06/29/ProjectV-M2-Implementation/" rel="prev" title="PROJECT-v M2：基础战斗闭环实现拆解">
-                  <i class="fa fa-angle-left"></i> PROJECT-v M2：基础战斗闭环实现拆解
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2026/06/30/ProjectV-M4-Implementation/" rel="next" title="PROJECT-v M4：关卡原型与 Boss 压力验证">
-                  PROJECT-v M4：关卡原型与 Boss 压力验证 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2026</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">HenRiser</span>
+</article>
+    <footer class="article-footer"><p>原创内容采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a> 许可；引用内容遵循原作者许可。</p><button class="text-link copy-link"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> 复制文章链接</button></footer>
+    <nav class="article-pagination" aria-label="系列阅读"><a href="/2026/06/29/ProjectV-M2-Implementation/"><span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> 上一篇 · M2</span><strong>基础战斗</strong></a><a href="/2026/06/30/ProjectV-M4-Implementation/"><span>下一篇 · M4 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><strong>关卡与 Boss</strong></a></nav>
   </div>
-  <div class="powered-by">Powered by <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZw==">NexT.Gemini</span>
-  </div>
-
-    </div>
+  <aside class="article-sidebar"><div class="article-sidebar-inner"><h2 class="eyebrow">本文目录</h2><nav class="desktop-toc" aria-label="文章目录"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E6%8F%90%E4%BA%A4%E5%92%8C%E4%BE%9D%E6%8D%AE"><span class="toc-text">关联提交和依据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#M3-%E7%9A%84%E7%9B%AE%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C"><span class="toc-text">M3 的目标和边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E7%94%9F%E6%88%90%E5%85%A5%E5%8F%A3"><span class="toc-text">工程生成入口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AA%E9%81%BF%E7%B3%BB%E7%BB%9F"><span class="toc-text">闪避系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%8F%96%E6%B6%88%E5%92%8C%E8%BF%9E%E6%8B%9B"><span class="toc-text">攻击取消和连招</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%B8%AD%E5%8F%8D%E9%A6%88%E9%93%BE"><span class="toc-text">命中反馈链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%80%E8%83%BD%E7%B3%BB%E7%BB%9F"><span class="toc-text">技能系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A6%E5%99%A8%E5%92%8C%E5%BC%82%E4%B8%96%E7%95%8C%E4%BF%AE%E9%A5%B0"><span class="toc-text">武器和异世界修饰</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9F%B3%E9%A2%91%E5%8D%A0%E4%BD%8D"><span class="toc-text">音频占位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#M3-%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF"><span class="toc-text">M3 测试场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="toc-text">验证结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%B2%E7%9F%A5%E9%A3%8E%E9%99%A9"><span class="toc-text">已知风险</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#M4-%E6%96%B9%E5%90%91"><span class="toc-text">M4 方向</span></a></li></ol></nav><div class="article-series"><a class="eyebrow" href="/projects/">PROJECT-V 系列</a><ol class="stage-list"><li><a href="/2026/06/29/ProjectV-M0-Introduction/" ><span class="stage-number">M0</span><span>项目介绍与方向锁定</span></a></li><li><a href="/2026/06/29/ProjectV-M1-Implementation/" ><span class="stage-number">M1</span><span>玩家移动</span></a></li><li><a href="/2026/06/29/ProjectV-M2-Implementation/" ><span class="stage-number">M2</span><span>基础战斗</span></a></li><li><a href="/2026/06/29/ProjectV-M3-Implementation/" aria-current="page"><span class="stage-number">M3</span><span>完整战斗</span></a></li><li><a href="/2026/06/30/ProjectV-M4-Implementation/" ><span class="stage-number">M4</span><span>关卡与 Boss</span></a></li><li><a href="/2026/06/30/ProjectV-M5-Implementation/" ><span class="stage-number">M5</span><span>程序生成</span></a></li><li><a href="/2026/10/03/ProjectV-M6-Implementation/" ><span class="stage-number">M6</span><span>Roguelite 元进度</span></a></li></ol></div></div></aside>
+</div>
+</main>
+  <footer class="site-footer">
+    <div class="footer-inner"><div><a class="footer-brand" href="/">Codeverse<span>.</span></a><p>HenRiser 的工程笔记</p></div>
+    <div class="footer-links"><a href="https://github.com/HenRiser" target="_blank" rel="noopener noreferrer">GitHub <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a><a href="/atom.xml">RSS <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg></a><a href="/about/">关于</a></div>
+    <small>© 2026 HenRiser · CC BY-NC-SA 4.0</small></div>
   </footer>
-
-  
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="reading-progress-bar"></div>
-
-  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL0hlblJpc2Vy" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
-
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
+  <dialog class="search-dialog" aria-labelledby="search-title" data-index="/search.json">
+    <div class="search-top"><h2 id="search-title">搜索文章</h2><button class="icon-button" data-search-close aria-label="关闭搜索" title="关闭搜索"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    <form class="search-form" role="search"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><label class="sr-only" for="search-input">关键词</label><input id="search-input" type="search" placeholder="搜索标题、标签或正文…" autocomplete="off"><button class="icon-button search-clear" type="button" aria-label="清空搜索" title="清空搜索" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></form>
+    <p class="search-status" role="status" aria-live="polite"></p>
+    <div class="search-results"></div>
+    <button class="text-link search-retry" type="button" hidden>重新加载</button>
+  </dialog>
+  <button class="icon-button back-top" aria-label="回到顶部" title="回到顶部" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+  <div class="action-status" id="action-status" role="status" aria-live="polite"></div>
+  <template id="copy-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></template>
+  <template id="check-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></template>
+</body>
 </html>

@@ -1,0 +1,41 @@
+.project-heading { padding-bottom: 28px; }
+.project-section-nav { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 25px; }
+.project-section-nav a { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; color: var(--accent); font-size: 14px; }
+.project-section-nav span { font: 11px var(--mono); color: var(--muted); }
+.project-section-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 15px; margin: 0 0 20px; padding-top: 24px; border-top: 1px solid var(--line); }
+.project-section-heading h2 { margin: 0; font-size: 22px; }
+.project-section-heading > span { font-size: 12px; color: var(--muted); }
+.project-capture figure { margin: 0; }
+.project-capture img { width: 100%; max-width: 1026px; height: auto; display: block; margin-inline: auto; }
+.project-capture figcaption { margin-top: 16px; font-size: 14px; color: var(--muted); line-height: 1.9; max-width: 850px; }
+.project-source { font-size: 12px; color: var(--muted); line-height: 1.9; margin: 10px 0 0; overflow-wrap: anywhere; }
+.project-source code { font: 11px/1.8 var(--mono); }
+.project-materials { padding-top: 50px; }
+.material-viewer { --material-size: 256px; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(230px, 1fr); gap: 50px; }
+.material-stage { height: 350px; overflow: auto; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; }
+.material-surface { display: grid; place-items: center; width: max(100%, calc(var(--material-size) + 32px)); height: max(100%, calc(var(--material-size) + 32px)); padding: 16px; }
+.material-surface img { display: block; width: var(--material-size); height: var(--material-size); max-width: none; image-rendering: pixelated; }
+.material-controls { min-width: 0; }
+.material-controls h3 { margin: 0 0 18px; font-size: 23px; }
+.material-controls select { display: block; width: 100%; min-height: 40px; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 6px 12px; font: 14px var(--font); margin: 6px 0 18px; }
+.material-options > label, .material-options legend { font-size: 13px; }
+.material-options fieldset { border: 0; padding: 0; margin: 0 0 18px; }
+.material-options legend { padding: 0; margin-bottom: 8px; }
+.material-worlds { display: flex; gap: 0; border-bottom: 1px solid var(--line); }
+.material-worlds button { flex: 1; font-size: 14px; min-height: 42px; border: 0; border-bottom: 2px solid transparent; padding: 7px; background: transparent; color: var(--muted); margin-bottom: -1px; }
+.material-worlds button[aria-pressed="true"] { border-bottom-color: var(--accent); color: var(--accent); }
+.material-zoom-label { display: flex; justify-content: space-between; }
+.material-options input[type="range"] { width: 100%; min-height: 36px; accent-color: var(--accent); }
+.material-info { font: 12px/1.8 var(--mono); color: var(--muted); margin: 14px 0 6px; }
+.material-status { color: var(--warm); font-size: 12px; margin: 5px 0 0; }
+.project-archive-note { font-size: 14px; color: var(--muted); margin: 20px 0 0; max-width: 740px; }
+@media (max-width: 700px) {
+  .project-section-heading { flex-wrap: wrap; gap: 8px; }
+  .project-section-heading h2 { font-size: 20px; }
+  .project-section-nav { gap: 20px; margin-top: 20px; }
+  .material-viewer { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .material-stage { height: 300px; }
+  .material-controls h3 { font-size: 21px; margin-bottom: 12px; }
+  .material-options input[type="range"], .material-options select, .material-worlds button { min-height: 44px; }
+  .project-materials { padding-top: 35px; }
+}

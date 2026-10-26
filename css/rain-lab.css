@@ -1,0 +1,67 @@
+.rain-lab { --rain-stone: #5c666b; --rain-water: #9dcee9; --rain-current: #326b9b; border: 1px solid var(--line); border-radius: 6px; margin: 26px 0 36px; padding: 18px; background: var(--surface); font: 14px/1.6 var(--font); overflow-wrap: normal; }
+[data-theme="dark"] .rain-lab { --rain-stone: #89948e; --rain-water: #397895; --rain-current: #97c6ef; }
+.rain-lab *, .rain-lab *::before, .rain-lab *::after { box-sizing: border-box; }
+.rain-lab .rain-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.rain-lab h3 { font-size: 18px; margin: 0; line-height: 1.5; }
+.rain-total { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+.rain-total output { font-family: var(--mono); font-size: 27px; font-weight: 650; color: var(--accent); }
+.rain-total span { font-size: 12px; color: var(--muted); }
+.rain-top-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 0 4px; }
+.rain-lab label { font-size: 13px; }
+.rain-lab select { color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; font: 13px var(--font); padding: 7px 28px 7px 9px; min-height: 36px; max-width: 100%; }
+.rain-top-controls select { margin-left: 8px; }
+.rain-chart { width: 100%; height: 230px; }
+.rain-chart canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: ns-resize; }
+.rain-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 8px 0 20px; font-size: 12px; color: var(--muted); }
+.rain-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.rain-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 1px; }
+.rain-stone-swatch { background: var(--rain-stone); }
+.rain-water-swatch { background: var(--rain-water); }
+.rain-legend .rain-pointer-left { color: var(--accent); }
+.rain-legend .rain-pointer-right { color: var(--warm); }
+.rain-inputs { display: grid; grid-template-columns: 1fr 1.25fr; gap: 28px; }
+.rain-control > span, .rain-control > div, .rain-timeline > span { display: flex; align-items: center; gap: 9px; min-height: 36px; }
+.rain-control output, .rain-timeline output { margin-left: auto; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.rain-lab input[type="range"] { width: 100%; margin: 0; accent-color: var(--accent); min-height: 36px; padding: 0; cursor: pointer; display: block; }
+.rain-sequence { margin: 10px 0; font: 12px/1.8 var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.rain-playback { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.rain-transport { display: flex; align-items: center; gap: 2px; }
+.rain-lab .icon-button { width: 38px; height: 38px; }
+.rain-lab .icon-button:disabled { opacity: .35; cursor: default; }
+.rain-lab .rain-play { color: var(--accent); background: var(--accent-soft); }
+.rain-pause-icon, .rain-lab.is-playing .rain-play-icon { display: none; }
+.rain-lab.is-playing .rain-pause-icon { display: inline; }
+.rain-speed { display: flex; align-items: center; gap: 6px; }
+.rain-timeline { display: grid; grid-template-columns: 105px minmax(0, 1fr); align-items: center; gap: 16px; margin: 10px 0 12px; }
+.rain-state { display: flex; flex-wrap: wrap; gap: 7px 20px; font: 12px/1.8 var(--mono); }
+.rain-state > span { color: var(--muted); }
+.rain-state output { color: var(--text); font-weight: 600; }
+.rain-lab .rain-explanation { min-height: 3.4em; margin: 10px 0 0; font-size: 13px; line-height: 1.7; color: var(--muted); }
+.rain-lab .rain-data { padding: 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; margin: 18px 0 0; }
+.rain-data summary { padding: 12px 0 0; font-size: 12px; font-weight: 500; color: var(--accent); }
+.rain-data-scroll { max-height: 260px; overflow: auto; margin-top: 12px; }
+.rain-data table { width: 100%; border-collapse: collapse; margin: 0; font-size: 12px; }
+.rain-data th, .rain-data td { padding: 7px 10px; min-width: 0; }
+@media (max-width: 600px) {
+  .rain-lab { padding: 14px; margin-block: 22px 28px; }
+  .rain-chart { height: 180px; }
+  .rain-inputs { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 14px; }
+  .rain-control > div { gap: 6px; }
+  .rain-control > span, .rain-control > div { min-height: 44px; }
+  .rain-control select { width: 64px; padding-inline: 5px 14px; font-size: 12px; }
+  .rain-lab h3 { font-size: 16px; }
+  .rain-total output { font-size: 24px; }
+  .rain-total span { font-size: 11px; }
+  .rain-legend { gap: 7px 13px; margin-bottom: 12px; font-size: 11px; }
+  .rain-lab input[type="range"], .rain-lab select { min-height: 44px; }
+  .rain-playback { flex-wrap: wrap; }
+  .rain-transport { gap: 0; }
+  .rain-lab .icon-button { width: 44px; height: 44px; }
+  .rain-speed { margin-left: auto; }
+  .rain-speed > span { display: none; }
+  .rain-speed select { width: 64px; padding-inline: 6px 15px; }
+  .rain-timeline { grid-template-columns: 94px minmax(0, 1fr); gap: 12px; }
+  .rain-state { gap: 5px 14px; }
+}
+@media (max-width: 360px) { .rain-transport [data-rain-start], .rain-transport [data-rain-end] { display: none; } }
+@media print { .rain-lab { display: none; } }

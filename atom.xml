@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>Codeverse</title>
+<id>https:&#x2F;&#x2F;HenRiser.github.io/</id>
+<link href="https:&#x2F;&#x2F;HenRiser.github.io/atom.xml" rel="self"/>
+<link href="https:&#x2F;&#x2F;HenRiser.github.io/"/>
+<updated>2026-10-26T16:00:00.000Z</updated>
+<entry>
+<title>PROJECT-V Godot：普通难度平衡与代码审查</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;10&#x2F;27&#x2F;ProjectV-Godot-Balance-Review-2026-10-27&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;10&#x2F;27&#x2F;ProjectV-Godot-Balance-Review-2026-10-27&#x2F;"/>
+<updated>2026-10-26T16:00:00.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>这次 PROJECT-V 的调整围绕两个问题：玩家拿到的成长有没有真的留下来，以及一套在本机能跑的工程，能否在干净检出和导出包中重复得到相同结果。
+当前主线是 Godot 4.7.2 Mono、.NET 8 与 C# 12。此前 M0–M6 文章记录 Unity 历史阶段；本篇是 Godot 主线的普通难度平衡与代码审查，不追加新的 Mn 编号。</summary>
+</entry>
+<entry>
+<title>sent2video 开发记录：从小说到可交付的镜头</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;10&#x2F;21&#x2F;Sent2video-Local-Workflow&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;10&#x2F;21&#x2F;Sent2video-Local-Workflow&#x2F;"/>
+<updated>2026-10-21T15:02:21.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>小说写出来之后，制作工作还包括确认剧本、安排镜头、整理视觉参考、挑选片段，再把素材交给剪辑师。这次我在 Artcraft 的桌面与 3D 编辑能力基础上接入 Braipen，把这些环节整理进了 sent2video。
+本轮通过 AI 编码助手协作完成集成、代码审查与修复，并用本地回归和真实模型接口验证结果。工作重点是让创作版本有依据、模型任务可追踪、生成素材能在本地继续使用。</summary>
+</entry>
+<entry>
+<title>PROJECT-V M6：从单局生成到 Roguelite 元进度</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;10&#x2F;03&#x2F;ProjectV-M6-Implementation&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;10&#x2F;03&#x2F;ProjectV-M6-Implementation&#x2F;"/>
+<updated>2026-10-03T00:00:00.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>M5 解决了“怎样生成一条可复现且可达的路线”。M6 接着处理“玩家带着什么构筑进入这条路线，以及这次冒险给下一局留下些什么”。阶段于 2026-06-30 完成，本文依据当时的工程提交、测试结果与交付报告补记。
+实现的中心是 BuildContext：把武器、技能、永久升级和纯度整理成明确的输入，再交给既有生成与难度链路。围绕这个输入，灵魂结算、升级树、存档、Seed UI 和数据采集形成了元进度闭环。</summary>
+</entry>
+<entry>
+<title>Braipen 迭代复盘：从文本生成到可控创作工作流</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;09&#x2F;22&#x2F;Braipen-Workflow-Engineering&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;09&#x2F;22&#x2F;Braipen-Workflow-Engineering&#x2F;"/>
+<updated>2026-09-21T17:06:00.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>2026-10-26：从创作体验补齐编辑与恢复边界
+这轮审查以 099bc7e 为基线，沿着“设定 → 大纲与人物卡 → 章节规划 → 正文 → 确认与摘要”检查正常流程和中断情况。一次体验中的大纲入口卡点，进一步暴露了另一个问题：生成出来的资料还需要能编辑，未提交的修改也需要能找回来。
+大纲与人物卡现在可以手动编写和修改；保存时核对编辑起点，防止旧稿覆盖其他操作刚更新的资料。章节任务单、场景计划、策划意图和导入编辑草稿随 v5 工作区保留，切换页面或重新打开文件后可以继续处理。恢复文字不会自动批准规划，也不会自动替换作品已采用的文风版本。
+本机文件写入失败时，完整的新内容留在待保存候选里，普</summary>
+</entry>
+<entry>
+<title>PROJECT-V M5：种子驱动的程序生成关卡</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;30&#x2F;ProjectV-M5-Implementation&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;30&#x2F;ProjectV-M5-Implementation&#x2F;"/>
+<updated>2026-06-30T08:30:00.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>M5 的目标是把 M4 的手工 LevelConfigSO.orderedRooms 升级为可复现、可约束、可验证的程序生成链路。它不是简单随机抽房间，而是把 36 个房间原型、三世界顺序、房间类型强约束、平台可达性、Addressable 加载、难度曲线和 30-run QA gate 接成一条可测试的生成系统。
+除注明 docs 仓库的文档外，本文所有工程路径均以 PROJECT-V 项目根目录为基准；docs 路径均以 PROJECT-V-game-docs 根目录为基准。</summary>
+</entry>
+<entry>
+<title>PROJECT-V M4：关卡原型与 Boss 压力验证</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;30&#x2F;ProjectV-M4-Implementation&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;30&#x2F;ProjectV-M4-Implementation&#x2F;"/>
+<updated>2026-06-30T04:30:00.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>M4 的目标不是继续给 M3 战斗链堆更多孤立功能，而是把已经接通的移动、攻击、闪避、技能、武器倍率和反馈链放进连续房间、难度缩放、Boss 弱点和镜像 Boss 的压力环境里验证。换句话说，M4 关心的是：PROJECT-V 是否已经从“单场景战斗能跑通”推进到“关卡和 Boss 语境下仍能形成可玩构成”。
+除注明 docs 仓库的文档外，本文所有工程路径均以 PROJECT-V 项目根目录为基准；docs 路径均以 PROJECT-V-game-docs 根目录为基准。</summary>
+</entry>
+<entry>
+<title>PROJECT-V M3：完整战斗闭环实现拆解</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;29&#x2F;ProjectV-M3-Implementation&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;29&#x2F;ProjectV-M3-Implementation&#x2F;"/>
+<updated>2026-06-29T07:30:00.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>M3 的目标不是把战斗“做得热闹”，而是把 M2 的基础攻击、受伤、死亡链路扩展成可继续承载动作游戏手感的完整战斗骨架：玩家能闪避，攻击能按命中结果取消，命中反馈能从战斗事实触发，技能和武器能通过配置资产接入，测试场景和 runtime probe 能证明这条链路在 Unity 工程里真实可运行。
+除注明 docs 仓库的文档外，本文所有工程路径均以 PROJECT-V 项目根目录为基准；docs 路径均以 PROJECT-V-game-docs 根目录为基准。</summary>
+</entry>
+<entry>
+<title>PROJECT-V M2：基础战斗闭环实现拆解</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;29&#x2F;ProjectV-M2-Implementation&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;29&#x2F;ProjectV-M2-Implementation&#x2F;"/>
+<updated>2026-06-29T05:10:00.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>M2 的目标是把 M1 的“角色能动”推进到“基础战斗”。这一阶段不追求完整动作游戏手感，也不做技能、武器 Build、Boss 或正式表现层，而是先证明最小战斗链路成立：玩家能攻击，敌人能受伤和死亡，敌人能靠近并攻击玩家，玩家能死亡和复活，难度缩放和自动化测试能覆盖这条链路。
+本文所有文件路径均以 PROJECT-V 项目根目录为基准。</summary>
+</entry>
+<entry>
+<title>PROJECT-V M1：角色能动闭环实现拆解</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;29&#x2F;ProjectV-M1-Implementation&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;29&#x2F;ProjectV-M1-Implementation&#x2F;"/>
+<updated>2026-06-29T03:46:52.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>M1 不是一个“项目进度汇报”节点，而是 PROJECT-V 的第一条可运行实现链路：玩家输入进入 Unity，新 Input System 被消费，Rigidbody2D 接收移动与跳跃，状态机更新视觉状态，相机跟随，测试场景验证角色可以从起点平台移动到目标平台。
+本文所有文件路径均以 PROJECT-V 项目根目录为基准。</summary>
+</entry>
+<entry>
+<title>PROJECT-V M0：项目介绍与方向锁定</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;29&#x2F;ProjectV-M0-Introduction&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2026&#x2F;06&#x2F;29&#x2F;ProjectV-M0-Introduction&#x2F;"/>
+<updated>2026-06-29T03:30:00.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>PROJECT-V 是一个国风浪子剑客穿越末日异世界的 2D 横板 Roguelite 动作游戏。M0 的任务不是做可玩 Demo，而是把项目“为什么成立、做成什么样、哪些东西不做、后续怎么落地”先锁住。
+本文所有文档路径均以 PROJECT-V-game-docs 项目根目录为基准。</summary>
+</entry>
+<entry>
+<title>LeetCode 871：最低加油次数与反悔贪心</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2024&#x2F;10&#x2F;23&#x2F;LeetcodeHard-871&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2024&#x2F;10&#x2F;23&#x2F;LeetcodeHard-871&#x2F;"/>
+<updated>2024-10-23T06:41:35.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>写在前面：该题转载至leetcode力扣 No.871–最低加油次数 😃
+题目描述：
+No.871最低加油次数
+汽车从起点出发驶向目的地，该目的地位于出发位置东面 target英里处。
+沿途有加油站，用数组 stations表示。其中 stations[i] &#x3D; [positioni, fueli] 表示第 i 个加油站位于出发位置东面 positioni 英里处，并且有 fueli 升汽油。
+假设汽车油箱的容量是无限的，其中最初有 startFuel 升燃料。它每行驶 1 英里就会用掉 1 升汽油。当汽车到达加油站时，它可能停下来加油，将所有汽油从加油站转移到汽车中。
+为了到达目的地，汽车</summary>
+</entry>
+<entry>
+<title>LeetCode 42：接雨水与双指针</title>
+<id>https:&#x2F;&#x2F;henriser.github.io&#x2F;2024&#x2F;10&#x2F;22&#x2F;LeetcodeHard-42&#x2F;</id><link href="https:&#x2F;&#x2F;henriser.github.io&#x2F;2024&#x2F;10&#x2F;22&#x2F;LeetcodeHard-42&#x2F;"/>
+<updated>2024-10-21T16:32:52.000Z</updated>
+<author><name>HenRiser</name></author>
+<summary>写在前面：该题转载至leetcode力扣 No.42–接雨水 😃
+每根柱子上方的水量，取决于左右最高边界中的较低者。双指针每次只结算已经可以确定水位的一侧。</summary>
+</entry>
+</feed>

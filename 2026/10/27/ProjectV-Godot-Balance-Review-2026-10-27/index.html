@@ -1,0 +1,325 @@
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>PROJECT-V Godot：普通难度平衡与代码审查 · Codeverse</title>
+  <meta name="description" content="从精英刷怪的乘法链到强化收益、存档保护和跨场景战斗状态，记录 Godot 主线如何完成普通难度平衡与可复现交付。">
+  <link rel="canonical" href="https://henriser.github.io/2026/10/27/ProjectV-Godot-Balance-Review-2026-10-27/">
+  <meta property="og:title" content="PROJECT-V Godot：普通难度平衡与代码审查">
+  <meta property="og:description" content="从精英刷怪的乘法链到强化收益、存档保护和跨场景战斗状态，记录 Godot 主线如何完成普通难度平衡与可复现交付。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://henriser.github.io/2026/10/27/ProjectV-Godot-Balance-Review-2026-10-27/">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:site_name" content="Codeverse">
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="alternate" type="application/atom+xml" title="Codeverse" href="/atom.xml">
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script defer src="/js/site.js"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"PROJECT-V Godot：普通难度平衡与代码审查","datePublished":"2026-10-26T16:00:00.000Z","dateModified":"2026-10-26T16:00:00.000Z","author":{"@type":"Person","name":"HenRiser"},"mainEntityOfPage":"https://henriser.github.io/2026/10/27/ProjectV-Godot-Balance-Review-2026-10-27/","description":"从精英刷怪的乘法链到强化收益、存档保护和跨场景战斗状态，记录 Godot 主线如何完成普通难度平衡与可复现交付。","inLanguage":"zh-CN"}</script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body class="reading-page">
+  <a class="skip-link" href="#main">跳至正文</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Codeverse 首页"><img class="brand-mark" src="/images/logo.png" alt="Codeverse 原版 logo" width="40" height="40"><span>Codeverse</span></a>
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        
+        <a href="/" aria-current="page">文章</a>
+        
+        <a href="/projects/" >项目</a>
+        
+        <a href="/archives/" >归档</a>
+        
+        <a href="/about/" >关于</a>
+        
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button header-search" data-search-open aria-label="搜索文章" title="搜索文章"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>搜索</span></button>
+        <button class="icon-button theme-toggle" aria-label="切换颜色主题" title="切换颜色主题"><span class="theme-moon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg></span><span class="theme-sun"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></button>
+        <button class="icon-button menu-toggle" aria-label="展开导航" aria-expanded="false" aria-controls="main-nav" title="导航"><span class="menu-open-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></span><span class="menu-close-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></button>
+      </div>
+    </div>
+    <div class="reading-progress" aria-hidden="true"><span></span></div>
+  </header>
+  <main id="main" class="site-main">
+<div class="article-shell container">
+  <div class="article-column">
+    <nav class="breadcrumbs" aria-label="当前位置"><a href="/">文章</a><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="/projects/">PROJECT-V</a><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><span>Godot 开发记录</span></nav>
+    <header class="article-header"><div class="eyebrow">PROJECT-V / GODOT</div><h1>PROJECT-V Godot：普通难度平衡与代码审查</h1><div class="article-meta"><time datetime="2026-10-26T16:00:00.000Z">2026.10.27</time><span>·</span><span>约 14 分钟</span><span>·</span><span>HenRiser</span></div><div class="entry-tags"><a href="/tags/Devlog/">Devlog</a><a href="/tags/ProjectV/">ProjectV</a><a href="/tags/Godot/">Godot</a></div></header>
+    <details class="mobile-toc"><summary>文章目录</summary><nav aria-label="文章目录"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B2%BE%E8%8B%B1%E5%8E%8B%E5%8A%9B%E8%A6%81%E6%B2%BF%E7%9D%80%E7%9C%9F%E5%AE%9E%E5%88%B7%E6%80%AA%E9%93%BE%E8%AE%A1%E7%AE%97"><span class="toc-text">精英压力要沿着真实刷怪链计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%8A%E6%88%90%E9%95%BF%E5%8F%8D%E7%A8%8E%E9%99%90%E5%88%B6%E5%9C%A8%E5%8F%AF%E8%A7%A3%E9%87%8A%E7%9A%84%E8%8C%83%E5%9B%B4"><span class="toc-text">把成长反税限制在可解释的范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%BA%E5%8C%96%E7%94%9F%E6%95%88%EF%BC%8C%E8%A6%81%E7%9C%8B%E5%AE%9E%E9%99%85%E4%BC%A4%E5%AE%B3%E5%92%8C%E5%AE%9E%E9%99%85%E6%95%88%E7%94%A8"><span class="toc-text">强化生效，要看实际伤害和实际效用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E6%AD%A2%E6%8C%81%E7%BB%AD%E6%97%A0%E6%95%8C%EF%BC%8C%E4%B9%9F%E8%A6%81%E6%B8%85%E7%90%86%E9%9B%B6%E6%94%B6%E7%9B%8A%E5%A5%96%E5%8A%B1"><span class="toc-text">防止持续无敌，也要清理零收益奖励</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A1%E6%9F%A5%E9%87%8D%E7%82%B9%EF%BC%9A%E8%B7%A8%E6%B5%81%E7%A8%8B%E7%8A%B6%E6%80%81%E4%B8%8D%E8%83%BD%E9%9D%A0%E7%94%BB%E9%9D%A2%E9%81%AE%E7%BD%A9%E4%BF%9D%E8%AF%81"><span class="toc-text">审查重点：跨流程状态不能靠画面遮罩保证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%90%A5%E5%9C%B0%E8%BD%AC%E5%9C%BA%E5%BF%85%E9%A1%BB%E5%BD%A2%E6%88%90%E4%BA%8B%E5%8A%A1"><span class="toc-text">营地转场必须形成事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%9D%A5%E7%89%88%E6%9C%AC%E5%AD%98%E6%A1%A3%E4%B8%8D%E6%98%AF%E6%8D%9F%E5%9D%8F%E6%A1%A3"><span class="toc-text">未来版本存档不是损坏档</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9E%AC%E7%A7%BB%E4%B8%8E%E5%BC%B9%E9%81%93%EF%BC%8C%E9%9C%80%E8%A6%81%E6%98%8E%E7%A1%AE%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E8%BE%B9%E7%95%8C"><span class="toc-text">瞬移与弹道，需要明确生命周期边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E7%BB%BF%E7%81%AF%E4%B8%8D%E5%A4%9F%EF%BC%8C%E9%AA%8C%E8%AF%81%E5%85%A5%E5%8F%A3%E4%B9%9F%E8%A6%81%E8%83%BD%E5%A4%B1%E8%B4%A5"><span class="toc-text">一次绿灯不够，验证入口也要能失败</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E4%B8%96%E7%95%8C%E9%AA%8C%E6%94%B6%E7%94%BB%E9%9D%A2"><span class="toc-text">三世界验收画面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E3%80%81%E8%AF%81%E6%8D%AE%E4%B8%8E%E5%BD%93%E5%89%8D%E8%BE%B9%E7%95%8C"><span class="toc-text">提交、证据与当前边界</span></a></li></ol></nav></details>
+    <article class="prose" id="article-body"><p>这次 PROJECT-V 的调整围绕两个问题：玩家拿到的成长有没有真的留下来，以及一套在本机能跑的工程，能否在干净检出和导出包中重复得到相同结果。</p>
+<p>当前主线是 <strong>Godot 4.7.2 Mono、.NET 8 与 C# 12</strong>。此前 M0–M6 文章记录 Unity 历史阶段；本篇是 Godot 主线的普通难度平衡与代码审查，不追加新的 Mn 编号。</p>
+<span id="more"></span>
+<h2 id="精英压力要沿着真实刷怪链计算">精英压力要沿着真实刷怪链计算</h2>
+<p>只看敌人的基础血量，很难解释旧精英房为什么会突然变得难打。它同时叠加了房型、世界、个体和永久成长倍率，房间里还会初始生成三名专用精英。数量与单体强度相乘，形成了比单项配置看起来大得多的压力。</p>
+<p>这里有一个很容易改错的地方：<code>DifficultyScaler</code> 的 <code>targetEnemyCount</code> 不是当前实际刷怪数量的来源。<code>SpawnDirector</code> 读取的是 <code>roomConfig.enemySpawns</code>。因此调整必须追到真正消费数据的位置，同时核对 <code>spawn.count</code>、<code>maxAlive</code> 和个体倍率。</p>
+<p>本轮将初始精英数从 3 改为 1，额外生命倍率从 1.75 调至 1.15，额外伤害倍率从 1.3 调至 1.1。生化祭司仍会真实召唤最多两只寄生体，所以“一名初始精英”不等于整个房间永远只有一个敌人。</p>
+<p>以下取自同一批 <strong>24 个固定 seed、零永久升级</strong>的参数样本；每房枚举实际名册中的可选敌种。各列是样本内的极值，不是一场战斗的完整测量，初始总 HP 也不含召唤物。</p>
+<table>
+<thead>
+<tr>
+<th>世界</th>
+<th>精英房最大初始总 HP</th>
+<th>精英最高单击伤害</th>
+<th>精英最短前摇</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>废土</td>
+<td>1922.5 → 355.8</td>
+<td>46.6 → 34.7</td>
+<td>0.485s → 0.489s</td>
+</tr>
+<tr>
+<td>赛博</td>
+<td>861.5 → 164.0</td>
+<td>57.9 → 31.8</td>
+<td>0.179s → 0.362s</td>
+</tr>
+<tr>
+<td>生化</td>
+<td>1289.0 → 241.3</td>
+<td>31.8 → 24.0</td>
+<td>0.571s → 0.576s</td>
+</tr>
+</tbody>
+</table>
+<p>其中，刺客基础前摇从 0.20 秒延长至 0.40 秒，伤害从 25 调至 18；盾兵正面减伤从 70% 降到 50%。这些修改给读招和绕背留出空间。武器的基础伤害、攻速，以及主线 Boss 的基础血量和伤害没有在这轮一起重写。</p>
+<p>关键入口，相对于 PROJECT-V 根目录：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>godot-project/src/ProjectV.Core/Levels/DifficultyScaler.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>godot-project/src/ProjectV.Core/Levels/LevelGenerator.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>godot-project/src/ProjectV.Core/Data/Catalogs.cs</code></p>
+</li>
+<li class="lvl-2">
+<p><code>godot-project/scripts/Levels/SpawnDirector.cs</code></p>
+</li>
+</ul>
+<h2 id="把成长反税限制在可解释的范围">把成长反税限制在可解释的范围</h2>
+<p>如果一次升级既提高玩家数值，又把敌人同比抬高，升级的体感收益就会被吞掉。经济升级尤其不应该无故抬高即时战斗难度。</p>
+<p>这轮的做法是把永久构筑分先截到 18，再乘 25% 进入原有关序、房序的难度基线；敌方 HP 的成长反馈系数从 0.45 降到 0.15，伤害反馈系数从 0.28 降到 0.08。留魂升级和尚未接入实际效果的协同标签不再贡献敌方压力，构筑 hash 和标签本身仍保留。</p>
+<p>在 24-seed 门禁中，满永久成长相对于零成长的额外敌人 HP 不超过 7%，额外伤害不超过 4%。关序依旧递进，局内祝福不会再触发敌人追涨；修改前后 48 次生成记录的路线 hash 全部一致。</p>
+<p>这让“地图有没有变化”和“数值输入有没有变化”可以分开核对。需要注意，seed 保证的是现有关卡序列；敌种与站位仍使用 Godot 全局随机，不能把相同路线 hash 理解为整场战斗完全确定。</p>
+<p>镜像压力也改为先计算纯度的极端程度，再对称地影响生命、伤害和读招。基础生命倍率从 1.5 调到 1.2，镜像仍可拒绝。纯净和异化两端承担的是同一套极端程度规则。</p>
+<h2 id="强化生效，要看实际伤害和实际效用">强化生效，要看实际伤害和实际效用</h2>
+<p>这轮最直接的收益证据来自 <code>COMBAT-REGRESSION</code>：在同一个静止目标上关闭暴击，通过真实轻击接触读取目标 HP。四次配合良好的强化使长剑单次轻击由 <strong>14.4 提高到 26.784，约为 1.86 倍</strong>。</p>
+<p>这证明了收益进入了伤害管线。它没有测量躲招、移动命中率，也没有证明真人 Boss 战一定能快 1.86 倍。</p>
+<p>另外一组数据是理论预算。下面都是零永久升级、长剑、四次奖励，计入三连平均系数、基础暴击期望和每击 hitstop。</p>
+<table>
+<thead>
+<tr>
+<th>四次奖励样本</th>
+<th>连续轻击理论 DPS</th>
+<th>三个主线 Boss 的估算时间</th>
+<th>HP / 受伤倍率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>噬魂×2、气盾、疾风</td>
+<td>32.47</td>
+<td>46.8–58.5 秒</td>
+<td>100 / ×1.00</td>
+</tr>
+<tr>
+<td>内劲×2、罡气×2</td>
+<td>60.40</td>
+<td>25.2–31.5 秒</td>
+<td>100 / ×1.00</td>
+</tr>
+<tr>
+<td>内劲、剑心、狂暴×2</td>
+<td>72.48</td>
+<td>21.0–26.2 秒</td>
+<td>90 / ×1.40</td>
+</tr>
+</tbody>
+</table>
+<p>估算统一采用 <strong>50% 有效攻击时间</strong>；涉及毒的模型采用 80% 覆盖率。没有计入技能爆发、弱点、格挡、移动命中率和房间间隔。50% 是模型假设，不是采集到的玩家行为。低输出样本投入了防御与灵魂，它的价值也不能只用 DPS 排名。</p>
+<p>实现上同时修复了几个“配置变化了，收益却没进来”的位置：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p>百炼 1–5 级的毒伤分别为 3/4/5/6/7 DPS，每份淬毒另外增加 3 DPS，持续 5 秒；重复命中刷新同一个 DoT，而不是延后 tick 或制造瞬间爆发。</p>
+</li>
+<li class="lvl-2">
+<p>暗器继承伤害百分比，一份平伤按整次发射的弹数分摊，避免八枚弹重复吃八次平伤。</p>
+</li>
+<li class="lvl-2">
+<p>独立重击保留兵器配置的 2.5 倍；只有两次轻击后接重击，才额外获得 1.35 倍收尾加成。</p>
+</li>
+<li class="lvl-2">
+<p>取得正的生命上限增量时同步回复相同 HP；重复刷新修正器不会反复回血。</p>
+</li>
+</ul>
+<p>这些规则分别经过配置计算、实际接触和目标 HP 的验证。只断言某个 modifier 字段增加，还不足以证明玩家真的受益。</p>
+<h2 id="防止持续无敌，也要清理零收益奖励">防止持续无敌，也要清理零收益奖励</h2>
+<p>只给冷却设置下限，会留下另一个问题：满级玩家仍可能抽到一个已经无法继续缩短冷却的强化。</p>
+<p>普通闪避现在要求冷却至少比无敌时间多 0.15 秒；技能的商店乘区和祝福乘区合并计算后，冷却不能低于原值的 40%，无敌技能还要比持续时间多至少 0.5 秒。残影伤害从每级 10 调至 4。</p>
+<p>例如无敌已经达到 0.45 秒时，0.60 秒的普通闪避冷却便没有继续缩短的空间。奖励池和商店必须调用同一套实际冷却计算，比较变化前后的真实效果，才能过滤这时无效的“疾风”。暴击封顶和当前 U/I 技能不受益的“绵长”也按实际效用过滤。</p>
+<p>商店对满血药和封顶疾风符拒绝购买并说明原因，F 交互跳过无效商品，避免扣魂、移除货物之后才发现没有收益。休息回复从 35% 提高到 50%，药品仍为 35%，休息和最大 HP 回复都检查了只发生一次的边界。</p>
+<p>经济预算也要核对到账时点：在这批 72 个世界样本中，到店前最低只有 30 魂；进入 Shop 时 <code>RoomRuntime.BeginRoom</code> 立即清房并发放 15 魂，因此真正可购买时最低是 45 魂，才足以买 43 魂的药。把到账顺序省略，会得到相反的可购买性判断。</p>
+<p>相关入口：<code>godot-project/src/ProjectV.Core/Roguelite/RunBlessingPool.cs</code>、<code>ShopSystem.cs</code>，以及 <code>godot-project/scripts/Levels/InteractionService.cs</code>。其中 <code>ShopSystem.cs</code> 与前者位于同一个 Roguelite 目录。</p>
+<h2 id="审查重点：跨流程状态不能靠画面遮罩保证">审查重点：跨流程状态不能靠画面遮罩保证</h2>
+<h3 id="营地转场必须形成事务">营地转场必须形成事务</h3>
+<p>原流程可能先创建正式 Run，再等待约 0.3 秒切场景。在窗口期内再次点试玩、出征或购买，就可能让场景与业务状态属于两个不同流程。</p>
+<p>修复在 <code>GameManager</code>、<code>HubController</code> 和 <code>SceneTransition</code> 之间建立明确边界：营地离场后锁定状态变更回调，转场忙时拒绝新的人工导航，独立试玩进入显式的 <code>CombatTrial</code> 相位。试玩不触发正式局的死亡结算或存档写入。</p>
+<p>内部死亡、结算仍可沿用转场队列。这里限制的是重复人工输入对同一事务的改写，而不是把所有转场都一概禁掉。回归覆盖了出征与试玩的双向快速点击、购买、返回，以及下一关重复导航。</p>
+<h3 id="未来版本存档不是损坏档">未来版本存档不是损坏档</h3>
+<p>旧程序如果先按旧字段反序列化，再正常保存，可能无声抹掉新版本的合法字段；连续保存还可能把备份一并覆盖。</p>
+<p><code>SaveSystem</code> 现在先读取主档与备份的版本，拒绝未来结构，不移动或覆盖原文件。营地给出提示，禁用正式出征和永久购买，但仍允许进入独立试玩。</p>
+<p>验证不仅检查返回值，也检查文件字节、修改时间和文件集合没有变化。<code>SaveRecoveryTests</code> 从 5 个实例增加到 16 个；这 11 个新增实例也是最终 Core 数量由平衡阶段的 104 增至 115 的原因。</p>
+<p>入口为 <code>godot-project/src/ProjectV.Core/Roguelite/SaveSystem.cs</code>，营地与试玩边界由 <code>godot-project/scripts/GameManager.cs</code> 和对应场景回归共同覆盖。</p>
+<h2 id="瞬移与弹道，需要明确生命周期边界">瞬移与弹道，需要明确生命周期边界</h2>
+<p>连续扫掠适合处理两帧之间的真实运动，却不能直接跨过换房或坠落回入口。否则上一位置到新位置之间会形成一条并不存在的挥击或身体运动路径。</p>
+<p>本轮在明确瞬移时结束攻击、清理缓冲和连段，取消刀光，重置攻方与受击方的运动历史；保留已有蓄力、护盾和冷却。正常走位仍使用连续扫掠，新攻击也必须继续能够命中。</p>
+<p>挂在根节点上的玩家弹道还有自己的生命周期。清房、切世界、切试玩遭遇或冻结时，<code>ClearOwnedBy</code> 会先立即停用旧玩家弹；旧房间对象也先停用，再等待回收。敌弹拒绝待删除或不可处理状态，避免迟到回调继续伤害玩家。</p>
+<p>这两个边界不能粗暴合并：致死冻结要保留真实接触姿势，下一场、重开或瞬移时才取消相应动作。运动历史的一致性断言与真实物理接触测试也分别记录，不把缓存检查写成已经执行了完整敌弹战斗。</p>
+<p>关键文件位于 <code>godot-project/scripts/</code>：<code>Player/PlayerAttack.cs</code>、<code>Player/PlayerProjectile.cs</code>、<code>Player/WeaponVisual.cs</code>、<code>Combat/CombatBody.cs</code>、<code>Enemies/Projectile.cs</code>，以及 <code>Levels/GameplayController.cs</code>、<code>Levels/CombatTrialController.cs</code>。</p>
+<h2 id="一次绿灯不够，验证入口也要能失败">一次绿灯不够，验证入口也要能失败</h2>
+<p>审查同时处理了四种交付侧的假象：</p>
+<ol>
+<li class="lvl-3">
+<p><strong>错名筛选也报绿。</strong> <code>run_all.ps1</code> 和 <code>review_1080p.ps1</code> 先验证每个 <code>-Only</code> 名称及选中数量，任何错名都会直接失败，而不是漏测后输出 <code>ALL GREEN</code>。</p>
+</li>
+<li class="lvl-3">
+<p><strong>只在有缓存的机器上通过。</strong> 从没有 <code>.godot</code> 和测试 <code>obj</code> 的独立发布检出开始，由脚本恢复已有依赖、编译并受控导入资源，再跑场景。这个结果证明当前机器上的干净检出可以复现，并不等于全新操作系统验收。</p>
+</li>
+<li class="lvl-3">
+<p><strong>从新目录导出了旧工程。</strong> <code>export_windows.sh</code> 根据脚本自身位置定位工程，支持 Godot 参数和输出参数；异目录启动的 fixture 检查工作目录与 <code>--path</code>，实际导出再单独验证。</p>
+</li>
+<li class="lvl-3">
+<p><strong>PASS 旁边还有引擎错误。</strong> 性能脚本合并检查 stdout 与 stderr 中的 <code>ERROR</code> / <code>SCRIPT ERROR</code>，结合退出码与超时判断；退出 0 且打印 PASS 也不能掩盖引擎错误。</p>
+</li>
+</ol>
+<p>最终证据口径如下。本文整理时复核了归档产物，没有在博客任务中重跑游戏工程。</p>
+<table>
+<thead>
+<tr>
+<th>验证层</th>
+<th>最终结果</th>
+<th>证据的边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Core</td>
+<td>115/115，通过且无跳过</td>
+<td>配置、生成、数值、存档等逻辑，不是玩家通关率</td>
+</tr>
+<tr>
+<td>引擎场景</td>
+<td>19/19，另有资源导入检查通过</td>
+<td>各用例按范围验证；部分流程用直接伤害加速，真实命中另有专项</td>
+</tr>
+<tr>
+<td>脚本守卫</td>
+<td>8 项通过</td>
+<td>4 个错名筛选、3 个性能输出判定、1 个异目录导出路径</td>
+</tr>
+<tr>
+<td>导出版检查</td>
+<td>6 项通过</td>
+<td><code>hub</code>、<code>attack_input</code>、<code>combat</code>、<code>progression</code>、<code>spawn</code>、<code>trial</code></td>
+</tr>
+<tr>
+<td>编译</td>
+<td>0 警告、0 错误</td>
+<td>未来存档测试的预期保护提示不属于编译警告</td>
+</tr>
+</tbody>
+</table>
+<p>导出版专项包的 <code>ProjectV.dll</code> 与 <code>ProjectV.Core.dll</code> 都与交付候选程序集核对了 SHA-256；测试临时入口之后按原字节恢复。脚本守卫中的合成错误输出只验证脚本判定能力，不代表本轮做过新的性能压测。</p>
+<h2 id="三世界验收画面">三世界验收画面</h2>
+<p>以下三张图来自 <strong>2026-10-26 的原生 1920×1080 验收场景</strong>，分别展示准备或出手的指定姿势。它们用于检查资源、姿势和场景表现，<strong>不是连续自然战斗录像，也不能证明本轮数值平衡的真人体验</strong>。</p>
+<img src="/2026/10/27/ProjectV-Godot-Balance-Review-2026-10-27/world_wasteland_ready.png" alt="废土世界验收场景，主角与敌方处于指定准备姿势" width="1920" height="1080" loading="lazy">
+<p>废土：准备姿势，现代末世的工装、改装装备与高架环境。</p>
+<img src="/2026/10/27/ProjectV-Godot-Balance-Review-2026-10-27/world_cyberpunk_strike.png" alt="赛博世界验收场景，主角与敌方处于指定出手姿势" width="1920" height="1080" loading="lazy">
+<p>赛博：出手姿势，义体、外骨骼与能量兵器。</p>
+<img src="/2026/10/27/ProjectV-Godot-Balance-Review-2026-10-27/world_biohazard_ready.png" alt="生化世界验收场景，主角与敌方处于指定准备姿势" width="1920" height="1080" loading="lazy">
+<p>生化：准备姿势，防护服、菌根侵蚀与水墨岩彩环境。</p>
+<p>图片来源相对 PROJECT-V 根目录：<code>build/world_assets_2026-10-26/runtime_checks/review1080_final/gallery1080/</code>。博客只使用这三张指定图，不同步整套工程资产或本地构建目录。</p>
+<h2 id="提交、证据与当前边界">提交、证据与当前边界</h2>
+<p>截至本文发布时，审查版本已推送至私有仓库 <code>HenRiser/project-v-game</code> 的 <code>codex/godot-reviewed-balance-2026-10-27</code> 分支：</p>
+<table>
+<thead>
+<tr>
+<th>提交</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>f9b9168ecbe2a59e587b7cea8118849ff649be8b</code></td>
+<td>前一提交，纳入 Godot 主线与审查交付内容</td>
+</tr>
+<tr>
+<td><code>5ae7a572f4917ae00eb4d1aef2662231b479ad3c</code></td>
+<td>本文核对的最终分支 HEAD</td>
+</tr>
+</tbody>
+</table>
+<p><a target="_blank" rel="noopener" href="https://github.com/HenRiser/project-v-game/pull/1">PR #1：Godot 主线的平衡、审查修复与可复现交付</a> 仍为 open，尚未合并；<code>main</code> 和 <code>develop</code> 的远程提交保持原值。该链接需要私有仓库访问权限。</p>
+<p>以下证据路径均相对 PROJECT-V 根目录，指向发布检出中归档的材料：</p>
+<ul class="lvl-0">
+<li class="lvl-2">
+<p><code>reports/code_review_2026-10-27.html</code></p>
+</li>
+<li class="lvl-2">
+<p><code>reports/numerical_balance_2026-10-27.html</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reviews/2026-10-27/clean-regression.txt</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reviews/2026-10-27/runner-guards.json</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reviews/2026-10-27/release_verification.json</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reviews/2026-10-27/staging-audit.json</code></p>
+</li>
+<li class="lvl-2">
+<p><code>qa/reviews/2026-10-27/balance-before.json</code> 与 <code>balance-after.json</code></p>
+</li>
+</ul>
+<p>数值样本从 <code>0x4D600006</code> 派生 <code>balance-0</code> 至 <code>balance-23</code>，对照零/满永久成长，共 48 次生成、1126 个可选敌人参数案例和 72 个世界经济预算。它是明确范围的样本检查，不是所有 seed 的穷举。</p>
+<p>当前仍是工程与玩法原型。按该提交的 README，中局续玩、O 技能槽、部分永久升级、分叉路线和完整镜像技能复制尚未开放。真人盲测、长期运行和跨设备表现也不在这次自动化结果里。</p>
+<p>这一轮最重要的变化，是让压力、收益、状态边界和验证入口各自有清楚的依据。下一步应在相同武器下比较低输出、协同输出和毒构筑，采集死亡位置、Boss 入场 HP、有效攻击时间与失败原因，再修正理论模型中的假设。</p>
+</article>
+    <footer class="article-footer"><p>原创内容采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a> 许可；引用内容遵循原作者许可。</p><button class="text-link copy-link"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> 复制文章链接</button></footer>
+    <section class="related-posts"><h2>继续阅读</h2><a class="text-link" href="/2026/10/03/ProjectV-M6-Implementation/">PROJECT-V M6：从单局生成到 Roguelite 元进度<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><a class="text-link" href="/2026/06/30/ProjectV-M5-Implementation/">PROJECT-V M5：种子驱动的程序生成关卡<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></section>
+  </div>
+  <aside class="article-sidebar"><div class="article-sidebar-inner"><h2 class="eyebrow">本文目录</h2><nav class="desktop-toc" aria-label="文章目录"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B2%BE%E8%8B%B1%E5%8E%8B%E5%8A%9B%E8%A6%81%E6%B2%BF%E7%9D%80%E7%9C%9F%E5%AE%9E%E5%88%B7%E6%80%AA%E9%93%BE%E8%AE%A1%E7%AE%97"><span class="toc-text">精英压力要沿着真实刷怪链计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%8A%E6%88%90%E9%95%BF%E5%8F%8D%E7%A8%8E%E9%99%90%E5%88%B6%E5%9C%A8%E5%8F%AF%E8%A7%A3%E9%87%8A%E7%9A%84%E8%8C%83%E5%9B%B4"><span class="toc-text">把成长反税限制在可解释的范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%BA%E5%8C%96%E7%94%9F%E6%95%88%EF%BC%8C%E8%A6%81%E7%9C%8B%E5%AE%9E%E9%99%85%E4%BC%A4%E5%AE%B3%E5%92%8C%E5%AE%9E%E9%99%85%E6%95%88%E7%94%A8"><span class="toc-text">强化生效，要看实际伤害和实际效用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E6%AD%A2%E6%8C%81%E7%BB%AD%E6%97%A0%E6%95%8C%EF%BC%8C%E4%B9%9F%E8%A6%81%E6%B8%85%E7%90%86%E9%9B%B6%E6%94%B6%E7%9B%8A%E5%A5%96%E5%8A%B1"><span class="toc-text">防止持续无敌，也要清理零收益奖励</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A1%E6%9F%A5%E9%87%8D%E7%82%B9%EF%BC%9A%E8%B7%A8%E6%B5%81%E7%A8%8B%E7%8A%B6%E6%80%81%E4%B8%8D%E8%83%BD%E9%9D%A0%E7%94%BB%E9%9D%A2%E9%81%AE%E7%BD%A9%E4%BF%9D%E8%AF%81"><span class="toc-text">审查重点：跨流程状态不能靠画面遮罩保证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%90%A5%E5%9C%B0%E8%BD%AC%E5%9C%BA%E5%BF%85%E9%A1%BB%E5%BD%A2%E6%88%90%E4%BA%8B%E5%8A%A1"><span class="toc-text">营地转场必须形成事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%9D%A5%E7%89%88%E6%9C%AC%E5%AD%98%E6%A1%A3%E4%B8%8D%E6%98%AF%E6%8D%9F%E5%9D%8F%E6%A1%A3"><span class="toc-text">未来版本存档不是损坏档</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9E%AC%E7%A7%BB%E4%B8%8E%E5%BC%B9%E9%81%93%EF%BC%8C%E9%9C%80%E8%A6%81%E6%98%8E%E7%A1%AE%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E8%BE%B9%E7%95%8C"><span class="toc-text">瞬移与弹道，需要明确生命周期边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E7%BB%BF%E7%81%AF%E4%B8%8D%E5%A4%9F%EF%BC%8C%E9%AA%8C%E8%AF%81%E5%85%A5%E5%8F%A3%E4%B9%9F%E8%A6%81%E8%83%BD%E5%A4%B1%E8%B4%A5"><span class="toc-text">一次绿灯不够，验证入口也要能失败</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E4%B8%96%E7%95%8C%E9%AA%8C%E6%94%B6%E7%94%BB%E9%9D%A2"><span class="toc-text">三世界验收画面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E3%80%81%E8%AF%81%E6%8D%AE%E4%B8%8E%E5%BD%93%E5%89%8D%E8%BE%B9%E7%95%8C"><span class="toc-text">提交、证据与当前边界</span></a></li></ol></nav></div></aside>
+</div>
+</main>
+  <footer class="site-footer">
+    <div class="footer-inner"><div><a class="footer-brand" href="/">Codeverse<span>.</span></a><p>HenRiser 的工程笔记</p></div>
+    <div class="footer-links"><a href="https://github.com/HenRiser" target="_blank" rel="noopener noreferrer">GitHub <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a><a href="/atom.xml">RSS <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg></a><a href="/about/">关于</a></div>
+    <small>© 2026 HenRiser · CC BY-NC-SA 4.0</small></div>
+  </footer>
+  <dialog class="search-dialog" aria-labelledby="search-title" data-index="/search.json">
+    <div class="search-top"><h2 id="search-title">搜索文章</h2><button class="icon-button" data-search-close aria-label="关闭搜索" title="关闭搜索"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    <form class="search-form" role="search"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><label class="sr-only" for="search-input">关键词</label><input id="search-input" type="search" placeholder="搜索标题、标签或正文…" autocomplete="off"><button class="icon-button search-clear" type="button" aria-label="清空搜索" title="清空搜索" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></form>
+    <p class="search-status" role="status" aria-live="polite"></p>
+    <div class="search-results"></div>
+    <button class="text-link search-retry" type="button" hidden>重新加载</button>
+  </dialog>
+  <button class="icon-button back-top" aria-label="回到顶部" title="回到顶部" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+  <div class="action-status" id="action-status" role="status" aria-live="polite"></div>
+  <template id="copy-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></template>
+  <template id="check-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></template>
+</body>
+</html>
