@@ -1,0 +1,150 @@
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>PROJECT-V 四界流程与配装交互更新 · Codeverse</title>
+  <meta name="description" content="四个世界随机串成一局，营地拆分兵器与技能页面，复合按键收为四组，并用真实渲染帧验证武器切换动画。">
+  <link rel="canonical" href="https://henriser.github.io/2026/11/07/ProjectV-Four-Worlds-UI-2026-11-07/">
+  <meta property="og:title" content="PROJECT-V 四界流程与配装交互更新">
+  <meta property="og:description" content="四个世界随机串成一局，营地拆分兵器与技能页面，复合按键收为四组，并用真实渲染帧验证武器切换动画。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://henriser.github.io/2026/11/07/ProjectV-Four-Worlds-UI-2026-11-07/">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:site_name" content="Codeverse">
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="alternate" type="application/atom+xml" title="Codeverse" href="/atom.xml">
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+
+
+  <script defer src="/js/site.js"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"PROJECT-V 四界流程与配装交互更新","datePublished":"2026-11-06T16:00:00.000Z","dateModified":"2026-11-06T16:00:00.000Z","author":{"@type":"Person","name":"HenRiser"},"mainEntityOfPage":"https://henriser.github.io/2026/11/07/ProjectV-Four-Worlds-UI-2026-11-07/","description":"四个世界随机串成一局，营地拆分兵器与技能页面，复合按键收为四组，并用真实渲染帧验证武器切换动画。","inLanguage":"zh-CN"}</script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body class="reading-page">
+  <a class="skip-link" href="#main">跳至正文</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Codeverse 首页"><img class="brand-mark" src="/images/logo.png" alt="Codeverse 原版 logo" width="40" height="40"><span>Codeverse</span></a>
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+
+        <a href="/" aria-current="page">文章</a>
+
+        <a href="/projects/" >项目</a>
+
+        <a href="/archives/" >归档</a>
+
+        <a href="/about/" >关于</a>
+
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button header-search" data-search-open aria-label="搜索文章" title="搜索文章"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>搜索</span></button>
+        <button class="icon-button theme-toggle" aria-label="切换颜色主题" title="切换颜色主题"><span class="theme-moon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg></span><span class="theme-sun"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></button>
+        <button class="icon-button menu-toggle" aria-label="展开导航" aria-expanded="false" aria-controls="main-nav" title="导航"><span class="menu-open-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></span><span class="menu-close-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></button>
+      </div>
+    </div>
+    <div class="reading-progress" aria-hidden="true"><span></span></div>
+  </header>
+  <main id="main" class="site-main">
+<div class="article-shell container">
+  <div class="article-column">
+    <nav class="breadcrumbs" aria-label="当前位置"><a href="/">文章</a><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="/projects/">PROJECT-V</a><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><span>Godot 开发记录</span></nav>
+    <header class="article-header"><div class="eyebrow">PROJECT-V / GODOT</div><h1>PROJECT-V 四界流程与配装交互更新</h1><div class="article-meta"><time datetime="2026-11-06T16:00:00.000Z">2026.11.07</time><span>·</span><span>约 5 分钟</span><span>·</span><span>HenRiser</span></div><div class="entry-tags"><a href="/tags/ProjectV/">ProjectV</a><a href="/tags/Godot/">Godot</a><a href="/tags/Devlog/">Devlog</a></div></header>
+    <details class="mobile-toc"><summary>文章目录</summary><nav aria-label="文章目录"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E9%A6%96%E9%A1%B5%E8%BF%9B%E5%85%A5%E7%8B%AC%E7%AB%8B%E9%85%8D%E8%A3%85%E9%A1%B5%E9%9D%A2"><span class="toc-text">从首页进入独立配装页面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E5%90%88%E8%BE%93%E5%85%A5%E5%8F%AA%E4%BF%9D%E7%95%99%E5%9B%9B%E7%BB%84"><span class="toc-text">复合输入只保留四组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E4%B8%AA%E4%B8%96%E7%95%8C%E6%9E%84%E6%88%90%E5%AE%8C%E6%95%B4%E4%B8%80%E5%B1%80"><span class="toc-text">四个世界构成完整一局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Boss-%E6%8A%80%E8%83%BD%E4%B8%8E%E8%BF%9C%E7%A8%8B%E6%94%BB%E5%87%BB%E6%9B%B4%E6%98%93%E8%BE%A8%E8%AE%A4"><span class="toc-text">Boss 技能与远程攻击更易辨认</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A6%E5%99%A8%E5%85%A5%E5%9C%BA%E5%8A%A8%E7%94%BB%E6%8C%89%E7%9C%9F%E5%AE%9E%E6%B8%B2%E6%9F%93%E5%B8%A7%E9%AA%8C%E8%AF%81"><span class="toc-text">武器入场动画按真实渲染帧验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E8%BD%AE%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%90%8E%E7%BB%AD%E5%B7%A5%E4%BD%9C"><span class="toc-text">本轮验证与后续工作</span></a></li></ol></nav></details>
+    <article class="prose" id="article-body"><p>11月2日至6日，PROJECT-V 从三世界流程扩展到四界随机行旅，同时整理了首页、营地配装、Boss 技能与战斗信息。当前主线仍使用 Godot 4.7.2 Mono、.NET 8 和 C# 12。</p>
+<p>这轮交互调整的重点很具体：选武器时看清当前这一把，搭配技能时只处理技能，进入下一世界时让流程自动继续。</p>
+<span id="more"></span>
+<h2 id="从首页进入独立配装页面">从首页进入独立配装页面</h2>
+<p>涂鸦首页使用米白留白、炭灰人物与朱红强调，左侧三枚刀刃分别承载开始、设置和退出。游戏文字采用已落地的“断锋刀刻”正文与标题字体。四页漫画开场经过颗粒清理，以10秒交叉淡入播放，Space 或 Esc 可跳过；营地移除了回看入口。</p>
+<img src="/2026/11/07/ProjectV-Four-Worlds-UI-2026-11-07/title.png" alt="涂鸦首页的三枚刀刃菜单与右侧主角" width="1920" height="1080" loading="lazy">
+<p>营地现在分为兵器、技能、修行三页。兵器页只展示一把大图，名称、伤害、攻速与序号放在同一个框中；右侧上下按钮和框内滚轮循环切换八件兵器。切换立即改变选装，框外滚动不会误换武器。</p>
+<img src="/2026/11/07/ProjectV-Four-Worlds-UI-2026-11-07/weapon.png" alt="单武器展示框，右侧上下切换按钮，底部保留险境和启程" width="1920" height="1080" loading="lazy">
+<p>五个技能槽移到独立页面，详情按当前项目显示。换页保留搭配，重复装入同一技能仍会被阻止。HUD、商店、奖励与结算同步采用首页色调；价格、效果和纯度代价分层，闲置提示隐藏。</p>
+<h2 id="复合输入只保留四组">复合输入只保留四组</h2>
+<p>复合按键限定为 <strong>Space+H、Space+U、Space+I、Space+O</strong>。先后顺序不影响识别，每组仍使用独立8秒冷却；组合触发或因冷却被拒绝后，需要全部松键才能开始下一轮。具体复合战斗效果尚未开放。</p>
+<p>删掉另外六组时，不能只改界面列表。旧输入解析会把第二个键一起消费，因此无匹配分支也要调整：H、U、I、O 彼此重叠时，不触发组合，各自松开仍尝试施放原基础技能。多个键按住后补按 Space，则与最早仍按住的键配对。</p>
+<img src="/2026/11/07/ProjectV-Four-Worlds-UI-2026-11-07/skills.png" alt="独立技能页与仅含四种Space组合的目录" width="1920" height="1080" loading="lazy">
+<p>组合目录、输入识别与战斗候选都读取同一份定义，避免出现“列表删了，实战仍能触发”的差异。单测覆盖12个有序非 Space 按键对的两种释放顺序，共24例；运行场景还检查实际基础技能、暂停和换房后的输入清理。</p>
+<h2 id="四个世界构成完整一局">四个世界构成完整一局</h2>
+<p>废土、赛博、生化与手绘世界现在每局各出现一次，顺序由种子洗牌。前三个世界挑战完成后自动结算并继续，保留同一局的强化、纯度与挑战设置。最终通关、死亡以及第四世界末尾的镜像选择仍有各自的流程。</p>
+<p>主角外观随世界变化；手绘世界沿用完整人物动作，使用蓝灰衣装配色。真正的飞行敌人只走空中生成与悬停逻辑。商店取消自动购买最便宜物品，玩家通过点击或数字键选购，离开商店不会触发购买。当前版本停用音频，音轨制作留待后续。</p>
+<p>难度在启程前固定。每进入下一个世界，生命和伤害在上一世界基础上复利增长，移速与攻击冷却恢复速度使用一半增幅。</p>
+<table>
+<thead>
+<tr>
+<th>难度</th>
+<th>生命与伤害增长</th>
+<th>移速与冷却恢复增长</th>
+<th>灵魂收益</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>简单</td>
+<td>20%</td>
+<td>10%</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>普通（默认）</td>
+<td>35%</td>
+<td>17.5%</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>困难</td>
+<td>60%</td>
+<td>30%</td>
+<td>120%</td>
+</tr>
+<tr>
+<td>噩梦</td>
+<td>90%</td>
+<td>45%</td>
+<td>150%</td>
+</tr>
+</tbody>
+</table>
+<p>险境取消原10层玩法上限：生命每层增加15%，攻击冷却恢复速度每层增加10%。灵魂收益再乘以 <code>1 + 总险境层数 × 5%</code>，小数余数在本局后续发放中累计。只有完整通关四界，才更新所选难度的最高险境纪录；旧存档不会被补造历史成绩。</p>
+<p>攻击冷却恢复变快，并不代表预警和攻击动画也同比缩短。保留这些时长，是为了让高难度下的招式仍然可读。</p>
+<h2 id="Boss-技能与远程攻击更易辨认">Boss 技能与远程攻击更易辨认</h2>
+<p>六位 Boss 各自的三招已接入真实效果。母体的恢复技能引导3秒，每秒恢复最大生命的10%，可多次施放；攻击心核可打断，永久破坏心核后不能再恢复。只有弱点破坏使 Boss 提前强化时，才额外承担1.2倍生命伤害，普通血线进阶不触发这项易伤。</p>
+<p>镜像在生成时复制玩家选装的五槽基础技能及有效参数，分别计算冷却。它会真实执行所选的护盾、治疗、移动或暗器技能，不再仅用同名表现代替技能逻辑。</p>
+<p>玩家飞针、飞刀增加可辨认的弹芯和渐细曳迹；敌弹改用橙红、金黄、玫红或酸绿，与玩家的冷白青色区分。弹芯显示尺寸和命中半径保持同一来源，外围光晕与尾迹不参与判伤。</p>
+<img src="/2026/11/07/ProjectV-Four-Worlds-UI-2026-11-07/combat.png" alt="赛博世界测试场景中的浅色HUD、路线图与五槽技能栏" width="1920" height="1080" loading="lazy">
+<p>以上四张图均来自11月6日的1920×1080测试场景或导出包验收，展示实际运行界面。Boss 更大范围的华丽特效仍是独立待审样例，尚未接入正式战斗。</p>
+<h2 id="武器入场动画按真实渲染帧验证">武器入场动画按真实渲染帧验证</h2>
+<p>武器切换加入0.3秒滑入、缩放和淡入。画面沿切换方向移动32个逻辑像素，缩放从94%恢复到100%，透明度从15%升到100%。原生 Tween 在每个渲染帧连续插值，标题、属性与按钮保持固定。</p>
+<p>布局容器只负责安排展示区域，动画作用于内部图片，避免容器重新排版时把位移覆盖。快速滚动会取消上一次动画，以最新选装为准；切页、尺寸变化和启程时统一复位。暂停则冻结当前动画，恢复后继续。</p>
+<p>11月7日，在 RTX 4060 Laptop、1920×1080 的 Windows 导出包复核中，60 FPS 测试采样持续 <strong>4.815秒</strong>，记录289个渲染帧，平均 <strong>60.02 FPS</strong>；帧间隔中位数16.66ms，P95为17.09ms。11次完整切换各记录18个连续运动帧，采样过程中没有进行截图读回。该结果对应这台设备上的短时武器界面测试。</p>
+<h2 id="本轮验证与后续工作">本轮验证与后续工作</h2>
+<p>11月7日，按最终提交候选建立独立检出，223项 Core 测试与37个运行场景全部通过，编译为0警告、0错误。Windows 导出包另通过启动、手绘世界、Boss 技能和武器入场图形四项检查。动画专项覆盖滚轮、连续切换、暂停恢复、切页、尺寸变化与离场清理。</p>
+<p>本篇对应源码版本 <code>b7f4d7</code>。功能、资产及验证材料在同一份提交中归档；游戏源码仓库仍为私有。</p>
+<p>这轮留下的三个工程经验是：界面与输入共用同一份规则；移除功能时检查它原来消费的事件；动画帧率用实际渲染数据验证。接下来继续验收 Boss 特效，并补齐四种复合技能的战斗效果。</p>
+</article>
+    <footer class="article-footer"><p>原创内容采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a> 许可；引用内容遵循原作者许可。</p><button class="text-link copy-link"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> 复制文章链接</button></footer>
+    <section class="related-posts"><h2>继续阅读</h2><a class="text-link" href="/2026/10/27/ProjectV-Godot-Balance-Review-2026-10-27/">PROJECT-V Godot：普通难度平衡与代码审查<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a><a class="text-link" href="/2026/10/03/ProjectV-M6-Implementation/">PROJECT-V M6：从单局生成到 Roguelite 元进度<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></section>
+  </div>
+  <aside class="article-sidebar"><div class="article-sidebar-inner"><h2 class="eyebrow">本文目录</h2><nav class="desktop-toc" aria-label="文章目录"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E9%A6%96%E9%A1%B5%E8%BF%9B%E5%85%A5%E7%8B%AC%E7%AB%8B%E9%85%8D%E8%A3%85%E9%A1%B5%E9%9D%A2"><span class="toc-text">从首页进入独立配装页面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E5%90%88%E8%BE%93%E5%85%A5%E5%8F%AA%E4%BF%9D%E7%95%99%E5%9B%9B%E7%BB%84"><span class="toc-text">复合输入只保留四组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E4%B8%AA%E4%B8%96%E7%95%8C%E6%9E%84%E6%88%90%E5%AE%8C%E6%95%B4%E4%B8%80%E5%B1%80"><span class="toc-text">四个世界构成完整一局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Boss-%E6%8A%80%E8%83%BD%E4%B8%8E%E8%BF%9C%E7%A8%8B%E6%94%BB%E5%87%BB%E6%9B%B4%E6%98%93%E8%BE%A8%E8%AE%A4"><span class="toc-text">Boss 技能与远程攻击更易辨认</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A6%E5%99%A8%E5%85%A5%E5%9C%BA%E5%8A%A8%E7%94%BB%E6%8C%89%E7%9C%9F%E5%AE%9E%E6%B8%B2%E6%9F%93%E5%B8%A7%E9%AA%8C%E8%AF%81"><span class="toc-text">武器入场动画按真实渲染帧验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E8%BD%AE%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%90%8E%E7%BB%AD%E5%B7%A5%E4%BD%9C"><span class="toc-text">本轮验证与后续工作</span></a></li></ol></nav></div></aside>
+</div>
+</main>
+  <footer class="site-footer">
+    <div class="footer-inner"><div><a class="footer-brand" href="/">Codeverse<span>.</span></a><p>HenRiser 的工程笔记</p></div>
+    <div class="footer-links"><a href="https://github.com/HenRiser" target="_blank" rel="noopener noreferrer">GitHub <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a><a href="/atom.xml">RSS <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg></a><a href="/about/">关于</a></div>
+    <small>© 2026 HenRiser · CC BY-NC-SA 4.0</small></div>
+  </footer>
+  <dialog class="search-dialog" aria-labelledby="search-title" data-index="/search.json">
+    <div class="search-top"><h2 id="search-title">搜索文章</h2><button class="icon-button" data-search-close aria-label="关闭搜索" title="关闭搜索"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    <form class="search-form" role="search"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><label class="sr-only" for="search-input">关键词</label><input id="search-input" type="search" placeholder="搜索标题、标签或正文…" autocomplete="off"><button class="icon-button search-clear" type="button" aria-label="清空搜索" title="清空搜索" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></form>
+    <p class="search-status" role="status" aria-live="polite"></p>
+    <div class="search-results"></div>
+    <button class="text-link search-retry" type="button" hidden>重新加载</button>
+  </dialog>
+  <button class="icon-button back-top" aria-label="回到顶部" title="回到顶部" hidden><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+  <div class="action-status" id="action-status" role="status" aria-live="polite"></div>
+  <template id="copy-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></template>
+  <template id="check-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></template>
+</body>
+</html>
